@@ -36,7 +36,7 @@ public class EnderID {
 		this.stackSize = stack.stackSize;
 		if(blacklistedItems.contains(getItemIdentifier())) throw new BlockConversionException(modId, name, "Blacklisted!");
 		if(stack.hasTagCompound()) {
-			if(!isAllowedTagCompound()) throw new BlockConversionException(modId, name, "NBT tag compound cannot be sent");
+			if(!isAllowedTagCompound()) throw new BlockConversionException(modId, name, "NBT tag compound cannot be sent!");
 			this.compound = stack.getTagCompound();
 		}
 	}

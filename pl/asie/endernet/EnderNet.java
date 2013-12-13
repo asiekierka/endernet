@@ -4,6 +4,7 @@ import java.io.IOException;
 import java.util.logging.Logger;
 
 import pl.asie.endernet.http.EnderHTTPServer;
+import pl.asie.endernet.http.HTTPClient;
 import pl.asie.endernet.http.URIHandlerCanReceive;
 import pl.asie.endernet.http.URIHandlerPing;
 import pl.asie.endernet.lib.EnderID;
@@ -78,6 +79,11 @@ public class EnderNet {
 		httpServer.registerHandler("/canReceive", new URIHandlerCanReceive());
 		
 		log.info("Iron ingot is: " + EnderID.getItemIdentifierFor(Item.ingotIron));
+		try {
+			log.info("Localhost attempt says " + HTTPClient.canReceive("127.0.0.1:21500", new EnderID(new ItemStack(Item.ingotGold, 1))));
+		} catch(Exception e) {
+			e.printStackTrace();
+		}
 		// End
 		config.save();
 	}

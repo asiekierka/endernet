@@ -2,6 +2,7 @@ package pl.asie.endernet.http;
 
 import java.util.Map;
 
+import pl.asie.endernet.EnderNet;
 import pl.asie.endernet.lib.EnderID;
 
 import com.google.gson.Gson;
@@ -15,7 +16,10 @@ public class URIHandlerCanReceive implements IURIHandler {
 
 	public boolean actuallyServe(IHTTPSession session) {
 		Map<String, String> params = session.getParms();
-		if(!params.containsKey("object")) return false;
+		if(!params.containsKey("object")) {
+			EnderNet.log.info("/canReceive did not contain object!");
+			return false;
+		}
 		Gson gson = new Gson();
 		EnderID block = gson.fromJson(params.get("object"), EnderID.class);
 		return block.isReceiveable();
@@ -23,6 +27,9 @@ public class URIHandlerCanReceive implements IURIHandler {
 	
 	@Override
 	public Response serve(IHTTPSession session) {
+		try {
+			session.parseBody(null);
+		} catch(Exception e) { e.printStackTrace(); }
 		if(actuallyServe(session)) return new Response(Response.Status.OK, NanoHTTPD.MIME_PLAINTEXT, "EEYUP");
 		else return new Response(Response.Status.OK, NanoHTTPD.MIME_PLAINTEXT, "NNOPE");
 	}
