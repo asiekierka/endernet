@@ -3,11 +3,14 @@ package pl.asie.endernet;
 import java.io.IOException;
 import java.util.logging.Logger;
 
+import pl.asie.endernet.block.BlockEnderTransmitter;
+import pl.asie.endernet.block.TileEntityEnderTransmitter;
 import pl.asie.endernet.http.EnderHTTPServer;
 import pl.asie.endernet.http.HTTPClient;
 import pl.asie.endernet.http.URIHandlerCanReceive;
 import pl.asie.endernet.http.URIHandlerPing;
 import pl.asie.endernet.lib.EnderID;
+import pl.asie.tweaks.AsieTweaks;
 import cpw.mods.fml.client.registry.RenderingRegistry;
 import cpw.mods.fml.common.FMLLog;
 import cpw.mods.fml.common.Mod;
@@ -20,6 +23,7 @@ import cpw.mods.fml.common.event.FMLPreInitializationEvent;
 import cpw.mods.fml.common.network.NetworkMod;
 import cpw.mods.fml.common.registry.EntityRegistry;
 import cpw.mods.fml.common.registry.GameRegistry;
+import cpw.mods.fml.common.registry.LanguageRegistry;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.renderer.entity.RenderItem;
 import net.minecraft.client.renderer.entity.RenderManager;
@@ -49,6 +53,8 @@ public class EnderNet {
 		return itemID > 0 && itemID < 65536;
 	}
 	
+	public static BlockEnderTransmitter enderTransmitter;
+	
 	@EventHandler
 	public void preInit(FMLPreInitializationEvent event) {
 		log = Logger.getLogger("endernet");
@@ -60,6 +66,15 @@ public class EnderNet {
 		if(System.getProperty("user.dir").indexOf(".asielauncher") >= 0) {
 			log.info("Hey, you! Yes, you! Thanks for using AsieLauncher! ~asie");
 		}
+		
+		if(isBlock("enderTransmitter", 2350)) {
+			enderTransmitter = new BlockEnderTransmitter(config.getBlock("enderTransmitter", 2350).getInt());
+			GameRegistry.registerBlock(enderTransmitter);
+		}
+		if(isBlock("enderReceiver", 2351)) {
+			
+		}
+		GameRegistry.registerTileEntity(TileEntityEnderTransmitter.class, "enderTransmitter");
 	}
 	
 	@EventHandler
@@ -78,12 +93,14 @@ public class EnderNet {
 		httpServer.registerHandler("/ping", new URIHandlerPing());
 		httpServer.registerHandler("/canReceive", new URIHandlerCanReceive());
 		
-		log.info("Iron ingot is: " + EnderID.getItemIdentifierFor(Item.ingotIron));
+		log.info("Iron ingot is: " + EnderID.getItemIdentifierFor(AsieTweaks.instance.itemDyedBook));
 		try {
 			log.info("Localhost attempt says " + HTTPClient.canReceive("127.0.0.1:21500", new EnderID(new ItemStack(Item.ingotGold, 1))));
 		} catch(Exception e) {
 			e.printStackTrace();
 		}
+		
+		LanguageRegistry.instance().addStringLocalization("tile.endernet.enderTransmitter.name", "Ender Transmitter");
 		// End
 		config.save();
 	}

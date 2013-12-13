@@ -20,6 +20,7 @@ public class EnderID {
 	static {
 		blacklistedItems = new ArrayList<String>();
 		whitelistedNBTItems = new ArrayList<String>();
+		whitelistedNBTItems.add("asietweaks|asietweaks.dyedBook");
 	}
 	
 	public EnderID(ItemStack stack) throws BlockConversionException {
@@ -36,8 +37,8 @@ public class EnderID {
 		this.stackSize = stack.stackSize;
 		if(blacklistedItems.contains(getItemIdentifier())) throw new BlockConversionException(modId, name, "Blacklisted!");
 		if(stack.hasTagCompound()) {
-			if(!isAllowedTagCompound()) throw new BlockConversionException(modId, name, "NBT tag compound cannot be sent!");
 			this.compound = stack.getTagCompound();
+			if(!isAllowedTagCompound()) throw new BlockConversionException(modId, name, "NBT tag compound cannot be sent!");
 		}
 	}
 	
