@@ -4,7 +4,9 @@ import java.io.IOException;
 import java.util.logging.Logger;
 
 import pl.asie.endernet.http.EnderHTTPServer;
+import pl.asie.endernet.http.URIHandlerCanReceive;
 import pl.asie.endernet.http.URIHandlerPing;
+import pl.asie.endernet.lib.EnderID;
 import cpw.mods.fml.client.registry.RenderingRegistry;
 import cpw.mods.fml.common.FMLLog;
 import cpw.mods.fml.common.Mod;
@@ -73,7 +75,9 @@ public class EnderNet {
 			log.warning("HTTP server not initialized; EnderNet will transmit *ONLY*!");
 		}
 		httpServer.registerHandler("/ping", new URIHandlerPing());
+		httpServer.registerHandler("/canReceive", new URIHandlerCanReceive());
 		
+		log.info("Iron ingot is: " + EnderID.getItemIdentifierFor(Item.ingotIron));
 		// End
 		config.save();
 	}

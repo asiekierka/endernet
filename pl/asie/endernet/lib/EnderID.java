@@ -2,6 +2,7 @@ package pl.asie.endernet.lib;
 
 import java.util.ArrayList;
 
+import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
 import cpw.mods.fml.common.registry.GameRegistry;
@@ -22,10 +23,15 @@ public class EnderID {
 	}
 	
 	public EnderID(ItemStack stack) throws BlockConversionException {
+		if(!(stack instanceof ItemStack)) throw new BlockConversionException("", "unknown", "Custom item stacks unsupported!");
 		UniqueIdentifier itemID = GameRegistry.findUniqueIdentifierFor(stack.getItem());
-		if(itemID == null) throw new BlockConversionException("", "unknown", "Can't find unique identifier");
-		this.modId = itemID.modId;
-		this.name = itemID.name;
+		if(itemID == null) {
+			this.modId = "Minecraft";
+			this.name = stack.getItem().getUnlocalizedName();
+		} else {
+			this.modId = itemID.modId;
+			this.name = itemID.name;
+		}
 		this.metadata = stack.getItemDamage();
 		this.stackSize = stack.stackSize;
 		if(blacklistedItems.contains(getItemIdentifier())) throw new BlockConversionException(modId, name, "Blacklisted!");
@@ -40,20 +46,42 @@ public class EnderID {
 	}
 	
 	public boolean isReceiveable() {
-		if(GameRegistry.findItem(modId, name) == null) return false;
-		return true;
+		return (createItemStack() != null);
 	}
 	
 	public ItemStack createItemStack() {
-		ItemStack stack = GameRegistry.findItemStack(modId, name, stackSize);
-		stack.setItemDamage(metadata);
-		stack.setTagCompound(compound);
+		ItemStack stack = null;
+		if(this.modId.equals("Minecraft")) {
+			for(Item i: Item.itemsList) {
+				if(i == null) continue;
+				if(i.getUnlocalizedName().equals(this.name)) {
+					stack = new ItemStack(i, stackSize);
+				}
+			}
+			if(stack == null) return null;
+		} else stack = GameRegistry.findItemStack(modId, name, stackSize);
+		if(stack != null) {
+			stack.setItemDamage(metadata);
+			stack.setTagCompound(compound);
+		}
 		return stack;
 	}
 	
 	public boolean isAllowedTagCompound() {
-		if(this.modId.equals("minecraft")) return true; // All vanilla items are allowed NBTs by default
+		if(this.modId.equals("Minecraft")) return true; // All vanilla items are allowed NBTs by default
 		if(whitelistedNBTItems.contains(getItemIdentifier())) return true;
 		return false;
+	}
+	
+	public static String getItemIdentifierFor(Item item) {
+		UniqueIdentifier uid = GameRegistry.findUniqueIdentifierFor(item);
+		if(uid == null) {
+			return "Minecraft|" + item.getUnlocalizedName();
+		} else return uid.modId + "|" + uid.name;
+	}
+	
+	public static String getItemIdentifierFor(ItemStack itemStack) {
+		if(!(itemStack instanceof ItemStack)) return "unknown";
+		else return getItemIdentifierFor(itemStack.getItem());
 	}
 }
