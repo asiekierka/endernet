@@ -1,7 +1,10 @@
 package pl.asie.endernet;
 
+import java.io.File;
 import java.io.IOException;
 import java.util.logging.Logger;
+
+import com.google.common.collect.ImmutableList;
 
 import pl.asie.endernet.block.BlockEnderTransmitter;
 import pl.asie.endernet.block.TileEntityEnderTransmitter;
@@ -19,6 +22,8 @@ import cpw.mods.fml.common.Mod.EventHandler;
 import cpw.mods.fml.common.Mod.Instance;
 import cpw.mods.fml.common.SidedProxy;
 import cpw.mods.fml.common.event.FMLInitializationEvent;
+import cpw.mods.fml.common.event.FMLInterModComms.IMCEvent;
+import cpw.mods.fml.common.event.FMLInterModComms.IMCMessage;
 import cpw.mods.fml.common.event.FMLPostInitializationEvent;
 import cpw.mods.fml.common.event.FMLPreInitializationEvent;
 import cpw.mods.fml.common.network.NetworkMod;
@@ -34,6 +39,7 @@ import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraftforge.common.Configuration;
+import net.minecraftforge.common.DimensionManager;
 import net.minecraftforge.common.MinecraftForge;
 
 @Mod(modid="endernet", name="EnderNet", version="0.0.1")
@@ -61,9 +67,7 @@ public class EnderNet {
 	public static EnderRegistry registry;
 	
 	@EventHandler
-	public void preInit(FMLPreInitializationEvent event) {
-		registry = new EnderRegistry();
-		
+	public void preInit(FMLPreInitializationEvent event) {		
 		log = Logger.getLogger("endernet");
 		log.setParent(FMLLog.getLogger());
 		
@@ -118,5 +122,18 @@ public class EnderNet {
 	
 	@EventHandler
 	public void postInit(FMLPostInitializationEvent event) {
+	}
+	
+	@EventHandler
+	public void receiveMessages(IMCEvent event) {
+		ImmutableList<IMCMessage> messages = event.getMessages();
+		for(IMCMessage msg : messages) {
+			if(msg.key.equals("ENWhitelistItemNBT")) {
+				EnderID.whitelistedNBTItems.add(EnderID.getItemIdentifierFor(msg.getItemStackValue()));
+			}
+			if(msg.key.equals("ENBlacklistItem")) {
+				EnderID.blacklistedItems.add(EnderID.getItemIdentifierFor(msg.getItemStackValue()));
+			}
+		}
 	}
 }

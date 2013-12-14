@@ -41,7 +41,7 @@ public class BlockEnder extends BlockContainer {
 	
     @Override
 	public void breakBlock(World world, int x, int y, int z, int id, int meta) {
-    	super.breakBlock(world, x, y, z, id, meta);
     	this.onBlockDestroyed(world, x, y, z, meta);
+    	super.breakBlock(world, x, y, z, id, meta);
 	}
 }

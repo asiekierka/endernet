@@ -96,9 +96,8 @@ public class TileEntityEnderTransmitter extends TileEntityEnder implements IInve
 		if(!canReceive()) progress = 0;
 		if(inventory[0] != null && startSending && canReceive()) {
 			if(progress < getMaxProgress()) {
-				EnderNet.log.info("adding to prog");
 				progress++;
-			} else {
+			} else { // Finished
 				progress = 0;
 				this.setInventorySlotContents(0, null);
 				updateReceive();
