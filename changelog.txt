@@ -1,0 +1,9 @@
+alpha3:
++ Add /eninfo command for devs to get information on their blocks.
+* Fix maps being sendable.
+
+alpha2:
+- Remove extra debug code that stopped EnderNet from launching.
+
+alpha1:
+/ First release.

@@ -17,7 +17,6 @@ import pl.asie.endernet.http.URIHandlerReceive;
 import pl.asie.endernet.lib.EnderID;
 import pl.asie.endernet.lib.EnderRedirector;
 import pl.asie.endernet.lib.EnderRegistry;
-import pl.asie.tweaks.AsieTweaks;
 import cpw.mods.fml.client.registry.RenderingRegistry;
 import cpw.mods.fml.common.FMLLog;
 import cpw.mods.fml.common.Mod;
@@ -27,8 +26,10 @@ import cpw.mods.fml.common.SidedProxy;
 import cpw.mods.fml.common.event.FMLInitializationEvent;
 import cpw.mods.fml.common.event.FMLInterModComms.IMCEvent;
 import cpw.mods.fml.common.event.FMLInterModComms.IMCMessage;
+import cpw.mods.fml.common.event.FMLInterModComms;
 import cpw.mods.fml.common.event.FMLPostInitializationEvent;
 import cpw.mods.fml.common.event.FMLPreInitializationEvent;
+import cpw.mods.fml.common.event.FMLServerStartingEvent;
 import cpw.mods.fml.common.network.NetworkMod;
 import cpw.mods.fml.common.network.NetworkRegistry;
 import cpw.mods.fml.common.registry.EntityRegistry;
@@ -46,7 +47,7 @@ import net.minecraftforge.common.Configuration;
 import net.minecraftforge.common.DimensionManager;
 import net.minecraftforge.common.MinecraftForge;
 
-@Mod(modid="endernet", name="EnderNet", version="0.0.1")
+@Mod(modid="endernet", name="EnderNet", version="0.0.3")
 @NetworkMod(channels={"EnderNet"}, clientSideRequired=true, packetHandler=NetworkHandler.class)
 public class EnderNet {
 	public Configuration config;
@@ -85,17 +86,24 @@ public class EnderNet {
 		
 		if(isBlock("enderTransmitter", 2350)) {
 			enderTransmitter = new BlockEnderTransmitter(config.getBlock("enderTransmitter", 2350).getInt());
-			GameRegistry.registerBlock(enderTransmitter);
+			GameRegistry.registerBlock(enderTransmitter, "enderTransmitter");
 		}
 		if(isBlock("enderReceiver", 2351)) {
 			enderReceiver = new BlockEnderReceiver(config.getBlock("enderReceiver", 2351).getInt());
-			GameRegistry.registerBlock(enderReceiver);
+			GameRegistry.registerBlock(enderReceiver, "enderReceiver");
 		}
 		
 		GameRegistry.registerTileEntity(TileEntityEnderTransmitter.class, "enderTransmitter");
 		MinecraftForge.EVENT_BUS.register(new pl.asie.endernet.EventHandler());
 	}
 	
+	@EventHandler
+	public void serverLoad(FMLServerStartingEvent event)
+	{
+		if(config.get("misc", "enableDevCommands", true).getBoolean(true))
+			event.registerServerCommand(new CommandEndernetInfo());
+	}
+	 
 	@EventHandler
 	public void init(FMLInitializationEvent event) {
 		NetworkRegistry.instance().registerGuiHandler(this, new NetworkHandler());
@@ -121,15 +129,9 @@ public class EnderNet {
 		httpServer.registerHandler("/canReceive", new URIHandlerCanReceive());
 		httpServer.registerHandler("/receive", new URIHandlerReceive());
 		
-		log.info("Iron ingot is: " + EnderID.getItemIdentifierFor(AsieTweaks.instance.itemDyedBook));
-		try {
-			log.info("Localhost attempt says " + HTTPClient.canReceive("127.0.0.1:21500", new EnderID(new ItemStack(Item.ingotGold, 1))));
-		} catch(Exception e) {
-			e.printStackTrace();
-		}
-		
 		LanguageRegistry.instance().addStringLocalization("tile.endernet.enderTransmitter.name", "Ender Transmitter");
 		LanguageRegistry.instance().addStringLocalization("tile.endernet.enderReceiver.name", "Ender Receiver");
+		LanguageRegistry.instance().addStringLocalization("command.endernet.info", "Gives you dev information on the currently held inventory item.");
 		// End
 		config.save();
 	}
@@ -142,10 +144,10 @@ public class EnderNet {
 	public void receiveMessages(IMCEvent event) {
 		ImmutableList<IMCMessage> messages = event.getMessages();
 		for(IMCMessage msg : messages) {
-			if(msg.key.equals("ENWhitelistItemNBT")) {
+			if(msg.key.equals("WhitelistItemNBT")) {
 				EnderID.whitelistedNBTItems.add(EnderID.getItemIdentifierFor(msg.getItemStackValue()));
 			}
-			if(msg.key.equals("ENBlacklistItem")) {
+			if(msg.key.equals("BlacklistItem")) {
 				EnderID.blacklistedItems.add(EnderID.getItemIdentifierFor(msg.getItemStackValue()));
 			}
 		}

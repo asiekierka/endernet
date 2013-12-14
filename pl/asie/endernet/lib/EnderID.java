@@ -21,6 +21,7 @@ public class EnderID {
 		blacklistedItems = new ArrayList<String>();
 		whitelistedNBTItems = new ArrayList<String>();
 		whitelistedNBTItems.add("asietweaks|asietweaks.dyedBook");
+		blacklistedItems.add("Minecraft|item.map"); // Maps do not use NBT, data is stored on the server side, can't send.
 	}
 	
 	public EnderID(ItemStack stack) throws BlockConversionException {
