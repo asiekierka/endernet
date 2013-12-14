@@ -3,6 +3,7 @@ package pl.asie.endernet.block;
 import pl.asie.endernet.EnderNet;
 import pl.asie.endernet.lib.BlockConversionException;
 import pl.asie.endernet.lib.EnderID;
+import pl.asie.endernet.lib.EnderRedirector;
 import cpw.mods.fml.client.FMLClientHandler;
 import net.minecraft.client.gui.GuiScreen;
 import net.minecraft.entity.player.EntityPlayer;
@@ -82,12 +83,7 @@ public class TileEntityEnderTransmitter extends TileEntityEnder implements IInve
 	private boolean updateReceive() {
 		if(inventory[0] == null) return true; // I can always receive air, you know... :3
 		if(this.worldObj.isRemote) return true; // No pinging on the client
-		try {
-			EnderID item = new EnderID(inventory[0]);
-			return item.isReceiveable();
-		} catch(BlockConversionException e) {
-			return false;
-		}
+		return EnderRedirector.canReceive("0.0", inventory[0]);
 	}
 	
 	@Override
@@ -170,9 +166,8 @@ public class TileEntityEnderTransmitter extends TileEntityEnder implements IInve
 	}
 
 	private void writeNBTProgress(NBTTagCompound tagCompound) {
-		tagCompound.setBoolean("r", canReceive()); // eceive?
-		tagCompound.setShort("p", (short)progress); // rogress
-		tagCompound.setShort("m", (short)getMaxProgress());
+		tagCompound.setBoolean("r", canReceive());
+		tagCompound.setShort("p", (short)progress);
 	}
 	
 	@Override

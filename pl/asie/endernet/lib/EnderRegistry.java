@@ -15,6 +15,10 @@ import net.minecraftforge.common.DimensionManager;
 public class EnderRegistry {
 	private ArrayList<EntityCoord> entities = new ArrayList<EntityCoord>();
 	
+	public EntityCoord getEntityCoord(int id) {
+		return entities.size() > id ? entities.get(id) : null;
+	}
+	
 	public int getEntityID(TileEntity entity) {
 		EntityCoord ec = new EntityCoord(entity);
 		if(!entities.contains(ec)) {

@@ -12,7 +12,9 @@ import pl.asie.endernet.http.EnderHTTPServer;
 import pl.asie.endernet.http.HTTPClient;
 import pl.asie.endernet.http.URIHandlerCanReceive;
 import pl.asie.endernet.http.URIHandlerPing;
+import pl.asie.endernet.http.URIHandlerReceive;
 import pl.asie.endernet.lib.EnderID;
+import pl.asie.endernet.lib.EnderRedirector;
 import pl.asie.endernet.lib.EnderRegistry;
 import pl.asie.tweaks.AsieTweaks;
 import cpw.mods.fml.client.registry.RenderingRegistry;
@@ -38,6 +40,7 @@ import net.minecraft.entity.passive.EntityVillager;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.tileentity.TileEntity;
+import net.minecraftforge.common.ConfigCategory;
 import net.minecraftforge.common.Configuration;
 import net.minecraftforge.common.DimensionManager;
 import net.minecraftforge.common.MinecraftForge;
@@ -94,6 +97,12 @@ public class EnderNet {
 	public void init(FMLInitializationEvent event) {
 		NetworkRegistry.instance().registerGuiHandler(this, new NetworkHandler());
 		
+		ConfigCategory servers = config.getCategory("servers");
+		servers.setComment("List servers in S:name=ip form");
+		for(String name: servers.keySet()) {
+			EnderRedirector.serverIPs.put(name, servers.get(name).getString());
+		}
+		
 		httpServer = new EnderHTTPServer(config.get("comm", "httpServerPort", 21500).getInt());
 		try {
 			if(config.get("comm", "httpServerEnabled", true).getBoolean(true)) httpServer.start();
@@ -107,6 +116,7 @@ public class EnderNet {
 		}
 		httpServer.registerHandler("/ping", new URIHandlerPing());
 		httpServer.registerHandler("/canReceive", new URIHandlerCanReceive());
+		httpServer.registerHandler("/receive", new URIHandlerReceive());
 		
 		log.info("Iron ingot is: " + EnderID.getItemIdentifierFor(AsieTweaks.instance.itemDyedBook));
 		try {
