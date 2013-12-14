@@ -9,6 +9,7 @@ import java.io.Reader;
 import com.google.gson.Gson;
 
 import pl.asie.endernet.lib.EnderRegistry;
+import pl.asie.endernet.lib.FileUtils;
 import net.minecraftforge.common.DimensionManager;
 import net.minecraftforge.event.ForgeSubscribe;
 import net.minecraftforge.event.world.WorldEvent;
@@ -18,17 +19,12 @@ public class EventHandler {
 	public void worldLoadEvent(WorldEvent.Load event) {
 		File registryLocation = new File(DimensionManager.getCurrentSaveRootDirectory(), "enderRegistry.json");
 		if(registryLocation.exists()) {
-			try {
-				BufferedReader reader = new BufferedReader(
-						new InputStreamReader(new FileInputStream(registryLocation), "UTF-8")
-						);
+			String jsonString = FileUtils.load(registryLocation);
+			if(jsonString != null) {
 				Gson gson = new Gson();
-				EnderNet.registry = gson.fromJson(reader.readLine(), EnderRegistry.class);
-				reader.close();
-			} catch(Exception e) {
-				e.printStackTrace();
-				EnderNet.registry = new EnderRegistry();
+				EnderNet.registry = gson.fromJson(jsonString, EnderRegistry.class);
 			}
+			else EnderNet.registry = new EnderRegistry();
 		} else EnderNet.registry = new EnderRegistry();
 	}
 }

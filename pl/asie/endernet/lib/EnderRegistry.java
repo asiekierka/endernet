@@ -33,14 +33,7 @@ public class EnderRegistry {
 		Gson gson = new Gson();
 		String output = gson.toJson(this);
 		File location = new File(DimensionManager.getCurrentSaveRootDirectory(), "enderRegistry.json");
-		try {
-			PrintWriter out = new PrintWriter(location);
-			out.println(output);
-			out.flush();
-			out.close();
-		} catch(Exception e) {
-			e.printStackTrace();
-		}
+		FileUtils.save(output, location);
 	}
 	
 	public void removeEntity(TileEntity entity) {
