@@ -14,7 +14,7 @@ import net.minecraft.network.packet.Packet132TileEntityData;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.tileentity.TileEntityFurnace;
 
-public class TileEntityEnderTransmitter extends TileEntity implements IInventory {
+public class TileEntityEnderTransmitter extends TileEntityEnder implements IInventory {
 	protected ItemStack[] inventory = new ItemStack[2];
 	
 	@Override

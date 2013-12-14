@@ -10,6 +10,7 @@ import pl.asie.endernet.http.HTTPClient;
 import pl.asie.endernet.http.URIHandlerCanReceive;
 import pl.asie.endernet.http.URIHandlerPing;
 import pl.asie.endernet.lib.EnderID;
+import pl.asie.endernet.lib.EnderRegistry;
 import pl.asie.tweaks.AsieTweaks;
 import cpw.mods.fml.client.registry.RenderingRegistry;
 import cpw.mods.fml.common.FMLLog;
@@ -57,9 +58,12 @@ public class EnderNet {
 	}
 	
 	public static BlockEnderTransmitter enderTransmitter;
+	public static EnderRegistry registry;
 	
 	@EventHandler
 	public void preInit(FMLPreInitializationEvent event) {
+		registry = new EnderRegistry();
+		
 		log = Logger.getLogger("endernet");
 		log.setParent(FMLLog.getLogger());
 		
@@ -77,6 +81,7 @@ public class EnderNet {
 		if(isBlock("enderReceiver", 2351)) {
 			
 		}
+		
 		GameRegistry.registerTileEntity(TileEntityEnderTransmitter.class, "enderTransmitter");
 		MinecraftForge.EVENT_BUS.register(new pl.asie.endernet.EventHandler());
 	}
