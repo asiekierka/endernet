@@ -21,16 +21,19 @@ import cpw.mods.fml.common.event.FMLInitializationEvent;
 import cpw.mods.fml.common.event.FMLPostInitializationEvent;
 import cpw.mods.fml.common.event.FMLPreInitializationEvent;
 import cpw.mods.fml.common.network.NetworkMod;
+import cpw.mods.fml.common.network.NetworkRegistry;
 import cpw.mods.fml.common.registry.EntityRegistry;
 import cpw.mods.fml.common.registry.GameRegistry;
 import cpw.mods.fml.common.registry.LanguageRegistry;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.renderer.entity.RenderItem;
 import net.minecraft.client.renderer.entity.RenderManager;
+import net.minecraft.entity.passive.EntityVillager;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraftforge.common.Configuration;
+import net.minecraftforge.common.MinecraftForge;
 
 @Mod(modid="endernet", name="EnderNet", version="0.0.1")
 @NetworkMod(channels={"EnderNet"}, clientSideRequired=true, packetHandler=NetworkHandler.class)
@@ -75,10 +78,13 @@ public class EnderNet {
 			
 		}
 		GameRegistry.registerTileEntity(TileEntityEnderTransmitter.class, "enderTransmitter");
+		MinecraftForge.EVENT_BUS.register(new pl.asie.endernet.EventHandler());
 	}
 	
 	@EventHandler
 	public void init(FMLInitializationEvent event) {
+		NetworkRegistry.instance().registerGuiHandler(this, new NetworkHandler());
+		
 		httpServer = new EnderHTTPServer(config.get("comm", "httpServerPort", 21500).getInt());
 		try {
 			if(config.get("comm", "httpServerEnabled", true).getBoolean(true)) httpServer.start();

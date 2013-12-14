@@ -1,10 +1,16 @@
 package pl.asie.endernet.block;
 
+import pl.asie.endernet.EnderNet;
+import cpw.mods.fml.client.FMLClientHandler;
+import net.minecraft.client.gui.GuiScreen;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.inventory.IInventory;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.nbt.NBTTagList;
+import net.minecraft.network.INetworkManager;
+import net.minecraft.network.packet.Packet;
+import net.minecraft.network.packet.Packet132TileEntityData;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.tileentity.TileEntityFurnace;
 
@@ -31,12 +37,15 @@ public class TileEntityEnderTransmitter extends TileEntity implements IInventory
 			if (this.inventory[slot].stackSize <= amount) {
 				itemstack = this.inventory[slot];
 				this.inventory[slot] = null;
+		        onSlotUpdate(slot);
 				return itemstack;
 			} else {
 				itemstack = this.inventory[slot].splitStack(amount);
 
 				if (this.inventory[slot].stackSize == 0)
 					this.inventory[slot] = null;
+				
+		        onSlotUpdate(slot);
 				
 				return itemstack;
 			}
@@ -48,12 +57,70 @@ public class TileEntityEnderTransmitter extends TileEntity implements IInventory
         ItemStack stack = getStackInSlot(slot);
         if(stack == null) return null;
         inventory[slot] = null;
+        onSlotUpdate(slot);
         return stack;
+	}
+	
+	private int progress;
+	
+	public int getProgress() { return progress; }
+	
+	public int getMaxProgress() {
+		if(inventory[0] == null) return 4; // random number, chosen by fair dice roll
+		else return inventory[0].stackSize * 30;
+	}
+	
+	private boolean isReceiveable;
+	private boolean startSending = true;
+	
+	public boolean canReceive() {
+		return isReceiveable;
+	}
+	
+	private boolean updateReceive() {
+		if(inventory[0] == null) return true; // I can always receive air, you know... :3
+		return true;
+	}
+	
+	@Override
+	public void updateEntity() {
+		if(inventory[0] != null && startSending && canReceive()) {
+			if(progress < getMaxProgress()) {
+				EnderNet.log.info("adding to prog");
+				progress++;
+			} else {
+				progress = 0;
+				this.setInventorySlotContents(0, null);
+				updateReceive();
+			}
+		}
+	}
+	
+	private void onSlotUpdate(int slot) {
+		super.onInventoryChanged();
+        if(slot == 0) { // Item changed!
+    		startSending = false;
+    		if(inventory[0] == null) {
+    			progress = 0; // Reset progress if no item
+    		}
+        	boolean newr = updateReceive();
+        	isReceiveable = newr;
+        	this.worldObj.markBlockForUpdate(xCoord, yCoord, zCoord);
+        	startSending = true;
+        }
 	}
 
 	@Override
 	public void setInventorySlotContents(int slot, ItemStack stack) {
+		if(inventory[slot] != null && stack != null) {
+			if((inventory[slot].itemID != stack.itemID)
+					|| (inventory[slot].getItemDamage() != stack.getItemDamage())) {
+				progress = 0; // Reset progress if item changed
+				this.worldObj.markBlockForUpdate(xCoord, yCoord, zCoord);
+			}
+		}
         inventory[slot] = stack;
+        onSlotUpdate(slot);
 	}
 
 	@Override
@@ -80,21 +147,39 @@ public class TileEntityEnderTransmitter extends TileEntity implements IInventory
 	}
 
 	@Override
-	public void openChest() { }
+	public void openChest() {
+		this.worldObj.markBlockForUpdate(xCoord, yCoord, zCoord);
+	}
 
 	@Override
 	public void closeChest() { }
 
 	@Override
 	public boolean isItemValidForSlot(int slot, ItemStack stack) {
-		if(slot == 1) { // Fuel
-			// Check if is fuel
-			if(TileEntityFurnace.getItemBurnTime(stack) == 0) {
-				// TODO: check for batteries and stuff
-				return false;
-			}
-		}
 		return true;
+	}
+
+	private void writeNBTProgress(NBTTagCompound tagCompound) {
+		tagCompound.setBoolean("r", canReceive()); // eceive?
+		tagCompound.setShort("p", (short)progress); // rogress
+		tagCompound.setShort("m", (short)getMaxProgress());
+	}
+	
+	@Override
+	public Packet getDescriptionPacket() {
+		NBTTagCompound tagCompound = new NBTTagCompound();
+		writeNBTProgress(tagCompound);
+		return new Packet132TileEntityData(xCoord, yCoord, zCoord, 0, tagCompound);
+	}
+
+	@Override
+	public void onDataPacket(INetworkManager networkManager, Packet132TileEntityData packet) {	     
+		// example: update open GUI
+		GuiScreen gui = FMLClientHandler.instance().getClient().currentScreen;
+		if (gui != null && gui instanceof GuiEnderTransmitter) {
+			GuiEnderTransmitter get = (GuiEnderTransmitter)gui;
+			get.syncNBTFromClient(packet.data);
+		}
 	}
 	
     // http://www.minecraftforge.net/wiki/Containers_and_GUIs
@@ -110,6 +195,8 @@ public class TileEntityEnderTransmitter extends TileEntity implements IInventory
                             inventory[slot] = ItemStack.loadItemStackFromNBT(tag);
                     }
             }
+            this.isReceiveable = tagCompound.getBoolean("r");
+            this.progress = tagCompound.getShort("p");
     }
 
     @Override
@@ -126,5 +213,6 @@ public class TileEntityEnderTransmitter extends TileEntity implements IInventory
                     }
             }
             tagCompound.setTag("Inventory", itemList);
+            writeNBTProgress(tagCompound);
     }
 }
