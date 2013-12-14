@@ -80,9 +80,8 @@ public class EnderNet {
 		config = new Configuration(event.getSuggestedConfigurationFile());
 		config.load();
 		
-		if(System.getProperty("user.dir").indexOf(".asielauncher") >= 0) {
-			log.info("Hey, you! Yes, you! Thanks for using AsieLauncher! ~asie");
-		}
+		if(System.getProperty("user.dir").indexOf(".asielauncher") >= 0)
+			log.info("Thanks for using AsieLauncher!");
 		
 		if(isBlock("enderTransmitter", 2350)) {
 			enderTransmitter = new BlockEnderTransmitter(config.getBlock("enderTransmitter", 2350).getInt());
@@ -108,23 +107,8 @@ public class EnderNet {
 	public void init(FMLInitializationEvent event) {
 		NetworkRegistry.instance().registerGuiHandler(this, new NetworkHandler());
 		
-		ConfigCategory servers = config.getCategory("servers");
-		servers.setComment("List servers in S:name=ip form");
-		for(String name: servers.keySet()) {
-			EnderRedirector.serverIPs.put(name, servers.get(name).getString());
-		}
-		
-		httpServer = new EnderHTTPServer(config.get("comm", "httpServerPort", 21500).getInt());
-		try {
-			if(config.get("comm", "httpServerEnabled", true).getBoolean(true)) httpServer.start();
-		} catch(IOException e) {
-			e.printStackTrace();
-		}
-		if(httpServer.wasStarted()) {
-			log.info("HTTP server ready!");
-		} else {
-			log.warning("HTTP server not initialized; EnderNet will transmit *ONLY*!");
-		}
+		addServerMappings();
+		startHTTPServer();
 		httpServer.registerHandler("/ping", new URIHandlerPing());
 		httpServer.registerHandler("/canReceive", new URIHandlerCanReceive());
 		httpServer.registerHandler("/receive", new URIHandlerReceive());
@@ -132,7 +116,7 @@ public class EnderNet {
 		LanguageRegistry.instance().addStringLocalization("tile.endernet.enderTransmitter.name", "Ender Transmitter");
 		LanguageRegistry.instance().addStringLocalization("tile.endernet.enderReceiver.name", "Ender Receiver");
 		LanguageRegistry.instance().addStringLocalization("command.endernet.info", "Gives you dev information on the currently held inventory item.");
-		// End
+
 		config.save();
 	}
 	
@@ -150,6 +134,28 @@ public class EnderNet {
 			if(msg.key.equals("BlacklistItem")) {
 				EnderID.blacklistedItems.add(EnderID.getItemIdentifierFor(msg.getItemStackValue()));
 			}
+		}
+	}
+	
+	public void addServerMappings() {
+		ConfigCategory servers = config.getCategory("servers");
+		servers.setComment("List servers in S:name=ip form");
+		for(String name: servers.keySet()) {
+			EnderRedirector.serverIPs.put(name, servers.get(name).getString());
+		}
+	}
+	
+	public void startHTTPServer() {
+		httpServer = new EnderHTTPServer(config.get("comm", "httpServerPort", 21500).getInt());
+		try {
+			if(config.get("comm", "httpServerEnabled", true).getBoolean(true)) httpServer.start();
+		} catch(IOException e) {
+			e.printStackTrace();
+		}
+		if(httpServer.wasStarted()) {
+			log.info("HTTP server ready!");
+		} else {
+			log.warning("HTTP server not initialized; EnderNet will transmit *ONLY*!");
 		}
 	}
 }

@@ -1,3 +1,8 @@
+alpha4:
++ Add support for OpenBlocks crayons/glasses and Thermal Expansion energy storage sending
++ Added heuristic-esque NBT tag detection.
+  * This will work on custom books and enchanted items, so you don't need to register these.
+
 alpha3:
 + Add /eninfo command for devs to get information on their blocks.
 * Fix maps being sendable.

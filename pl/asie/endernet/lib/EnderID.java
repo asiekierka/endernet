@@ -2,8 +2,10 @@ package pl.asie.endernet.lib;
 
 import java.util.ArrayList;
 
+import pl.asie.endernet.EnderNet;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
+import net.minecraft.nbt.NBTBase;
 import net.minecraft.nbt.NBTTagCompound;
 import cpw.mods.fml.common.registry.GameRegistry;
 import cpw.mods.fml.common.registry.GameRegistry.UniqueIdentifier;
@@ -20,8 +22,19 @@ public class EnderID {
 	static {
 		blacklistedItems = new ArrayList<String>();
 		whitelistedNBTItems = new ArrayList<String>();
-		whitelistedNBTItems.add("asietweaks|asietweaks.dyedBook");
 		blacklistedItems.add("Minecraft|item.map"); // Maps do not use NBT, data is stored on the server side, can't send.
+		
+		// SUPPORT
+		// AsieTweaks
+		whitelistedNBTItems.add("asietweaks|asietweaks.dyedBook");
+		// OpenBlocks
+		whitelistedNBTItems.add("OpenBlocks|openblocks.crayonGlasses");
+		whitelistedNBTItems.add("OpenBlocks|openblocks.imaginary");
+		whitelistedNBTItems.add("OpenBlocks|openblocks.paintbrush");
+		// Thermal Expansion 3
+		whitelistedNBTItems.add("ThermalExpansion|EnergyCell");
+		whitelistedNBTItems.add("ThermalExpansion|Tesseract");
+		whitelistedNBTItems.add("Minecraft|item.thermalexpansion.capacitor");
 	}
 	
 	public EnderID(ItemStack stack) throws BlockConversionException {
@@ -70,9 +83,22 @@ public class EnderID {
 	}
 	
 	public boolean isAllowedTagCompound() {
-		if(this.modId.equals("Minecraft")) return true; // All vanilla items are allowed NBTs by default
+		if(this.modId.equals("Minecraft")) return true; // All vanilla items are allowed NBTs by default (BUG - also works for badly registered items)
 		if(whitelistedNBTItems.contains(getItemIdentifier())) return true;
-		return false;
+		/* This routine checks for common patterns that are whitelisted. */
+		boolean onlyAllowed = true;
+		int bookCount = 0;
+		for(Object o: this.compound.getTags()) {
+			NBTBase base = (NBTBase)o;
+			if(base.getName().equals("ench")) { }
+			else if(base.getName().equals("author") || base.getName().equals("title") || base.getName().equals("pages")) {
+				bookCount++;
+			}
+			else onlyAllowed = false;
+			break;
+		}
+		if(bookCount != 0 && bookCount != 3) return false; // Books have all of these tags or none.
+		return onlyAllowed;
 	}
 	
 	public static String getItemIdentifierFor(Item item) {
