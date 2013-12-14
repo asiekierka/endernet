@@ -4,6 +4,7 @@ import pl.asie.endernet.EnderNet;
 import pl.asie.endernet.lib.BlockConversionException;
 import pl.asie.endernet.lib.EnderID;
 import pl.asie.endernet.lib.EnderRedirector;
+import pl.asie.endernet.lib.SlotEnergy;
 import cpw.mods.fml.client.FMLClientHandler;
 import net.minecraft.client.gui.GuiScreen;
 import net.minecraft.entity.player.EntityPlayer;
@@ -162,7 +163,7 @@ public class TileEntityEnderTransmitter extends TileEntityEnder implements IInve
 
 	@Override
 	public boolean isItemValidForSlot(int slot, ItemStack stack) {
-		return true;
+		return (slot != 1 ? true : SlotEnergy.isValid(stack));
 	}
 
 	private void writeNBTProgress(NBTTagCompound tagCompound) {

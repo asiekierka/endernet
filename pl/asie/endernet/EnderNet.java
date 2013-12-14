@@ -6,6 +6,7 @@ import java.util.logging.Logger;
 
 import com.google.common.collect.ImmutableList;
 
+import pl.asie.endernet.block.BlockEnderReceiver;
 import pl.asie.endernet.block.BlockEnderTransmitter;
 import pl.asie.endernet.block.TileEntityEnderTransmitter;
 import pl.asie.endernet.http.EnderHTTPServer;
@@ -67,6 +68,7 @@ public class EnderNet {
 	}
 	
 	public static BlockEnderTransmitter enderTransmitter;
+	public static BlockEnderReceiver enderReceiver;
 	public static EnderRegistry registry;
 	
 	@EventHandler
@@ -86,7 +88,8 @@ public class EnderNet {
 			GameRegistry.registerBlock(enderTransmitter);
 		}
 		if(isBlock("enderReceiver", 2351)) {
-			
+			enderReceiver = new BlockEnderReceiver(config.getBlock("enderReceiver", 2351).getInt());
+			GameRegistry.registerBlock(enderReceiver);
 		}
 		
 		GameRegistry.registerTileEntity(TileEntityEnderTransmitter.class, "enderTransmitter");
