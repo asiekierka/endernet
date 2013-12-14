@@ -9,11 +9,10 @@ import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.world.World;
 
-public class BlockEnderTransmitter extends BlockContainer {
+public class BlockEnderTransmitter extends BlockEnder {
 	public BlockEnderTransmitter(int id) {
-		super(id, Material.iron);
+		super(id);
 		this.setUnlocalizedName("endernet.enderTransmitter");
-		this.setCreativeTab(CreativeTabs.tabMisc);
 	}
 
 	@Override

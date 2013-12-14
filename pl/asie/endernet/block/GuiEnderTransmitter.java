@@ -35,6 +35,7 @@ public class GuiEnderTransmitter extends GuiContainer {
         if(!canReceive) this.drawTexturedModalRect(xo+66, yo+33, 0, 172, 18, 18);
         int progressWidth = Math.min(44, progress * 44 / transmitter.getMaxProgress());
         this.drawTexturedModalRect(xo+66, yo+53, 44-progressWidth, 167, progressWidth, 4);
+        this.drawString(this.fontRenderer, "ID " + transmitter.enderNetID, xo + 6, yo + 6, 16777215);
     }
 
 	public void syncNBTFromClient(NBTTagCompound data) {

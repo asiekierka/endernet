@@ -9,9 +9,16 @@ import net.minecraft.world.World;
 public class EnderRegistry {
 	private ArrayList<EntityCoord> entities = new ArrayList<EntityCoord>();
 	
-	public int getNewEntityID(TileEntity entity) {
+	public int getEntityID(TileEntity entity) {
 		EntityCoord ec = new EntityCoord(entity);
-		entities.add(ec);
+		if(!entities.contains(ec)) entities.add(ec);
 		return entities.indexOf(ec);
+	}
+	
+	public void removeEntity(TileEntity entity) {
+		EntityCoord ec = new EntityCoord(entity);
+		if(entities.contains(ec)) {
+			entities.set(entities.indexOf(ec), null);
+		}
 	}
 }

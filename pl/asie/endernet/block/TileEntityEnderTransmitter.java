@@ -72,7 +72,7 @@ public class TileEntityEnderTransmitter extends TileEntityEnder implements IInve
 		else return inventory[0].stackSize * 35;
 	}
 	
-	private boolean isReceiveable;
+	private boolean isReceiveable = true;
 	private boolean startSending = true;
 	
 	public boolean canReceive() {

@@ -11,4 +11,12 @@ public class EntityCoord {
 		this.z = entity.zCoord;
 		this.dimensionID = entity.getWorldObj().provider.dimensionId;
 	}
+	
+	@Override
+	public boolean equals(Object other) {
+		if(other == null || !(other instanceof EntityCoord)) return false;
+		if(other == this) return true;
+		EntityCoord e = (EntityCoord)other;
+		return (e.x == this.x && e.y == this.y && e.z == this.z && e.dimensionID == this.dimensionID);
+	}
 }

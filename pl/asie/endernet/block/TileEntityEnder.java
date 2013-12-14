@@ -12,7 +12,7 @@ public class TileEntityEnder extends TileEntity {
 	@Override
 	public void updateEntity() {
 		super.updateEntity();
-		if(!this.worldObj.isRemote && enderNetID == -1) enderNetID = EnderNet.registry.getNewEntityID(this);
+		if(!this.worldObj.isRemote && enderNetID == -1) enderNetID = EnderNet.registry.getEntityID(this);
 	}
 
 	@Override
