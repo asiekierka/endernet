@@ -129,6 +129,7 @@ public class EnderNet {
 		}
 		
 		LanguageRegistry.instance().addStringLocalization("tile.endernet.enderTransmitter.name", "Ender Transmitter");
+		LanguageRegistry.instance().addStringLocalization("tile.endernet.enderReceiver.name", "Ender Receiver");
 		// End
 		config.save();
 	}

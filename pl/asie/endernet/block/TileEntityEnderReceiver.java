@@ -23,7 +23,9 @@ public class TileEntityEnderReceiver extends TileEntityEnder {
 	
 	// SOURCE: OpenModsLib/openmods/utils/InventoryUtils.java
 	// LICENSE: https://github.com/OpenMods/OpenModsLib/blob/master/LICENSE
+	// Slight patches done by asie
 	public static void tryMergeStacks(IInventory targetInventory, int slot, ItemStack stack) {
+		if(stack.stackSize == 0) return;
 		if (targetInventory.isItemValidForSlot(slot, stack)) {
 			ItemStack targetStack = targetInventory.getStackInSlot(slot);
 			if (targetStack == null) {
@@ -70,6 +72,7 @@ public class TileEntityEnderReceiver extends TileEntityEnder {
 				}
 			}
 		}
+		if(stack.stackSize == 0) return true;	
 		return false;
 	}
 }

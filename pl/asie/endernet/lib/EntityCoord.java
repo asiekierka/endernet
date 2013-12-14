@@ -1,6 +1,8 @@
 package pl.asie.endernet.lib;
 
 import net.minecraft.tileentity.TileEntity;
+import net.minecraft.world.World;
+import net.minecraftforge.common.DimensionManager;
 
 public class EntityCoord {
 	public int dimensionID, x, y, z;
@@ -18,5 +20,11 @@ public class EntityCoord {
 		if(other == this) return true;
 		EntityCoord e = (EntityCoord)other;
 		return (e.x == this.x && e.y == this.y && e.z == this.z && e.dimensionID == this.dimensionID);
+	}
+	
+	public TileEntity get() {
+		World world = DimensionManager.getWorld(dimensionID);
+		if(world == null) return null;
+		else return world.getBlockTileEntity(x, y, z);
 	}
 }

@@ -84,7 +84,7 @@ public class TileEntityEnderTransmitter extends TileEntityEnder implements IInve
 	private boolean updateReceive() {
 		if(inventory[0] == null) return true; // I can always receive air, you know... :3
 		if(this.worldObj.isRemote) return true; // No pinging on the client
-		return EnderRedirector.canReceive("0.0", inventory[0]);
+		return EnderRedirector.canReceive(address, inventory[0]);
 	}
 	
 	@Override
@@ -96,8 +96,12 @@ public class TileEntityEnderTransmitter extends TileEntityEnder implements IInve
 				progress++;
 			} else { // Finished
 				progress = 0;
-				this.setInventorySlotContents(0, null);
-				updateReceive();
+				if(!this.worldObj.isRemote) {
+					if(EnderRedirector.receive(address, inventory[0])) {
+						this.setInventorySlotContents(0, null);
+						updateReceive();
+					}
+				}
 			}
 		}
 	}
@@ -175,7 +179,7 @@ public class TileEntityEnderTransmitter extends TileEntityEnder implements IInve
 	public Packet getDescriptionPacket() {
 		NBTTagCompound tagCompound = new NBTTagCompound();
 		writeNBTProgress(tagCompound);
-		tagCompound.setInteger("eid", enderNetID);
+		writeNBTEnderData(tagCompound);
 		return new Packet132TileEntityData(xCoord, yCoord, zCoord, 0, tagCompound);
 	}
 

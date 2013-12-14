@@ -47,23 +47,33 @@ public class HTTPClient {
 	    }
 	}
 	
-	public static boolean canReceive(String server, EnderID item) {
-		// convert EnderID to JSON
-		Gson gson = new Gson();
-		String itemString = gson.toJson(item);
-		// send string to the good ol' friend http server
-		HashMap<String, String> params = new HashMap<String, String>();
-		params.put("object", itemString);
-		BufferedReader br = sendPost(server, "/canReceive", params);
+	public static boolean readAnswer(BufferedReader br) {
 		if(br == null) return false;
-		// get answer
 		try {
 			String s =br.readLine();
-			EnderNet.log.info("DEBUG: Received /canReceive: " + s);
 			return s.equals("EEYUP");
 		} catch(Exception e) {
 			e.printStackTrace();
 			return false;
 		}
+	}
+	
+	public static boolean canReceive(String server, EnderID item) {
+		Gson gson = new Gson();
+		String itemString = gson.toJson(item);
+		// send string to the good ol' friend http server
+		HashMap<String, String> params = new HashMap<String, String>();
+		params.put("object", itemString);
+		return readAnswer(sendPost(server, "/canReceive", params));
+	}
+	
+	public static boolean receive(String server, int enderID, EnderID item) {
+		Gson gson = new Gson();
+		String itemString = gson.toJson(item);
+		// send string to the good ol' friend http server
+		HashMap<String, String> params = new HashMap<String, String>();
+		params.put("object", itemString);
+		params.put("target", enderID+"");
+		return readAnswer(sendPost(server, "/receive", params));
 	}
 }

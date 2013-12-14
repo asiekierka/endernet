@@ -36,11 +36,10 @@ public class URIHandlerReceive implements IURIHandler {
 		int target = new Integer(params.get("target")).intValue();
 		EntityCoord location = EnderNet.registry.getEntityCoord(target);
 		if(location == null) return false;
-		World world = DimensionManager.getWorld(location.dimensionID);
-		TileEntity entity = world.getBlockTileEntity(location.x, location.y, location.z);
+		TileEntity entity = location.get();
 		if(entity == null || !(entity instanceof TileEntityEnderReceiver)) return false;
-		// TODO: add everything else
-		return true;
+		TileEntityEnderReceiver receiver = (TileEntityEnderReceiver)entity;
+		return receiver.receiveItem(block);
 	}
 	
 	@Override
