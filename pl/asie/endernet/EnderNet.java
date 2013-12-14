@@ -47,7 +47,7 @@ import net.minecraftforge.common.Configuration;
 import net.minecraftforge.common.DimensionManager;
 import net.minecraftforge.common.MinecraftForge;
 
-@Mod(modid="endernet", name="EnderNet", version="0.0.3")
+@Mod(modid="endernet", name="EnderNet", version="0.0.4")
 @NetworkMod(channels={"EnderNet"}, clientSideRequired=true, packetHandler=NetworkHandler.class)
 public class EnderNet {
 	public Configuration config;

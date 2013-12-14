@@ -1,10 +1,12 @@
 package pl.asie.endernet.lib;
 
+import java.io.IOException;
 import java.util.ArrayList;
 
 import pl.asie.endernet.EnderNet;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
+import net.minecraft.nbt.CompressedStreamTools;
 import net.minecraft.nbt.NBTBase;
 import net.minecraft.nbt.NBTTagCompound;
 import cpw.mods.fml.common.registry.GameRegistry;
@@ -14,7 +16,7 @@ public class EnderID {
 	public String modId;
 	public String name;
 	public int metadata, stackSize;
-	public NBTTagCompound compound;
+	public byte[] compound;
 	
 	public static final ArrayList<String> blacklistedItems;
 	public static final ArrayList<String> whitelistedNBTItems;
@@ -51,8 +53,11 @@ public class EnderID {
 		this.stackSize = stack.stackSize;
 		if(blacklistedItems.contains(getItemIdentifier())) throw new BlockConversionException(modId, name, "Blacklisted!");
 		if(stack.hasTagCompound()) {
-			this.compound = stack.getTagCompound();
-			if(!isAllowedTagCompound()) throw new BlockConversionException(modId, name, "NBT tag compound cannot be sent!");
+			NBTTagCompound compound = stack.getTagCompound();
+			try {
+				this.compound = CompressedStreamTools.compress(compound);
+			} catch(Exception e) { e.printStackTrace(); throw new BlockConversionException(modId, name, "Could not compress NBT tag compound!"); }
+			if(!isAllowedTagCompound(compound)) throw new BlockConversionException(modId, name, "NBT tag compound cannot be sent!");
 		}
 	}
 	
@@ -62,6 +67,16 @@ public class EnderID {
 	
 	public boolean isReceiveable() {
 		return (createItemStack() != null);
+	}
+	
+	public void setTagCompound(NBTTagCompound compound) throws IOException {
+		this.compound = CompressedStreamTools.compress(compound);
+	}
+	
+	public NBTTagCompound getTagCompound() {
+		try {
+			return CompressedStreamTools.decompress(compound);
+		} catch(Exception e) { e.printStackTrace(); return null; }
 	}
 	
 	public ItemStack createItemStack() {
@@ -77,18 +92,18 @@ public class EnderID {
 		} else stack = GameRegistry.findItemStack(modId, name, stackSize);
 		if(stack != null) {
 			stack.setItemDamage(metadata);
-			stack.setTagCompound(compound);
+			stack.setTagCompound(getTagCompound());
 		}
 		return stack;
 	}
 	
-	public boolean isAllowedTagCompound() {
+	public boolean isAllowedTagCompound(NBTTagCompound compound) {
 		if(this.modId.equals("Minecraft")) return true; // All vanilla items are allowed NBTs by default (BUG - also works for badly registered items)
 		if(whitelistedNBTItems.contains(getItemIdentifier())) return true;
 		/* This routine checks for common patterns that are whitelisted. */
 		boolean onlyAllowed = true;
 		int bookCount = 0;
-		for(Object o: this.compound.getTags()) {
+		for(Object o: compound.getTags()) {
 			NBTBase base = (NBTBase)o;
 			if(base.getName().equals("ench")) { }
 			else if(base.getName().equals("author") || base.getName().equals("title") || base.getName().equals("pages")) {
