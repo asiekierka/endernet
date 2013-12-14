@@ -1,0 +1,12 @@
+alpha5:
+- Finish up sane permissions system.
+
+later:
+- Add actual fuel support.
+- Add ComputerCraft integration.
+- Add redstone energy sending.
+- Document the APIs used.
+- Find a pixel artist to do the art.
+
+much later:
+- Add bundled cable support.
