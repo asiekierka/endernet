@@ -1,6 +1,8 @@
 package pl.asie.endernet.block;
 
 import pl.asie.endernet.EnderNet;
+import pl.asie.endernet.lib.BlockConversionException;
+import pl.asie.endernet.lib.EnderID;
 import cpw.mods.fml.client.FMLClientHandler;
 import net.minecraft.client.gui.GuiScreen;
 import net.minecraft.entity.player.EntityPlayer;
@@ -67,7 +69,7 @@ public class TileEntityEnderTransmitter extends TileEntityEnder implements IInve
 	
 	public int getMaxProgress() {
 		if(inventory[0] == null) return 4; // random number, chosen by fair dice roll
-		else return inventory[0].stackSize * 30;
+		else return inventory[0].stackSize * 35;
 	}
 	
 	private boolean isReceiveable;
@@ -79,11 +81,19 @@ public class TileEntityEnderTransmitter extends TileEntityEnder implements IInve
 	
 	private boolean updateReceive() {
 		if(inventory[0] == null) return true; // I can always receive air, you know... :3
-		return true;
+		if(this.worldObj.isRemote) return true; // No pinging on the client
+		try {
+			EnderID item = new EnderID(inventory[0]);
+			return item.isReceiveable();
+		} catch(BlockConversionException e) {
+			return false;
+		}
 	}
 	
 	@Override
 	public void updateEntity() {
+		super.updateEntity();
+		if(!canReceive()) progress = 0;
 		if(inventory[0] != null && startSending && canReceive()) {
 			if(progress < getMaxProgress()) {
 				EnderNet.log.info("adding to prog");
@@ -149,6 +159,7 @@ public class TileEntityEnderTransmitter extends TileEntityEnder implements IInve
 	@Override
 	public void openChest() {
 		this.worldObj.markBlockForUpdate(xCoord, yCoord, zCoord);
+		EnderNet.log.info("My id is " + this.enderNetID);
 	}
 
 	@Override
@@ -169,12 +180,14 @@ public class TileEntityEnderTransmitter extends TileEntityEnder implements IInve
 	public Packet getDescriptionPacket() {
 		NBTTagCompound tagCompound = new NBTTagCompound();
 		writeNBTProgress(tagCompound);
+		tagCompound.setInteger("eid", enderNetID);
 		return new Packet132TileEntityData(xCoord, yCoord, zCoord, 0, tagCompound);
 	}
 
 	@Override
-	public void onDataPacket(INetworkManager networkManager, Packet132TileEntityData packet) {	     
-		// example: update open GUI
+	public void onDataPacket(INetworkManager networkManager, Packet132TileEntityData packet) {	 
+		this.enderNetID = packet.data.getInteger("eid");
+		this.isReceiveable = packet.data.getBoolean("r");
 		GuiScreen gui = FMLClientHandler.instance().getClient().currentScreen;
 		if (gui != null && gui instanceof GuiEnderTransmitter) {
 			GuiEnderTransmitter get = (GuiEnderTransmitter)gui;
