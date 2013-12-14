@@ -5,6 +5,7 @@ import java.util.HashMap;
 import java.util.Map;
 
 import pl.asie.endernet.EnderNet;
+import pl.asie.endernet.api.IURIHandler;
 import fi.iki.elonen.NanoHTTPD;
 import fi.iki.elonen.NanoHTTPD.IHTTPSession;
 import fi.iki.elonen.NanoHTTPD.Method;

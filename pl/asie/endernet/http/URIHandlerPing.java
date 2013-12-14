@@ -1,5 +1,6 @@
 package pl.asie.endernet.http;
 
+import pl.asie.endernet.api.IURIHandler;
 import fi.iki.elonen.NanoHTTPD;
 import fi.iki.elonen.NanoHTTPD.IHTTPSession;
 import fi.iki.elonen.NanoHTTPD.Method;

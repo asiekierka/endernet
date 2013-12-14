@@ -50,7 +50,7 @@ public class HTTPClient {
 	public static boolean readAnswer(BufferedReader br) {
 		if(br == null) return false;
 		try {
-			String s =br.readLine();
+			String s = br.readLine();
 			return s.equals("EEYUP");
 		} catch(Exception e) {
 			e.printStackTrace();

@@ -12,6 +12,7 @@ import net.minecraft.world.World;
 public class BlockEnderTransmitter extends BlockEnder {
 	public BlockEnderTransmitter(int id) {
 		super(id);
+		this.setTextureName("endernet:ender_transmitter");
 		this.setUnlocalizedName("endernet.enderTransmitter");
 	}
 

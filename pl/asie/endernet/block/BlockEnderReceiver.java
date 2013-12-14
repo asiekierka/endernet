@@ -13,6 +13,7 @@ import net.minecraft.world.World;
 public class BlockEnderReceiver extends BlockEnder {
 	public BlockEnderReceiver(int id) {
 		super(id);
+		this.setTextureName("endernet:ender_receiver");
 		this.setUnlocalizedName("endernet.enderReceiver");
 	}
 

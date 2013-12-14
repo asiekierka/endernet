@@ -3,6 +3,7 @@ package pl.asie.endernet.http;
 import java.util.Map;
 
 import pl.asie.endernet.EnderNet;
+import pl.asie.endernet.api.IURIHandler;
 import pl.asie.endernet.lib.EnderID;
 
 import com.google.gson.Gson;

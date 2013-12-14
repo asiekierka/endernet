@@ -1,4 +1,4 @@
-package pl.asie.endernet.http;
+package pl.asie.endernet.api;
 
 import fi.iki.elonen.NanoHTTPD.IHTTPSession;
 import fi.iki.elonen.NanoHTTPD.Response;

@@ -6,6 +6,7 @@ import net.minecraft.tileentity.TileEntity;
 import net.minecraft.world.World;
 import net.minecraftforge.common.DimensionManager;
 import pl.asie.endernet.EnderNet;
+import pl.asie.endernet.api.IURIHandler;
 import pl.asie.endernet.block.TileEntityEnderReceiver;
 import pl.asie.endernet.lib.EnderID;
 import pl.asie.endernet.lib.EnderRedirector;
