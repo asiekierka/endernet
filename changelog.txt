@@ -1,5 +1,6 @@
-alpha7:
+alpha7 "The Aesthetics Update":
 + Transmitters now emit pretty particles on successful transmission!
++ Better textures for Transmitters and Receivers.
 
 alpha6:
 * Fixed a bug where receivers did not initialize upon world reload.

@@ -120,9 +120,9 @@ public class TileEntityEnderTransmitter extends TileEntityEnder implements IInve
 			double randX = ((random.nextDouble() * 0.8D) - 0.4D) + 0.5D + (double)this.xCoord;
 			double randY = (double)this.yCoord + 0.9D + (random.nextDouble() * 0.2D);
 			double randZ = ((random.nextDouble() * 0.8D) - 0.4D) + 0.5D + (double)this.zCoord;
-			double randVX = (random.nextDouble() * 0.125D) - 0.0625D;
+			double randVX = (random.nextDouble() * 0.15D) - 0.075D;
 			double randVY = (random.nextDouble() * 0.1D) + 0.02D; 
-			double randVZ = (random.nextDouble() * 0.125D) - 0.0625D;
+			double randVZ = (random.nextDouble() * 0.15D) - 0.075D;
 			this.worldObj.spawnParticle("smoke", randX, randY, randZ, randVX, randVY, randVZ);	
 		}
 	}
