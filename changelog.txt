@@ -1,3 +1,7 @@
+alpha8:
++ Add "receiveFromDefinedOnly" config option. Setting it to true makes you only able to receive from defined servers.
++ Add WAILA integration (shows ID of transmitter/receiver on hover).
+
 alpha7 "The Aesthetics Update":
 + Transmitters now emit pretty particles on successful transmission!
 + Better textures for Transmitters and Receivers.

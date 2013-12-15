@@ -8,6 +8,7 @@ import com.google.common.collect.ImmutableList;
 
 import pl.asie.endernet.block.BlockEnderReceiver;
 import pl.asie.endernet.block.BlockEnderTransmitter;
+import pl.asie.endernet.block.TileEntityEnder;
 import pl.asie.endernet.block.TileEntityEnderReceiver;
 import pl.asie.endernet.block.TileEntityEnderTransmitter;
 import pl.asie.endernet.http.EnderHTTPServer;
@@ -15,6 +16,7 @@ import pl.asie.endernet.http.HTTPClient;
 import pl.asie.endernet.http.URIHandlerCanReceive;
 import pl.asie.endernet.http.URIHandlerPing;
 import pl.asie.endernet.http.URIHandlerReceive;
+import pl.asie.endernet.integration.WailaIntegration;
 import pl.asie.endernet.lib.EnderID;
 import pl.asie.endernet.lib.EnderRedirector;
 import pl.asie.endernet.lib.EnderRegistry;
@@ -38,6 +40,7 @@ import cpw.mods.fml.common.network.NetworkRegistry;
 import cpw.mods.fml.common.registry.EntityRegistry;
 import cpw.mods.fml.common.registry.GameRegistry;
 import cpw.mods.fml.common.registry.LanguageRegistry;
+import mcp.mobius.waila.api.IWailaRegistrar;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.renderer.entity.RenderItem;
 import net.minecraft.client.renderer.entity.RenderManager;
@@ -77,6 +80,7 @@ public class EnderNet {
 	public static EnderServerManager servers;
 	
 	public static boolean spawnParticles;
+	public static boolean onlyAllowDefined;
 	
 	private File serverFile;
 	
@@ -105,7 +109,7 @@ public class EnderNet {
 		MinecraftForge.EVENT_BUS.register(new pl.asie.endernet.EventHandler());
 		
 		spawnParticles = config.get("misc", "spawnTransmitterParticles", true).getBoolean(true);
-		
+		onlyAllowDefined = config.get("comm", "receiveFromDefinedOnly", true).getBoolean(true);
 		serverFile = new File(event.getModConfigurationDirectory(), "endernet-servers.json");
 	}
 	
@@ -118,6 +122,8 @@ public class EnderNet {
 	 
 	@EventHandler
 	public void init(FMLInitializationEvent event) {
+		FMLInterModComms.sendMessage("Waila", "register", "pl.asie.endernet.EnderNet.registerWaila");
+		
 		NetworkRegistry.instance().registerGuiHandler(this, new NetworkHandler());
 		
 		startServerManager();
@@ -190,5 +196,9 @@ public class EnderNet {
 		} else {
 			log.warning("HTTP server not initialized; EnderNet will transmit *ONLY*!");
 		}
+	}
+	
+	public static void registerWaila(IWailaRegistrar reg) {
+		reg.registerBodyProvider(new WailaIntegration(), TileEntityEnder.class);
 	}
 }

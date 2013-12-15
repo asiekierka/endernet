@@ -2,8 +2,11 @@ package pl.asie.endernet.lib;
 
 import java.io.File;
 import java.lang.reflect.Type;
+import java.net.InetAddress;
 import java.util.ArrayList;
 import java.util.HashMap;
+
+import pl.asie.endernet.EnderNet;
 
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
@@ -56,5 +59,18 @@ public class EnderServerManager {
 
 	public void add(EnderServer es) {
 		servers.put(es.name, es);
+	}
+	
+	public boolean canReceive(String remoteAddr) {
+		if(remoteAddr.equals("127.0.0.1") || !EnderNet.onlyAllowDefined) return true;
+		try {
+			InetAddress remote = InetAddress.getByName(remoteAddr);
+			// Check if such address exists
+			for(EnderServer es: servers.values()) {
+				InetAddress server = InetAddress.getByName(es.address.split(":")[0]);
+				if(server.equals(remote)) return true;
+			}
+			return false;
+		} catch(Exception e) { e.printStackTrace(); return false; }
 	}
 }
