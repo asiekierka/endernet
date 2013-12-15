@@ -76,7 +76,7 @@ public class EnderID {
 	public NBTTagCompound getTagCompound() {
 		try {
 			return CompressedStreamTools.decompress(compound);
-		} catch(Exception e) { e.printStackTrace(); return null; }
+		} catch(Exception e) { return null; }
 	}
 	
 	public ItemStack createItemStack() {

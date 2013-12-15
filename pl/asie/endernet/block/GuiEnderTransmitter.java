@@ -75,19 +75,13 @@ public class GuiEnderTransmitter extends GuiContainer {
 	private void updateText() {
 		if(oldAddress.equals(address.getText())) return;
 		oldAddress = address.getText();
-		Packet250CustomPayload packet = new Packet250CustomPayload();
-		packet.channel = "EnderNet";
 		ByteArrayOutputStream baos = new ByteArrayOutputStream();
 		DataOutputStream data = new DataOutputStream(baos);
 		try {
 			data.writeByte((byte)1);
 			data.writeInt(transmitter.enderNetID);
 			data.writeUTF(this.address.getText());
-			data.flush();
-			packet.data = baos.toByteArray();
-			data.close();
-			baos.close();
-			PacketDispatcher.sendPacketToServer(packet);
+			PacketDispatcher.sendPacketToServer(new Packet250CustomPayload("EnderNet", baos.toByteArray()));
 		} catch(Exception e) { e.printStackTrace(); }
 	}
 

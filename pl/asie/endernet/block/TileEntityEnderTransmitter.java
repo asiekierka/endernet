@@ -115,7 +115,8 @@ public class TileEntityEnderTransmitter extends TileEntityEnder implements IInve
 	
 	public void spawnSuccessParticles() {
 		if(!EnderNet.spawnParticles) return;
-		int count = 56 + (2 * inventory[0].stackSize) + random.nextInt(24);
+		int count = 56 + random.nextInt(24);
+		if(inventory[0] != null) count +=  (2 * inventory[0].stackSize);
 		for(; count >= 0; count--) {
 			double randX = ((random.nextDouble() * 0.8D) - 0.4D) + 0.5D + (double)this.xCoord;
 			double randY = (double)this.yCoord + 0.9D + (random.nextDouble() * 0.2D);
