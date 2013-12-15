@@ -13,7 +13,12 @@ public class URIHandlerPing implements IURIHandler {
 	}
 
 	@Override
-	public String getPermission() {
+	public String getPermissionName() {
 		return null;
+	}
+	
+	@Override
+	public String getURI() {
+		return "/ping";
 	}
 }

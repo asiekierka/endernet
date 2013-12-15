@@ -50,7 +50,12 @@ public class URIHandlerReceive implements IURIHandler {
 	}
 	
 	@Override
-	public String getPermission() {
+	public String getPermissionName() {
 		return "item";
+	}
+	
+	@Override
+	public String getURI() {
+		return "/receive";
 	}
 }

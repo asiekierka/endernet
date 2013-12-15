@@ -129,10 +129,10 @@ public class EnderNet {
 		
 		startServerManager();
 		startHTTPServer();
-		httpServer.registerHandler("/ping", new URIHandlerPing());
-		httpServer.registerHandler("/canReceive", new URIHandlerCanReceive());
-		httpServer.registerHandler("/receive", new URIHandlerReceive());
-		httpServer.registerHandler("/sendString", new URIHandlerSendString());
+		httpServer.registerHandler(new URIHandlerPing());
+		httpServer.registerHandler(new URIHandlerCanReceive());
+		httpServer.registerHandler(new URIHandlerReceive());
+		httpServer.registerHandler(new URIHandlerSendString());
 		
 		LanguageRegistry.instance().addStringLocalization("tile.endernet.enderTransmitter.name", "Ender Transmitter");
 		LanguageRegistry.instance().addStringLocalization("tile.endernet.enderReceiver.name", "Ender Receiver");

@@ -11,6 +11,7 @@ import pl.asie.endernet.api.IURIHandler;
 import pl.asie.endernet.block.TileEntityEnderReceiver;
 import pl.asie.endernet.lib.EnderID;
 import pl.asie.endernet.lib.EnderRedirector;
+import pl.asie.endernet.lib.EnderServer;
 import pl.asie.endernet.lib.EntityCoord;
 
 import com.google.gson.Gson;
@@ -35,7 +36,8 @@ public class URIHandlerSendString implements IURIHandler {
 		TileEntity entity = EnderNet.registry.getTileEntity(target);
 		if(entity == null || !(entity instanceof IEnderStringReceiver)) return false;
 		IEnderStringReceiver receiver = (IEnderStringReceiver)entity;
-		return receiver.receiveString(params.get("string"));
+		EnderServer server = EnderNet.servers.findByAddress(session.getHeaders().get("remote-addr"));
+		return receiver.receiveString(server, params.get("string"));
 	}
 	
 	@Override
@@ -48,7 +50,12 @@ public class URIHandlerSendString implements IURIHandler {
 	}
 
 	@Override
-	public String getPermission() {
+	public String getPermissionName() {
 		return "message";
+	}
+	
+	@Override
+	public String getURI() {
+		return "/sendString";
 	}
 }

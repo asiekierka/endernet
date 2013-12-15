@@ -16,7 +16,7 @@ public class EnderRedirector {
 			if(isLocal(getServerName(address))) {
 				TileEntity entity = EnderNet.registry.getTileEntity(getServerEnderID(address));
 				if(entity == null || !(entity instanceof IEnderStringReceiver)) return false;
-				return ((IEnderStringReceiver)entity).receiveString(string);
+				return ((IEnderStringReceiver)entity).receiveString(new EnderServer("local", "127.0.0.1"), string);
 			} else {
 				String serverName = getServerName(address);
 				String serverAddress = EnderNet.servers.getAddress(serverName);

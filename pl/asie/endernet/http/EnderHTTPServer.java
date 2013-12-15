@@ -19,8 +19,8 @@ public class EnderHTTPServer extends NanoHTTPD {
 		super(port);
 	}
 	
-	public void registerHandler(String uri, IURIHandler handler) {
-		handlers.put(uri, handler);
+	public void registerHandler(IURIHandler handler) {
+		handlers.put(handler.getURI(), handler);
 	}
 	
 	@Override
@@ -28,7 +28,7 @@ public class EnderHTTPServer extends NanoHTTPD {
 		String address = session.getHeaders().get("remote-addr");
 		if(handlers.containsKey(session.getUri())) {
 			IURIHandler handler = handlers.get(session.getUri());
-			if(!EnderNet.servers.canReceive(address, handler.getPermission())) {
+			if(!EnderNet.servers.canReceive(address, handler.getPermissionName())) {
 				return new Response(Response.Status.FORBIDDEN, MIME_PLAINTEXT, "NNOPE");
 			} else {
 				return handler.serve(session);

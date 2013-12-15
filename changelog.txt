@@ -2,6 +2,7 @@ alpha11:
 + Add permission system for URIHandlers.
   / Specify in permissions: [...] in endernet-servers.json.
   / Supported permissions: "item", "message".
++ ComputerCraft API now gives name of the server the message was received from.
 
 alpha10:
 + Add ComputerCraft API!

@@ -1,5 +1,7 @@
 package pl.asie.endernet.api;
 
+import pl.asie.endernet.lib.EnderServer;
+
 public interface IEnderStringReceiver {
-	public boolean receiveString(String string);
+	public boolean receiveString(EnderServer server, String string);
 }

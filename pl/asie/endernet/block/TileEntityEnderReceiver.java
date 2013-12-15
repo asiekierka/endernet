@@ -7,6 +7,7 @@ import net.minecraft.item.ItemStack;
 import net.minecraft.tileentity.TileEntity;
 import pl.asie.endernet.api.IEnderStringReceiver;
 import pl.asie.endernet.lib.EnderID;
+import pl.asie.endernet.lib.EnderServer;
 
 public class TileEntityEnderReceiver extends TileEntityEnder implements IEnderStringReceiver {
 	private static final int[][] DIRECTIONS = {
@@ -84,10 +85,11 @@ public class TileEntityEnderReceiver extends TileEntityEnder implements IEnderSt
 	// COMPUTERCRAFT COMPATIBILITY BEGIN
 	
 	@Override
-	public boolean receiveString(String string) {
+	public boolean receiveString(EnderServer server, String string) {
 		if(super.computers.size() == 0) return false;
-		Object[] arguments = new Object[1];
-		arguments[0] = string;
+		Object[] arguments = new Object[2];
+		arguments[0] = (server != null ? server.name : "unknown");
+		arguments[1] = string;
 		for(IComputerAccess computer: super.computers) {
 			computer.queueEvent("endernet_message", arguments);
 		}
