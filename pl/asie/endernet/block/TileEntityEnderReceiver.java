@@ -55,7 +55,7 @@ public class TileEntityEnderReceiver extends TileEntityEnder {
 			TileEntity entity = worldObj.getBlockTileEntity(
 					xCoord+dir[0], yCoord+dir[1], zCoord+dir[2]
 							);
-			if(entity == null) continue;
+			if(entity == null || (entity instanceof TileEntityEnderTransmitter)) continue;
 			if(entity instanceof ISidedInventory) {
 				ISidedInventory inv = (ISidedInventory)entity;
 				for(int slot: inv.getAccessibleSlotsFromSide(opposite(side))) {

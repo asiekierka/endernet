@@ -1,5 +1,6 @@
 alpha6:
 * Fixed a bug where receivers did not initialize upon world reload.
+* Fixed putting a receiver next to a transmitter.
 
 alpha5a:
 * Server entries from the old config get autoimported to the new one now.
