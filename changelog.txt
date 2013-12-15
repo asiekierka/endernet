@@ -1,5 +1,8 @@
 alpha5:
-* Items now fall out of an Ender Transmitter.
++ Changed config format to a more superior one.
+  * Passwords and permissions are not yet implemented.
+* Items now fall out of an Ender Transmitter on break.
+* Fixed the Ender Transmitter GUI refreshing to work a /lot/ better.
 
 alpha4:
 + Add support for OpenBlocks crayons/glasses and Thermal Expansion energy storage sending

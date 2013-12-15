@@ -17,6 +17,8 @@ import pl.asie.endernet.http.URIHandlerReceive;
 import pl.asie.endernet.lib.EnderID;
 import pl.asie.endernet.lib.EnderRedirector;
 import pl.asie.endernet.lib.EnderRegistry;
+import pl.asie.endernet.lib.EnderServer;
+import pl.asie.endernet.lib.EnderServerManager;
 import cpw.mods.fml.client.registry.RenderingRegistry;
 import cpw.mods.fml.common.FMLLog;
 import cpw.mods.fml.common.Mod;
@@ -47,7 +49,7 @@ import net.minecraftforge.common.Configuration;
 import net.minecraftforge.common.DimensionManager;
 import net.minecraftforge.common.MinecraftForge;
 
-@Mod(modid="endernet", name="EnderNet", version="0.0.4")
+@Mod(modid="endernet", name="EnderNet", version="0.0.5")
 @NetworkMod(channels={"EnderNet"}, clientSideRequired=true, packetHandler=NetworkHandler.class)
 public class EnderNet {
 	public Configuration config;
@@ -71,6 +73,8 @@ public class EnderNet {
 	public static BlockEnderTransmitter enderTransmitter;
 	public static BlockEnderReceiver enderReceiver;
 	public static EnderRegistry registry;
+	public static EnderServerManager servers;
+	private File serverFile;
 	
 	@EventHandler
 	public void preInit(FMLPreInitializationEvent event) {		
@@ -94,6 +98,8 @@ public class EnderNet {
 		
 		GameRegistry.registerTileEntity(TileEntityEnderTransmitter.class, "enderTransmitter");
 		MinecraftForge.EVENT_BUS.register(new pl.asie.endernet.EventHandler());
+		
+		serverFile = new File(event.getModConfigurationDirectory(), "endernet-servers.json");
 	}
 	
 	@EventHandler
@@ -107,7 +113,7 @@ public class EnderNet {
 	public void init(FMLInitializationEvent event) {
 		NetworkRegistry.instance().registerGuiHandler(this, new NetworkHandler());
 		
-		addServerMappings();
+		startServerManager();
 		startHTTPServer();
 		httpServer.registerHandler("/ping", new URIHandlerPing());
 		httpServer.registerHandler("/canReceive", new URIHandlerCanReceive());
@@ -137,15 +143,33 @@ public class EnderNet {
 		}
 	}
 	
-	public void addServerMappings() {
-		ConfigCategory servers = config.getCategory("servers");
-		servers.setComment("List servers in S:name=ip form");
-		for(String name: servers.keySet()) {
-			EnderRedirector.serverIPs.put(name, servers.get(name).getString());
+	private void startServerManager() {
+		servers = new EnderServerManager();
+		reloadServerFile();
+		
+		ConfigCategory serverC = config.getCategory("servers");
+        serverC.setComment("List servers in S:name=ip form, see endernet-servers.json for more detailed config");
+        for(String name: serverC.keySet()) {
+            	if(servers.get(name) != null) continue;
+                EnderServer es = new EnderServer(name, serverC.get(name).getString());
+                servers.add(es);
+        }
+	}
+	
+	public void reloadServerFile() {
+		if(serverFile.exists()) {
+			servers.clear();
+			servers.loadFromJSON(serverFile);
+		} else {
+			servers.saveToJSON(serverFile);
 		}
 	}
 	
-	public void startHTTPServer() {
+	public void saveServerFile() {
+		servers.saveToJSON(serverFile);
+	}
+	
+	private void startHTTPServer() {
 		httpServer = new EnderHTTPServer(config.get("comm", "httpServerPort", 21500).getInt());
 		try {
 			if(config.get("comm", "httpServerEnabled", true).getBoolean(true)) httpServer.start();

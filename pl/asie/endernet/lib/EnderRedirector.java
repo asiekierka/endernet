@@ -9,7 +9,7 @@ import net.minecraft.item.ItemStack;
 import net.minecraft.tileentity.TileEntity;
 
 public class EnderRedirector {
-	public static HashMap<String, String> serverIPs = new HashMap<String, String>();
+	//public static HashMap<String, String> serverIPs = new HashMap<String, String>();
 	
 	public static boolean canReceive(String address, ItemStack stack) {
 		try {
@@ -17,8 +17,9 @@ public class EnderRedirector {
 				return new EnderID(stack).isReceiveable();
 			} else {
 				String serverName = getServerName(address);
-				if(!serverIPs.containsKey(serverName)) return false;
-				return HTTPClient.canReceive(serverIPs.get(serverName), new EnderID(stack));
+				String serverAddress = EnderNet.servers.getAddress(serverName);
+				if(serverAddress == null) return false;
+				return HTTPClient.canReceive(serverAddress, new EnderID(stack));
 			}
 		} catch(Exception e) {
 			return false;
@@ -37,8 +38,9 @@ public class EnderRedirector {
 				} else return false;
 			} else {
 				String serverName = getServerName(address);
-				if(!serverIPs.containsKey(serverName)) return false;
-				return HTTPClient.receive(serverIPs.get(serverName), getServerEnderID(address), new EnderID(stack));
+				String serverAddress = EnderNet.servers.getAddress(serverName);
+				if(serverAddress == null) return false;
+				return HTTPClient.receive(serverAddress, getServerEnderID(address), new EnderID(stack));
 			}
 		} catch(Exception e) {
 			return false;

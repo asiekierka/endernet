@@ -17,7 +17,12 @@ public class FileUtils {
 			BufferedReader reader = new BufferedReader(
 					new InputStreamReader(new FileInputStream(file), "UTF-8")
 					);
-			String s = reader.readLine();
+			String s = "";
+			while(true) {
+				String s1 = reader.readLine();
+				if(s1 == null) break;
+				s += s1;
+			}
 			reader.close();
 			return s;
 		} catch(Exception e) { e.printStackTrace(); return null; }

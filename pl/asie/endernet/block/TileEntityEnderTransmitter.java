@@ -95,12 +95,12 @@ public class TileEntityEnderTransmitter extends TileEntityEnder implements IInve
 			if(progress < getMaxProgress()) {
 				progress++;
 			} else { // Finished
-				progress = 0;
 				if(!this.worldObj.isRemote) {
 					if(EnderRedirector.receive(address, inventory[0])) {
 						this.setInventorySlotContents(0, null);
-						updateReceive();
-					}
+						this.isReceiveable = updateReceive();
+					} else this.isReceiveable = false;
+					this.worldObj.markBlockForUpdate(xCoord, yCoord, zCoord);
 				}
 			}
 		}
@@ -227,4 +227,8 @@ public class TileEntityEnderTransmitter extends TileEntityEnder implements IInve
             tagCompound.setTag("Inventory", itemList);
             writeNBTProgress(tagCompound);
     }
+
+	public void setProgress(int i) {
+		this.progress = i;
+	}
 }
