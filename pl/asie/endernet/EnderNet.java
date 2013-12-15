@@ -8,6 +8,7 @@ import com.google.common.collect.ImmutableList;
 
 import pl.asie.endernet.block.BlockEnderReceiver;
 import pl.asie.endernet.block.BlockEnderTransmitter;
+import pl.asie.endernet.block.TileEntityEnderReceiver;
 import pl.asie.endernet.block.TileEntityEnderTransmitter;
 import pl.asie.endernet.http.EnderHTTPServer;
 import pl.asie.endernet.http.HTTPClient;
@@ -97,6 +98,7 @@ public class EnderNet {
 		}
 		
 		GameRegistry.registerTileEntity(TileEntityEnderTransmitter.class, "enderTransmitter");
+		GameRegistry.registerTileEntity(TileEntityEnderReceiver.class, "enderReceiver");
 		MinecraftForge.EVENT_BUS.register(new pl.asie.endernet.EventHandler());
 		
 		serverFile = new File(event.getModConfigurationDirectory(), "endernet-servers.json");

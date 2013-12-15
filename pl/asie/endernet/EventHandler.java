@@ -8,10 +8,12 @@ import java.io.Reader;
 
 import com.google.gson.Gson;
 
+import pl.asie.endernet.block.TileEntityEnder;
 import pl.asie.endernet.lib.EnderRegistry;
 import pl.asie.endernet.lib.FileUtils;
 import net.minecraftforge.common.DimensionManager;
 import net.minecraftforge.event.ForgeSubscribe;
+import net.minecraftforge.event.world.ChunkEvent;
 import net.minecraftforge.event.world.WorldEvent;
 
 public class EventHandler {
@@ -26,5 +28,23 @@ public class EventHandler {
 			}
 			else EnderNet.registry = new EnderRegistry();
 		} else EnderNet.registry = new EnderRegistry();
+		for(Object o: event.world.loadedTileEntityList) {
+			if(o instanceof TileEntityEnder) {
+				TileEntityEnder e = (TileEntityEnder)o;
+				System.out.println("Marking block for update");
+				event.world.markBlockForUpdate(e.xCoord, e.yCoord, e.zCoord);
+			}
+		}
+	}
+	
+	@ForgeSubscribe
+	public void chunkLoadEvent(ChunkEvent.Load event) {
+		for(Object o: event.getChunk().chunkTileEntityMap.values()) {
+			if(o instanceof TileEntityEnder) {
+				TileEntityEnder e = (TileEntityEnder)o;
+				System.out.println("Marking block for update");
+				event.world.markBlockForUpdate(e.xCoord, e.yCoord, e.zCoord);
+			}
+		}
 	}
 }
