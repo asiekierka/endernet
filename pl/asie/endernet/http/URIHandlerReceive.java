@@ -20,7 +20,6 @@ import fi.iki.elonen.NanoHTTPD.Method;
 import fi.iki.elonen.NanoHTTPD.Response;
 
 public class URIHandlerReceive implements IURIHandler {
-
 	public boolean actuallyServe(IHTTPSession session) {
 		Map<String, String> params = session.getParms();
 		if(!params.containsKey("object")) {
@@ -48,5 +47,10 @@ public class URIHandlerReceive implements IURIHandler {
 		} catch(Exception e) { e.printStackTrace(); }
 		if(actuallyServe(session)) return new Response(Response.Status.OK, NanoHTTPD.MIME_PLAINTEXT, "EEYUP");
 		else return new Response(Response.Status.OK, NanoHTTPD.MIME_PLAINTEXT, "NNOPE");
+	}
+	
+	@Override
+	public String getPermission() {
+		return "item";
 	}
 }

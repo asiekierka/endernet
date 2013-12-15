@@ -34,4 +34,9 @@ public class URIHandlerCanReceive implements IURIHandler {
 		if(actuallyServe(session)) return new Response(Response.Status.OK, NanoHTTPD.MIME_PLAINTEXT, "EEYUP");
 		else return new Response(Response.Status.OK, NanoHTTPD.MIME_PLAINTEXT, "NNOPE");
 	}
+
+	@Override
+	public String getPermission() {
+		return null;
+	}
 }

@@ -1,3 +1,11 @@
+alpha11:
++ Add permission system for URIHandlers.
+  / Specify in permissions: [...] in endernet-servers.json.
+  / Supported permissions: "item", "message".
+
+alpha10:
++ Add ComputerCraft API!
+
 alpha9a:
 * Fixed an NPE in particle spawning
 * Fixed SMP bugs, making the mod function correctly on servers

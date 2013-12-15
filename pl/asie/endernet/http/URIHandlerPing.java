@@ -7,9 +7,13 @@ import fi.iki.elonen.NanoHTTPD.Method;
 import fi.iki.elonen.NanoHTTPD.Response;
 
 public class URIHandlerPing implements IURIHandler {
-
 	@Override
 	public Response serve(IHTTPSession session) {
 		return new Response(Response.Status.OK, NanoHTTPD.MIME_PLAINTEXT, "PONG");
+	}
+
+	@Override
+	public String getPermission() {
+		return null;
 	}
 }

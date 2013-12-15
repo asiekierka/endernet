@@ -25,11 +25,14 @@ public class EnderHTTPServer extends NanoHTTPD {
 	
 	@Override
     public Response serve(IHTTPSession session) {
-		if(!EnderNet.servers.canReceive(session.getHeaders().get("remote-addr"))) {
-			return new Response(Response.Status.FORBIDDEN, MIME_PLAINTEXT, "NNOPE");
-		}
+		String address = session.getHeaders().get("remote-addr");
 		if(handlers.containsKey(session.getUri())) {
-			return handlers.get(session.getUri()).serve(session);
+			IURIHandler handler = handlers.get(session.getUri());
+			if(!EnderNet.servers.canReceive(address, handler.getPermission())) {
+				return new Response(Response.Status.FORBIDDEN, MIME_PLAINTEXT, "NNOPE");
+			} else {
+				return handler.serve(session);
+			}
 		}
         return new Response(Response.Status.NOT_FOUND, MIME_PLAINTEXT, "URI " + session.getUri() + " not found!");
 	}

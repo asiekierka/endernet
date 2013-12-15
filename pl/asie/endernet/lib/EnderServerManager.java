@@ -19,9 +19,7 @@ public class EnderServerManager {
 		servers = new HashMap<String, EnderServer>();
 	}
 	
-	public boolean can(String name, String permission) {
-		EnderServer server = get(name);
-		if(server == null) return false;
+	public boolean can(EnderServer server, String permission) {
 		if(server.permissions.size() == 0) return true; // no perms - all allowed
 		if(server.permissions.contains("none")) return false; // none as a permission - nothing allowed
 		return server.permissions.contains(permission);
@@ -69,16 +67,24 @@ public class EnderServerManager {
 		servers.put(es.name, es);
 	}
 	
-	public boolean canReceive(String remoteAddr) {
-		if(remoteAddr.equals("127.0.0.1") || !EnderNet.onlyAllowDefined) return true;
+	public EnderServer findByAddress(String remoteAddr) {
 		try {
 			InetAddress remote = InetAddress.getByName(remoteAddr);
 			// Check if such address exists
 			for(EnderServer es: servers.values()) {
 				InetAddress server = InetAddress.getByName(es.address.split(":")[0]);
-				if(server.equals(remote)) return true;
+				if(server.equals(remote)) return es;
 			}
-			return false;
-		} catch(Exception e) { e.printStackTrace(); return false; }
+			return null;
+		} catch(Exception e) { e.printStackTrace(); return null; }
+	}
+	
+	public boolean canReceive(String remoteAddr, String permission) {
+		if(permission == null || permission.equals("") || permission.equals("none")) return true;
+		if(remoteAddr.equals("127.0.0.1") || !EnderNet.onlyAllowDefined) return true;
+		EnderServer es = findByAddress(remoteAddr);
+		if(es != null) {
+			return this.can(es, permission);
+		} else return false;
 	}
 }
