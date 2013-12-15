@@ -134,6 +134,8 @@ public class TileEntityEnderTransmitter extends TileEntityEnder implements IInve
         }
     }
 
+	private ReceiveThread rt = null;
+	
 	@Override
 	public void updateEntity() {
 		super.updateEntity();
@@ -143,8 +145,10 @@ public class TileEntityEnderTransmitter extends TileEntityEnder implements IInve
 				progress++;
 			} else { // Finished
 				if(!this.worldObj.isRemote) {
-					ReceiveThread rt = new ReceiveThread(this, 1);
-					rt.start();
+					if(rt == null) {
+						ReceiveThread rt = new ReceiveThread(this, 1);
+						rt.start();
+					} else if(!rt.isAlive()) rt = null;
 				}
 			}
 		}
