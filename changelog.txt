@@ -1,4 +1,5 @@
 alpha11:
++ Add support for blacklisting receivable item types in config.
 + Add permission system for URIHandlers.
   / Specify in permissions: [...] in endernet-servers.json.
   / Supported permissions: "item", "message".

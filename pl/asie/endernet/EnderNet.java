@@ -2,6 +2,7 @@ package pl.asie.endernet;
 
 import java.io.File;
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.logging.Logger;
 
 import com.google.common.collect.ImmutableList;
@@ -53,6 +54,7 @@ import net.minecraftforge.common.ConfigCategory;
 import net.minecraftforge.common.Configuration;
 import net.minecraftforge.common.DimensionManager;
 import net.minecraftforge.common.MinecraftForge;
+import net.minecraftforge.common.Property;
 
 @Mod(modid="endernet", name="EnderNet", version="0.0.11")
 @NetworkMod(channels={"EnderNet"}, clientSideRequired=true, packetHandler=NetworkHandler.class)
@@ -72,7 +74,7 @@ public class EnderNet {
 	
 	public boolean isItem(String name, int defaultID) {
 		int itemID = config.getItem(name, defaultID).getInt(); 
-		return itemID > 0 && itemID < 65536;
+		return itemID > 256 && itemID < 32000;
 	}
 	
 	public static BlockEnderTransmitter enderTransmitter;
@@ -82,6 +84,8 @@ public class EnderNet {
 	
 	public static boolean spawnParticles;
 	public static boolean onlyAllowDefined;
+	
+	private static ArrayList<Integer> blacklistedItems;
 	
 	private File serverFile;
 	
@@ -112,8 +116,29 @@ public class EnderNet {
 		spawnParticles = config.get("misc", "spawnTransmitterParticles", true).getBoolean(true);
 		onlyAllowDefined = config.get("comm", "receiveFromDefinedOnly", true).getBoolean(true);
 		serverFile = new File(event.getModConfigurationDirectory(), "endernet-servers.json");
+		
+		Property blacklistedItems = config.get("comm", "blacklistedItems", "");
+		blacklistedItems.comment = "Comma-separated IDs of blocks and items. For example: 42,46";
+		parseBlacklistedItems(blacklistedItems.getString());
 	}
 	
+	public static boolean isItemBlacklisted(int id) {
+		return blacklistedItems.contains(id);
+	}
+	
+	private void parseBlacklistedItems(String s) {
+		blacklistedItems = new ArrayList<Integer>();
+		String[] items = s.split(",");
+		for(String itemString: items) {
+			try {
+				int itemID = new Integer(itemString.trim()).intValue();
+				if(itemID > 0 && itemID < 32000) {
+					blacklistedItems.add(itemID);
+				}
+			} catch(NumberFormatException e) { }
+		}
+	}
+
 	@EventHandler
 	public void serverLoad(FMLServerStartingEvent event)
 	{

@@ -91,6 +91,7 @@ public class EnderID {
 			if(stack == null) return null;
 		} else stack = GameRegistry.findItemStack(modId, name, stackSize);
 		if(stack != null) {
+			if(EnderNet.isItemBlacklisted(stack.itemID)) return null;
 			stack.setItemDamage(metadata);
 			stack.setTagCompound(getTagCompound());
 		}
