@@ -8,6 +8,8 @@ import pl.asie.endernet.lib.EnderID;
 import pl.asie.endernet.lib.EnderRedirector;
 import pl.asie.endernet.lib.SlotEnergy;
 import cpw.mods.fml.client.FMLClientHandler;
+import dan200.computer.api.IComputerAccess;
+import dan200.computer.api.ILuaContext;
 import net.minecraft.client.gui.GuiScreen;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.inventory.IInventory;
@@ -259,5 +261,45 @@ public class TileEntityEnderTransmitter extends TileEntityEnder implements IInve
 
 	public void setProgress(int i) {
 		this.progress = i;
+	}
+	
+	public void sendString(String address, String s) {
+		EnderRedirector.sendString(address, s);
+	}
+	
+	public void sendString(String s) {
+		sendString(address, s);
+	}
+	
+	// COMPUTERCRAFT COMPATIBILITY BEGIN
+	@Override
+	public String[] getMethodNames() {
+		String[] names = new String[3];
+		names[0] = "getAddress";
+		names[1] = "setAddress";
+		names[2] = "send";
+		return names;
+	}
+	
+	@Override
+	public String getType() {
+		return "endernet_transmitter";
+	}
+	
+	@Override
+	public Object[] callMethod(IComputerAccess computer, ILuaContext context,
+			int method, Object[] arguments) throws Exception {
+		if(method < 2) return super.callMethod(computer, context, method, arguments);
+		else switch(method) {
+			case 2: // send
+				if(arguments.length == 2) {
+					if(!(arguments[0] instanceof String) && !(arguments[1] instanceof String)) return null;
+					sendString((String)arguments[0], (String)arguments[1]);
+				} else if(arguments.length == 1) {
+					if(!(arguments[0] instanceof String)) return null;
+					sendString((String)arguments[0]);
+				}
+		}
+		return null;
 	}
 }

@@ -19,6 +19,14 @@ public class EnderServerManager {
 		servers = new HashMap<String, EnderServer>();
 	}
 	
+	public boolean can(String name, String permission) {
+		EnderServer server = get(name);
+		if(server == null) return false;
+		if(server.permissions.size() == 0) return true; // no perms - all allowed
+		if(server.permissions.contains("none")) return false; // none as a permission - nothing allowed
+		return server.permissions.contains(permission);
+	}
+	
 	public EnderServer get(String name) {
 		return servers.get(name);
 	}

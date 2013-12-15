@@ -1,12 +1,14 @@
 package pl.asie.endernet.block;
 
+import dan200.computer.api.IComputerAccess;
 import net.minecraft.inventory.IInventory;
 import net.minecraft.inventory.ISidedInventory;
 import net.minecraft.item.ItemStack;
 import net.minecraft.tileentity.TileEntity;
+import pl.asie.endernet.api.IEnderStringReceiver;
 import pl.asie.endernet.lib.EnderID;
 
-public class TileEntityEnderReceiver extends TileEntityEnder {
+public class TileEntityEnderReceiver extends TileEntityEnder implements IEnderStringReceiver {
 	private static final int[][] DIRECTIONS = {
 		{0, -1, 0}, {0, 1, 0}, {0, 0, -1}, {0, 0, 1}, {-1, 0, 0}, {1, 0, 0}
 	};
@@ -77,5 +79,23 @@ public class TileEntityEnderReceiver extends TileEntityEnder {
 		}
 		if(stack.stackSize == 0) return true;	
 		return false;
+	}
+
+	// COMPUTERCRAFT COMPATIBILITY BEGIN
+	
+	@Override
+	public boolean receiveString(String string) {
+		if(super.computers.size() == 0) return false;
+		Object[] arguments = new Object[1];
+		arguments[0] = string;
+		for(IComputerAccess computer: super.computers) {
+			computer.queueEvent("endernet_message", arguments);
+		}
+		return true;
+	}
+	
+	@Override
+	public String getType() {
+		return "endernet_receiver";
 	}
 }

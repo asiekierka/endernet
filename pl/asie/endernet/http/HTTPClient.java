@@ -76,4 +76,11 @@ public class HTTPClient {
 		params.put("target", enderID+"");
 		return readAnswer(sendPost(server, "/receive", params));
 	}
+
+	public static boolean sendString(String server, int enderID, String string) {
+		HashMap<String, String> params = new HashMap<String, String>();
+		params.put("object", string);
+		params.put("target", enderID+"");
+		return readAnswer(sendPost(server, "/sendString", params));
+	}
 }

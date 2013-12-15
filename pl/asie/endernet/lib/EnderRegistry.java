@@ -19,6 +19,11 @@ public class EnderRegistry {
 		return entities.size() > id ? entities.get(id) : null;
 	}
 	
+	public TileEntity getTileEntity(int id) {
+		EntityCoord location = getEntityCoord(id);
+		return (location != null ? location.get() : null);
+	}
+	
 	public int getEntityID(TileEntity entity) {
 		EntityCoord ec = new EntityCoord(entity);
 		if(!entities.contains(ec)) {

@@ -16,6 +16,7 @@ import pl.asie.endernet.http.HTTPClient;
 import pl.asie.endernet.http.URIHandlerCanReceive;
 import pl.asie.endernet.http.URIHandlerPing;
 import pl.asie.endernet.http.URIHandlerReceive;
+import pl.asie.endernet.http.URIHandlerSendString;
 import pl.asie.endernet.integration.WailaIntegration;
 import pl.asie.endernet.lib.EnderID;
 import pl.asie.endernet.lib.EnderRedirector;
@@ -131,6 +132,7 @@ public class EnderNet {
 		httpServer.registerHandler("/ping", new URIHandlerPing());
 		httpServer.registerHandler("/canReceive", new URIHandlerCanReceive());
 		httpServer.registerHandler("/receive", new URIHandlerReceive());
+		httpServer.registerHandler("/sendString", new URIHandlerSendString());
 		
 		LanguageRegistry.instance().addStringLocalization("tile.endernet.enderTransmitter.name", "Ender Transmitter");
 		LanguageRegistry.instance().addStringLocalization("tile.endernet.enderReceiver.name", "Ender Receiver");

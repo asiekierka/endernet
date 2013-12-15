@@ -6,6 +6,7 @@ import net.minecraft.tileentity.TileEntity;
 import net.minecraft.world.World;
 import net.minecraftforge.common.DimensionManager;
 import pl.asie.endernet.EnderNet;
+import pl.asie.endernet.api.IEnderStringReceiver;
 import pl.asie.endernet.api.IURIHandler;
 import pl.asie.endernet.block.TileEntityEnderReceiver;
 import pl.asie.endernet.lib.EnderID;
@@ -19,26 +20,22 @@ import fi.iki.elonen.NanoHTTPD.IHTTPSession;
 import fi.iki.elonen.NanoHTTPD.Method;
 import fi.iki.elonen.NanoHTTPD.Response;
 
-public class URIHandlerReceive implements IURIHandler {
-
+public class URIHandlerSendString implements IURIHandler {
 	public boolean actuallyServe(IHTTPSession session) {
 		Map<String, String> params = session.getParms();
-		if(!params.containsKey("object")) {
-			EnderNet.log.info("/receive did not contain object!");
+		if(!params.containsKey("string")) {
+			EnderNet.log.info("/sendString did not contain string!");
 			return false;
 		}
 		if(!params.containsKey("target")) {
-			EnderNet.log.info("/receive did not contain target ID!");
+			EnderNet.log.info("/sendString did not contain target ID!");
 			return false;
 		}
-		Gson gson = new Gson();
-		EnderID block = gson.fromJson(params.get("object"), EnderID.class);
-		if(!block.isReceiveable()) return false;
 		int target = new Integer(params.get("target")).intValue();
 		TileEntity entity = EnderNet.registry.getTileEntity(target);
-		if(entity == null || !(entity instanceof TileEntityEnderReceiver)) return false;
-		TileEntityEnderReceiver receiver = (TileEntityEnderReceiver)entity;
-		return receiver.receiveItem(block);
+		if(entity == null || !(entity instanceof IEnderStringReceiver)) return false;
+		IEnderStringReceiver receiver = (IEnderStringReceiver)entity;
+		return receiver.receiveString(params.get("string"));
 	}
 	
 	@Override
