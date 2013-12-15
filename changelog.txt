@@ -1,3 +1,7 @@
+alpha12:
+* Fix bug introduced by threading that caused serious item duplication.
+* Fix it again!
+
 alpha11:
 + Add support for blacklisting receivable item types in config.
 + Add permission system for URIHandlers.

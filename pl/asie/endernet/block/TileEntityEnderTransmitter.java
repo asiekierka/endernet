@@ -146,7 +146,7 @@ public class TileEntityEnderTransmitter extends TileEntityEnder implements IInve
 			} else { // Finished
 				if(!this.worldObj.isRemote) {
 					if(rt == null) {
-						ReceiveThread rt = new ReceiveThread(this, 1);
+						rt = new ReceiveThread(this, 1);
 						rt.start();
 					} else if(!rt.isAlive()) rt = null;
 				}
