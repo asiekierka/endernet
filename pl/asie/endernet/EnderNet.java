@@ -154,6 +154,8 @@ public class EnderNet {
                 EnderServer es = new EnderServer(name, serverC.get(name).getString());
                 servers.add(es);
         }
+        
+        saveServerFile();
 	}
 	
 	public void reloadServerFile() {

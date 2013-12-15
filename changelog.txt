@@ -1,3 +1,6 @@
+alpha5a:
+* Server entries from the old config get autoimported to the new one now.
+
 alpha5:
 + Changed config format to a more superior one.
   * Passwords and permissions are not yet implemented.
