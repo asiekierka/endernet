@@ -1,5 +1,7 @@
 package pl.asie.endernet.block;
 
+import java.util.Random;
+
 import pl.asie.endernet.EnderNet;
 import pl.asie.endernet.lib.BlockConversionException;
 import pl.asie.endernet.lib.EnderID;
@@ -71,7 +73,7 @@ public class TileEntityEnderTransmitter extends TileEntityEnder implements IInve
 	
 	public int getMaxProgress() {
 		if(inventory[0] == null) return 4; // random number, chosen by fair dice roll
-		else return inventory[0].stackSize * 35;
+		else return 35 + ((inventory[0].stackSize - 1) * 10);
 	}
 	
 	private boolean isReceiveable = true;
@@ -87,6 +89,8 @@ public class TileEntityEnderTransmitter extends TileEntityEnder implements IInve
 		return EnderRedirector.canReceive(address, inventory[0]);
 	}
 	
+	private int clientRenderMessage = 0; // 1 - spawn particles
+	
 	@Override
 	public void updateEntity() {
 		super.updateEntity();
@@ -99,10 +103,27 @@ public class TileEntityEnderTransmitter extends TileEntityEnder implements IInve
 					if(EnderRedirector.receive(address, inventory[0])) {
 						this.setInventorySlotContents(0, null);
 						this.isReceiveable = updateReceive();
+						this.clientRenderMessage = 1;
 					} else this.isReceiveable = false;
 					this.worldObj.markBlockForUpdate(xCoord, yCoord, zCoord);
 				}
 			}
+		}
+	}
+	
+	private Random random = new Random();
+	
+	public void spawnSuccessParticles() {
+		if(!EnderNet.spawnParticles) return;
+		int count = 56 + (2 * inventory[0].stackSize) + random.nextInt(24);
+		for(; count >= 0; count--) {
+			double randX = ((random.nextDouble() * 0.8D) - 0.4D) + 0.5D + (double)this.xCoord;
+			double randY = (double)this.yCoord + 0.9D + (random.nextDouble() * 0.2D);
+			double randZ = ((random.nextDouble() * 0.8D) - 0.4D) + 0.5D + (double)this.zCoord;
+			double randVX = (random.nextDouble() * 0.125D) - 0.0625D;
+			double randVY = (random.nextDouble() * 0.1D) + 0.02D; 
+			double randVZ = (random.nextDouble() * 0.125D) - 0.0625D;
+			this.worldObj.spawnParticle("smoke", randX, randY, randZ, randVX, randVY, randVZ);	
 		}
 	}
 	
@@ -180,11 +201,18 @@ public class TileEntityEnderTransmitter extends TileEntityEnder implements IInve
 		NBTTagCompound tagCompound = new NBTTagCompound();
 		writeNBTProgress(tagCompound);
 		writeNBTEnderData(tagCompound);
+		tagCompound.setByte("c", (byte)clientRenderMessage);
+		this.clientRenderMessage = 0;
 		return new Packet132TileEntityData(xCoord, yCoord, zCoord, 0, tagCompound);
 	}
 
 	@Override
-	public void onDataPacket(INetworkManager networkManager, Packet132TileEntityData packet) {	 
+	public void onDataPacket(INetworkManager networkManager, Packet132TileEntityData packet) {
+		switch((int)packet.data.getByte("c")) {
+			case 1:
+				this.spawnSuccessParticles();
+				break;
+		}
 		this.enderNetID = packet.data.getInteger("eid");
 		this.isReceiveable = packet.data.getBoolean("r");
 		GuiScreen gui = FMLClientHandler.instance().getClient().currentScreen;

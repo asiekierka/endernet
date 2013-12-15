@@ -75,6 +75,9 @@ public class EnderNet {
 	public static BlockEnderReceiver enderReceiver;
 	public static EnderRegistry registry;
 	public static EnderServerManager servers;
+	
+	public static boolean spawnParticles;
+	
 	private File serverFile;
 	
 	@EventHandler
@@ -100,6 +103,8 @@ public class EnderNet {
 		GameRegistry.registerTileEntity(TileEntityEnderTransmitter.class, "enderTransmitter");
 		GameRegistry.registerTileEntity(TileEntityEnderReceiver.class, "enderReceiver");
 		MinecraftForge.EVENT_BUS.register(new pl.asie.endernet.EventHandler());
+		
+		spawnParticles = config.get("misc", "spawnTransmitterParticles", true).getBoolean(true);
 		
 		serverFile = new File(event.getModConfigurationDirectory(), "endernet-servers.json");
 	}

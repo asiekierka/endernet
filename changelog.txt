@@ -1,3 +1,6 @@
+alpha7:
++ Transmitters now emit pretty particles on successful transmission!
+
 alpha6:
 * Fixed a bug where receivers did not initialize upon world reload.
 * Fixed putting a receiver next to a transmitter.
