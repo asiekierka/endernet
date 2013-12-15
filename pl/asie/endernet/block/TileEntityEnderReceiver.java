@@ -87,10 +87,11 @@ public class TileEntityEnderReceiver extends TileEntityEnder implements IEnderSt
 	@Override
 	public boolean receiveString(EnderServer server, String string) {
 		if(super.computers.size() == 0) return false;
-		Object[] arguments = new Object[2];
-		arguments[0] = (server != null ? server.name : "unknown");
-		arguments[1] = string;
 		for(IComputerAccess computer: super.computers) {
+			Object[] arguments = new Object[3];
+			arguments[0] = (server != null ? server.name : "unknown");
+			arguments[1] = string;
+			arguments[2] = computer.getAttachmentName();
 			computer.queueEvent("endernet_message", arguments);
 		}
 		return true;

@@ -93,6 +93,47 @@ public class TileEntityEnderTransmitter extends TileEntityEnder implements IInve
 	
 	private int clientRenderMessage = 0; // 1 - spawn particles
 	
+	protected void sendToReceiver() {
+		if(EnderRedirector.receive(address, inventory[0])) {
+			this.setInventorySlotContents(0, null);
+			this.isReceiveable = updateReceive();
+			this.clientRenderMessage = 1;
+		} else this.isReceiveable = false;
+		this.worldObj.markBlockForUpdate(xCoord, yCoord, zCoord);
+	}
+	
+	private class ReceiveThread extends Thread {
+        private TileEntityEnderTransmitter entity;
+        private int action;
+        
+        ReceiveThread(TileEntityEnderTransmitter t, int a) {
+            this.entity = t;
+            this.action = a;
+        }
+
+        public void run() {
+            if(action == 1) entity.sendToReceiver();
+            else if(action == 2) {
+            	entity.isReceiveable = entity.updateReceive();
+            	entity.worldObj.markBlockForUpdate(xCoord, yCoord, zCoord);
+            	entity.startSending = true;
+            }
+        }
+    }
+	
+	private class StringSendThread extends Thread {
+        private String address, text;
+        
+        StringSendThread(String address, String text) {
+            this.address = address;
+            this.text = text;
+        }
+
+        public void run() {
+        	EnderRedirector.sendString(address, text);
+        }
+    }
+
 	@Override
 	public void updateEntity() {
 		super.updateEntity();
@@ -102,12 +143,8 @@ public class TileEntityEnderTransmitter extends TileEntityEnder implements IInve
 				progress++;
 			} else { // Finished
 				if(!this.worldObj.isRemote) {
-					if(EnderRedirector.receive(address, inventory[0])) {
-						this.setInventorySlotContents(0, null);
-						this.isReceiveable = updateReceive();
-						this.clientRenderMessage = 1;
-					} else this.isReceiveable = false;
-					this.worldObj.markBlockForUpdate(xCoord, yCoord, zCoord);
+					ReceiveThread rt = new ReceiveThread(this, 1);
+					rt.start();
 				}
 			}
 		}
@@ -137,10 +174,8 @@ public class TileEntityEnderTransmitter extends TileEntityEnder implements IInve
     		if(inventory[0] == null) {
     			progress = 0; // Reset progress if no item
     		}
-        	boolean newr = updateReceive();
-        	isReceiveable = newr;
-        	this.worldObj.markBlockForUpdate(xCoord, yCoord, zCoord);
-        	startSending = true;
+			ReceiveThread rt = new ReceiveThread(this, 2);
+			rt.start();
         }
 	}
 
@@ -264,7 +299,8 @@ public class TileEntityEnderTransmitter extends TileEntityEnder implements IInve
 	}
 	
 	public void sendString(String address, String s) {
-		EnderRedirector.sendString(address, s);
+		StringSendThread sst = new StringSendThread(address, s);
+		sst.start();
 	}
 	
 	public void sendString(String s) {
@@ -299,6 +335,7 @@ public class TileEntityEnderTransmitter extends TileEntityEnder implements IInve
 					if(!(arguments[0] instanceof String)) return null;
 					sendString((String)arguments[0]);
 				}
+				break;
 		}
 		return null;
 	}

@@ -3,6 +3,7 @@ alpha11:
   / Specify in permissions: [...] in endernet-servers.json.
   / Supported permissions: "item", "message".
 + ComputerCraft API now gives name of the server the message was received from.
+* The EnderNet HTTP accesses are now threaded. Far less crashes!
 
 alpha10:
 + Add ComputerCraft API!
