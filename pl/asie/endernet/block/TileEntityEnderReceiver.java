@@ -58,10 +58,13 @@ public class TileEntityEnderReceiver extends TileEntityEnder {
 			if(entity == null || (entity instanceof TileEntityEnderTransmitter)) continue;
 			if(entity instanceof ISidedInventory) {
 				ISidedInventory inv = (ISidedInventory)entity;
-				for(int slot: inv.getAccessibleSlotsFromSide(opposite(side))) {
-					if(inv.canInsertItem(slot, stack, opposite(side))) {
-						tryMergeStacks(inv, slot, stack);
-						if(stack.stackSize == 0) return true;
+				int[] slots = inv.getAccessibleSlotsFromSide(opposite(side));
+				if(slots != null) {
+					for(int slot: slots) {
+						if(inv.canInsertItem(slot, stack, opposite(side))) {
+							tryMergeStacks(inv, slot, stack);
+							if(stack.stackSize == 0) return true;
+						}
 					}
 				}
 			} else if(entity instanceof IInventory) {
