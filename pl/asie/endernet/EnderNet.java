@@ -84,6 +84,7 @@ public class EnderNet {
 	
 	public static boolean spawnParticles;
 	public static boolean onlyAllowDefined;
+	private static boolean treatBlacklistAsWhitelist;
 	
 	private static ArrayList<Integer> blacklistedItems;
 	
@@ -118,12 +119,15 @@ public class EnderNet {
 		serverFile = new File(event.getModConfigurationDirectory(), "endernet-servers.json");
 		
 		Property blacklistedItems = config.get("comm", "blacklistedItems", "");
-		blacklistedItems.comment = "Comma-separated IDs of blocks and items. For example: 42,46";
+		blacklistedItems.comment = "Comma-separated IDs of blocks and items that should be blacklisted. For example: 42,46";
 		parseBlacklistedItems(blacklistedItems.getString());
+		
+		treatBlacklistAsWhitelist = config.get("comm", "useBlacklistAsWhitelist", false).getBoolean(false);
 	}
 	
 	public static boolean isItemBlacklisted(int id) {
-		return blacklistedItems.contains(id);
+		boolean contained = blacklistedItems.contains(id);
+		return treatBlacklistAsWhitelist ? !contained : contained;
 	}
 	
 	private void parseBlacklistedItems(String s) {
@@ -135,7 +139,17 @@ public class EnderNet {
 				if(itemID > 0 && itemID < 32000) {
 					blacklistedItems.add(itemID);
 				}
-			} catch(NumberFormatException e) { }
+			} catch(NumberFormatException e) {
+				if(itemString.contains("|")) {
+					EnderID id = new EnderID(itemString.split("|")[0], itemString.split("|")[1]);
+					if(id != null) {
+						ItemStack stack = id.createItemStack();
+						if(stack != null) {
+							blacklistedItems.add(stack.getItem().itemID);
+						}
+					}
+				}
+			}
 		}
 	}
 
@@ -144,6 +158,7 @@ public class EnderNet {
 	{
 		if(config.get("misc", "enableDevCommands", true).getBoolean(true))
 			event.registerServerCommand(new CommandEndernetInfo());
+		event.registerServerCommand(new CommandEndernetReload());
 	}
 	 
 	@EventHandler
@@ -162,6 +177,8 @@ public class EnderNet {
 		LanguageRegistry.instance().addStringLocalization("tile.endernet.enderTransmitter.name", "Ender Transmitter");
 		LanguageRegistry.instance().addStringLocalization("tile.endernet.enderReceiver.name", "Ender Receiver");
 		LanguageRegistry.instance().addStringLocalization("command.endernet.info", "Gives you dev information on the currently held inventory item.");
+		LanguageRegistry.instance().addStringLocalization("command.endernet.reload", "Reloads the endernet-servers.json file.");
+		LanguageRegistry.instance().addStringLocalization("command.endernet.reload.success", "Successfully reloaded!");
 
 		config.save();
 	}

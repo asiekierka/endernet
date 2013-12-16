@@ -1,3 +1,8 @@
+beta1:
++ Add the ability to use EnderNet UIDs (/eninfo) for blacklisted items
++ Add the ability to use item blacklist as whitelist
++ Add the /enreload command to re-load the config file.
+
 alpha12:
 * Fix bug introduced by threading that caused serious item duplication.
 * Fix it again!

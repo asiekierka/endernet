@@ -40,22 +40,21 @@ public class TileEntityEnderTransmitter extends TileEntityEnder implements IInve
 	public ItemStack decrStackSize(int slot, int amount)
 	{
 		if (this.inventory[slot] != null) {
-			ItemStack itemstack;
-
+			ItemStack stack;
 			if (this.inventory[slot].stackSize <= amount) {
-				itemstack = this.inventory[slot];
+				stack = this.inventory[slot];
 				this.inventory[slot] = null;
 		        onSlotUpdate(slot);
-				return itemstack;
+				return stack;
 			} else {
-				itemstack = this.inventory[slot].splitStack(amount);
+				stack = this.inventory[slot].splitStack(amount);
 
 				if (this.inventory[slot].stackSize == 0)
 					this.inventory[slot] = null;
 				
 		        onSlotUpdate(slot);
 				
-				return itemstack;
+				return stack;
 			}
 		} else return null;
 	}
@@ -74,7 +73,7 @@ public class TileEntityEnderTransmitter extends TileEntityEnder implements IInve
 	public int getProgress() { return progress; }
 	
 	public int getMaxProgress() {
-		if(inventory[0] == null) return 4; // random number, chosen by fair dice roll
+		if(inventory[0] == null) return 35;
 		else return 35 + ((inventory[0].stackSize - 1) * 10);
 	}
 	

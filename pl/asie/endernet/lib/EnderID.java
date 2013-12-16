@@ -61,6 +61,13 @@ public class EnderID {
 		}
 	}
 	
+	public EnderID(String modId, String name) {
+		this.modId = modId;
+		this.name = name;
+		this.stackSize = 1;
+		this.metadata = 0;
+	}
+	
 	public String getItemIdentifier() {
 		return this.modId + "|" + this.name;
 	}
