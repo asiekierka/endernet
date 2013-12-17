@@ -41,18 +41,23 @@ public class EnderServerManager {
 		else return "";
 	}
 	
-	public void loadFromJSON(File file) {
+	public boolean loadFromJSON(File file, boolean simulate) {
 		Gson gson = new Gson();
 		String data = FileUtils.load(file);
-		if(data == null) return; // No data
+		if(data == null) return true; // No data
 		
 		Type arrayType = new TypeToken<ArrayList<EnderServer>>(){}.getType();
 		try {
 			ArrayList<EnderServer> serverList = gson.fromJson(data, arrayType);
-			for(EnderServer es: serverList) {
+			if(!simulate) for(EnderServer es: serverList) {
 				servers.put(es.name, es);
 			}
-		} catch(Exception e) { e.printStackTrace(); }
+			return true;
+		} catch(Exception e) { e.printStackTrace(); return false; }
+	}
+	
+	public boolean loadFromJSON(File file) {
+		return loadFromJSON(file, false);
 	}
 	
 	public void saveToJSON(File file) {

@@ -34,11 +34,11 @@ public class CommandEndernetReload extends CommandBase
     public void processCommand(ICommandSender par1ICommandSender, String[] par2ArrayOfStr)
     {
 		// Reload
-		EnderNet.instance.reloadServerFile();
+		String message = "commands.endernet.reload." + (EnderNet.instance.reloadServerFile() ? "success" : "failure");
 		
 		// Give success message
         EntityPlayerMP player = getCommandSenderAsPlayer(par1ICommandSender);
-        ChatMessageComponent chat = ChatMessageComponent.createFromTranslationKey("commands.endernet.reload.success");
+        ChatMessageComponent chat = ChatMessageComponent.createFromTranslationKey(message);
         player.sendChatToPlayer(chat);
     }
 }

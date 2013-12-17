@@ -56,9 +56,7 @@ public class TileEntityEnder extends TileEntity implements IPeripheral {
 	
 	@Override
 	public String[] getMethodNames() {
-		String[] names = new String[2];
-		names[0] = "getAddress";
-		names[1] = "setAddress";
+		String[] names = new String[]{"getAddress", "setAddress", "getID"};
 		return names;
 	}
 	
@@ -66,14 +64,18 @@ public class TileEntityEnder extends TileEntity implements IPeripheral {
 	public Object[] callMethod(IComputerAccess computer, ILuaContext context,
 			int method, Object[] arguments) throws Exception {
 		switch(method) {
-			case 0: // getAddress
+			case 0: { // getAddress
 				String[] out = new String[1];
 				out[0] = this.getAddress();
-				return out;
+				return out; }
 			case 1: // setAddress
 				if(arguments.length < 1 || !(arguments[0] instanceof String)) break;
 				this.setAddress((String)arguments[0]);
 				break;
+			case 2: { // getID
+				Integer[] out = new Integer[1];
+				out[0] = this.enderNetID;
+				return out; }
 		}
 		return null;
 	}

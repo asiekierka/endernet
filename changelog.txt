@@ -1,3 +1,11 @@
+beta2:
++ Add "getID" to the ComputerCraft APIs, to get the ID of the current device.
++ Add "hasItem" and "canSendItem" to ComputerCraft Ender Transmitter API - that way you can automate item sending better.
++ Improve item duct (Thermal Expansion 3) compatibility - you don't need a chest as a buffer anymore!
+* /enreload now properly recovers from failure to reload.
+* Fix major implementation bugs in the sending method.
+/ BETA2 CANNOT PROPERLY COMMUNICATE WITH ANY VERSION BEFORE BETA2! The reason for that is the major bugs in the item sending method mentioned above - the format of communication had to be changed. (This may happen any number of times until we move to rc1/0.2.0. But I will try to promise that it won't.)
+
 beta1:
 + Add the ability to use EnderNet UIDs (/eninfo) for blacklisted items
 + Add the ability to use item blacklist as whitelist

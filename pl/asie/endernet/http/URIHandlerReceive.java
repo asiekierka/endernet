@@ -20,24 +20,26 @@ import fi.iki.elonen.NanoHTTPD.Method;
 import fi.iki.elonen.NanoHTTPD.Response;
 
 public class URIHandlerReceive implements IURIHandler {
-	public boolean actuallyServe(IHTTPSession session) {
+	public String actuallyServe(IHTTPSession session) {
+		String fail = new HTTPResponse(false).toJson();
 		Map<String, String> params = session.getParms();
 		if(!params.containsKey("object")) {
 			EnderNet.log.info("/receive did not contain object!");
-			return false;
+			return fail;
 		}
 		if(!params.containsKey("target")) {
 			EnderNet.log.info("/receive did not contain target ID!");
-			return false;
+			return fail;
 		}
 		Gson gson = new Gson();
 		EnderID block = gson.fromJson(params.get("object"), EnderID.class);
-		if(!block.isReceiveable()) return false;
+		if(!block.isReceiveable()) return fail;
 		int target = new Integer(params.get("target")).intValue();
 		TileEntity entity = EnderNet.registry.getTileEntity(target);
-		if(entity == null || !(entity instanceof TileEntityEnderReceiver)) return false;
+		if(entity == null || !(entity instanceof TileEntityEnderReceiver)) return fail;
 		TileEntityEnderReceiver receiver = (TileEntityEnderReceiver)entity;
-		return receiver.receiveItem(block);
+		int amountSent = receiver.receiveItem(block);
+		return new HTTPResponse(amountSent > 0, amountSent).toJson();
 	}
 	
 	@Override
@@ -45,8 +47,7 @@ public class URIHandlerReceive implements IURIHandler {
 		try {
 			session.parseBody(null);
 		} catch(Exception e) { e.printStackTrace(); }
-		if(actuallyServe(session)) return new Response(Response.Status.OK, NanoHTTPD.MIME_PLAINTEXT, "EEYUP");
-		else return new Response(Response.Status.OK, NanoHTTPD.MIME_PLAINTEXT, "NNOPE");
+		return new Response(Response.Status.OK, NanoHTTPD.MIME_PLAINTEXT, actuallyServe(session));
 	}
 	
 	@Override

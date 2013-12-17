@@ -47,14 +47,16 @@ public class HTTPClient {
 	    }
 	}
 	
-	public static boolean readAnswer(BufferedReader br) {
-		if(br == null) return false;
+	public static HTTPResponse readAnswer(BufferedReader br) {
+		if(br == null) return new HTTPResponse(false);
 		try {
 			String s = br.readLine();
-			return s.equals("EEYUP");
+			Gson gson = new Gson();
+			HTTPResponse response = gson.fromJson(s, HTTPResponse.class);
+			return response;
 		} catch(Exception e) {
 			e.printStackTrace();
-			return false;
+			return new HTTPResponse(false);
 		}
 	}
 	
@@ -64,10 +66,10 @@ public class HTTPClient {
 		// send string to the good ol' friend http server
 		HashMap<String, String> params = new HashMap<String, String>();
 		params.put("object", itemString);
-		return readAnswer(sendPost(server, "/canReceive", params));
+		return readAnswer(sendPost(server, "/canReceive", params)).success;
 	}
 	
-	public static boolean receive(String server, int enderID, EnderID item) {
+	public static HTTPResponse receive(String server, int enderID, EnderID item) {
 		Gson gson = new Gson();
 		String itemString = gson.toJson(item);
 		// send string to the good ol' friend http server
@@ -81,6 +83,6 @@ public class HTTPClient {
 		HashMap<String, String> params = new HashMap<String, String>();
 		params.put("object", string);
 		params.put("target", enderID+"");
-		return readAnswer(sendPost(server, "/sendString", params));
+		return readAnswer(sendPost(server, "/sendString", params)).success;
 	}
 }

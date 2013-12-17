@@ -31,8 +31,7 @@ public class URIHandlerCanReceive implements IURIHandler {
 		try {
 			session.parseBody(null);
 		} catch(Exception e) { e.printStackTrace(); }
-		if(actuallyServe(session)) return new Response(Response.Status.OK, NanoHTTPD.MIME_PLAINTEXT, "EEYUP");
-		else return new Response(Response.Status.OK, NanoHTTPD.MIME_PLAINTEXT, "NNOPE");
+		return new Response(Response.Status.OK, NanoHTTPD.MIME_PLAINTEXT, new HTTPResponse(actuallyServe(session)).toJson());
 	}
 
 	@Override

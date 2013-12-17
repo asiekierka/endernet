@@ -1,15 +1,18 @@
 package pl.asie.endernet.block;
 
 import dan200.computer.api.IComputerAccess;
+import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.inventory.IInventory;
 import net.minecraft.inventory.ISidedInventory;
 import net.minecraft.item.ItemStack;
 import net.minecraft.tileentity.TileEntity;
+import cofh.api.transport.IItemConduit;
+import net.minecraftforge.common.ForgeDirection;
 import pl.asie.endernet.api.IEnderStringReceiver;
 import pl.asie.endernet.lib.EnderID;
 import pl.asie.endernet.lib.EnderServer;
 
-public class TileEntityEnderReceiver extends TileEntityEnder implements IEnderStringReceiver {
+public class TileEntityEnderReceiver extends TileEntityEnder implements IEnderStringReceiver, IInventory {
 	private static final int[][] DIRECTIONS = {
 		{0, -1, 0}, {0, 1, 0}, {0, 0, -1}, {0, 0, 1}, {-1, 0, 0}, {1, 0, 0}
 	};
@@ -51,9 +54,12 @@ public class TileEntityEnderReceiver extends TileEntityEnder implements IEnderSt
 		}
 	}
 	
-	public boolean receiveItem(EnderID item) {
+	public int receiveItem(EnderID item) {
 		ItemStack stack = item.createItemStack();
+		if(stack == null) return 0;
+		int amountPre = stack.stackSize;
 		for(int side = 0; side < 6; side++) {
+			if(stack == null || stack.stackSize == 0) continue;
 			int[] dir = DIRECTIONS[side];
 			TileEntity entity = worldObj.getBlockTileEntity(
 					xCoord+dir[0], yCoord+dir[1], zCoord+dir[2]
@@ -62,24 +68,25 @@ public class TileEntityEnderReceiver extends TileEntityEnder implements IEnderSt
 			if(entity instanceof ISidedInventory) {
 				ISidedInventory inv = (ISidedInventory)entity;
 				int[] slots = inv.getAccessibleSlotsFromSide(opposite(side));
-				if(slots != null) {
+				if(slots != null)
 					for(int slot: slots) {
 						if(inv.canInsertItem(slot, stack, opposite(side))) {
 							tryMergeStacks(inv, slot, stack);
-							if(stack.stackSize == 0) return true;
 						}
 					}
-				}
+			} else if(entity instanceof IItemConduit) { // TE3 compatibility
+				IItemConduit conduit = (IItemConduit)entity;
+				ForgeDirection from = ForgeDirection.getOrientation(opposite(side));
+				stack = conduit.insertItem(from, stack, false);
 			} else if(entity instanceof IInventory) {
 				IInventory inv = (IInventory)entity;
 				for(int slot = 0; slot < inv.getSizeInventory(); slot++) {
 					tryMergeStacks(inv, slot, stack);
-					if(stack.stackSize == 0) return true;			
 				}
 			}
 		}
-		if(stack.stackSize == 0) return true;	
-		return false;
+		int amountPost = stack != null ? stack.stackSize : 0;
+		return amountPre - amountPost;
 	}
 
 	// COMPUTERCRAFT COMPATIBILITY BEGIN
@@ -100,5 +107,62 @@ public class TileEntityEnderReceiver extends TileEntityEnder implements IEnderSt
 	@Override
 	public String getType() {
 		return "endernet_receiver";
+	}
+	
+	/* THERMAL EXPANSION ITEMDUCT COMPATIBILITY BEGIN
+	   TE3 needs all ItemDuct-interfacing items to have a dummy IInventory. -- asie */
+	   
+	@Override
+	public int getSizeInventory() {
+		return 1;
+	}
+
+	@Override
+	public ItemStack getStackInSlot(int i) {
+		return null;
+	}
+
+	@Override
+	public ItemStack decrStackSize(int slot, int amount)
+	{
+		return null;
+	}
+	
+	@Override
+	public ItemStack getStackInSlotOnClosing(int slot) {
+		return null;
+	}
+	
+	@Override
+	public void setInventorySlotContents(int slot, ItemStack stack) { }
+	
+	@Override
+	public String getInvName() {
+		return "asietweaks.enderreceiver.inventory";
+	}
+
+	@Override
+	public boolean isInvNameLocalized() {
+		return false;
+	}
+
+	@Override
+	public int getInventoryStackLimit() {
+		return 0;
+	}
+	
+	@Override
+	public boolean isUseableByPlayer(EntityPlayer player) {
+    	return false;
+    }
+    
+    @Override
+	public void openChest() { }
+	@Override
+	public void closeChest() { }
+
+	@Override
+	public boolean isItemValidForSlot(int slot, ItemStack stack) {
+		return false;
 	}
 }

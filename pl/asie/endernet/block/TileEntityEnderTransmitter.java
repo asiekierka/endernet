@@ -3,6 +3,7 @@ package pl.asie.endernet.block;
 import java.util.Random;
 
 import pl.asie.endernet.EnderNet;
+import pl.asie.endernet.http.HTTPResponse;
 import pl.asie.endernet.lib.BlockConversionException;
 import pl.asie.endernet.lib.EnderID;
 import pl.asie.endernet.lib.EnderRedirector;
@@ -93,8 +94,9 @@ public class TileEntityEnderTransmitter extends TileEntityEnder implements IInve
 	private int clientRenderMessage = 0; // 1 - spawn particles
 	
 	protected void sendToReceiver() {
-		if(EnderRedirector.receive(address, inventory[0])) {
-			this.setInventorySlotContents(0, null);
+		HTTPResponse response = EnderRedirector.receive(address, inventory[0]);
+		if(response.success) {
+			this.decrStackSize(0, response.amountSent);
 			this.isReceiveable = updateReceive();
 			this.clientRenderMessage = 1;
 		} else this.isReceiveable = false;
@@ -221,7 +223,7 @@ public class TileEntityEnderTransmitter extends TileEntityEnder implements IInve
 	@Override
 	public void openChest() {
 		this.worldObj.markBlockForUpdate(xCoord, yCoord, zCoord);
-		EnderNet.log.info("My id is " + this.enderNetID);
+		//EnderNet.log.info("My id is " + this.enderNetID);
 	}
 
 	@Override
@@ -313,10 +315,7 @@ public class TileEntityEnderTransmitter extends TileEntityEnder implements IInve
 	// COMPUTERCRAFT COMPATIBILITY BEGIN
 	@Override
 	public String[] getMethodNames() {
-		String[] names = new String[3];
-		names[0] = "getAddress";
-		names[1] = "setAddress";
-		names[2] = "send";
+		String[] names = new String[]{ "getAddress", "setAddress", "getID", "send", "hasItem", "canSendItem" };
 		return names;
 	}
 	
@@ -328,9 +327,9 @@ public class TileEntityEnderTransmitter extends TileEntityEnder implements IInve
 	@Override
 	public Object[] callMethod(IComputerAccess computer, ILuaContext context,
 			int method, Object[] arguments) throws Exception {
-		if(method < 2) return super.callMethod(computer, context, method, arguments);
+		if(method < 3) return super.callMethod(computer, context, method, arguments);
 		else switch(method) {
-			case 2: // send
+			case 3: // send
 				if(arguments.length == 2) {
 					if(!(arguments[0] instanceof String) && !(arguments[1] instanceof String)) return null;
 					sendString((String)arguments[0], (String)arguments[1]);
@@ -339,6 +338,14 @@ public class TileEntityEnderTransmitter extends TileEntityEnder implements IInve
 					sendString((String)arguments[0]);
 				}
 				break;
+			case 4: { // hasItem
+				Boolean[] output = new Boolean[1];
+				output[0] = inventory[0] != null && inventory[0].stackSize > 0;
+				return output; }
+			case 5: { // canSendItem
+				Boolean[] output = new Boolean[1];
+				output[0] = canReceive();
+				return output; }
 		}
 		return null;
 	}

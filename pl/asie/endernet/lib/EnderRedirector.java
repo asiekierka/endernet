@@ -6,6 +6,7 @@ import pl.asie.endernet.EnderNet;
 import pl.asie.endernet.api.IEnderStringReceiver;
 import pl.asie.endernet.block.TileEntityEnderReceiver;
 import pl.asie.endernet.http.HTTPClient;
+import pl.asie.endernet.http.HTTPResponse;
 import net.minecraft.item.ItemStack;
 import net.minecraft.tileentity.TileEntity;
 
@@ -42,22 +43,23 @@ public class EnderRedirector {
 		}
 	}
 	
-	public static boolean receive(String address, ItemStack stack) {
+	public static HTTPResponse receive(String address, ItemStack stack) {
 		try {
 			if(isLocal(getServerName(address))) {
 				if(new EnderID(stack).isReceiveable()) {
 					TileEntity entity = EnderNet.registry.getTileEntity(getServerEnderID(address));
-					if(entity == null || !(entity instanceof TileEntityEnderReceiver)) return false;
-					return ((TileEntityEnderReceiver)entity).receiveItem(new EnderID(stack));
-				} else return false;
+					if(entity == null || !(entity instanceof TileEntityEnderReceiver)) return new HTTPResponse(false);
+					int amountSent = ((TileEntityEnderReceiver)entity).receiveItem(new EnderID(stack));
+					return new HTTPResponse(amountSent > 0, amountSent);
+				} else return new HTTPResponse(false);
 			} else {
 				String serverName = getServerName(address);
 				String serverAddress = EnderNet.servers.getAddress(serverName);
-				if(serverAddress == null) return false;
+				if(serverAddress == null) return new HTTPResponse(false);
 				return HTTPClient.receive(serverAddress, getServerEnderID(address), new EnderID(stack));
 			}
 		} catch(Exception e) {
-			return false;
+			return new HTTPResponse(false);
 		}
 	}
 	

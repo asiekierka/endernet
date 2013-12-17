@@ -179,7 +179,8 @@ public class EnderNet {
 		LanguageRegistry.instance().addStringLocalization("command.endernet.info", "Gives you dev information on the currently held inventory item.");
 		LanguageRegistry.instance().addStringLocalization("command.endernet.reload", "Reloads the endernet-servers.json file.");
 		LanguageRegistry.instance().addStringLocalization("command.endernet.reload.success", "Successfully reloaded!");
-
+		LanguageRegistry.instance().addStringLocalization("command.endernet.reload.failure", "Failed to reload!");
+		
 		GameRegistry.addRecipe(new ItemStack(enderTransmitter, 1), "odo", "ded", "odo", 'd', new ItemStack(Item.diamond, 1), 'e', new ItemStack(Item.enderPearl, 1), 'o', new ItemStack(Item.redstone, 1));
 		GameRegistry.addRecipe(new ItemStack(enderTransmitter, 1), "dod", "oeo", "dod", 'd', new ItemStack(Item.diamond, 1), 'e', new ItemStack(Item.enderPearl, 1), 'o', new ItemStack(Item.redstone, 1));
 		GameRegistry.addRecipe(new ItemStack(enderReceiver, 1), "odo", "ded", "odo", 'd', new ItemStack(Item.diamond, 1), 'e', new ItemStack(Item.enderPearl, 1), 'o', new ItemStack(Item.dyePowder, 1, 4));
@@ -220,12 +221,14 @@ public class EnderNet {
         saveServerFile();
 	}
 	
-	public void reloadServerFile() {
+	public boolean reloadServerFile() {
 		if(serverFile.exists()) {
+			if(!servers.loadFromJSON(serverFile, true)) return false;
 			servers.clear();
-			servers.loadFromJSON(serverFile);
+			return servers.loadFromJSON(serverFile);
 		} else {
 			servers.saveToJSON(serverFile);
+			return true;
 		}
 	}
 	
