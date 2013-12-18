@@ -1,5 +1,6 @@
 package pl.asie.endernet.block;
 
+import buildcraft.api.transport.IPipeTile;
 import dan200.computer.api.IComputerAccess;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.inventory.IInventory;
@@ -78,6 +79,11 @@ public class TileEntityEnderReceiver extends TileEntityEnder implements IEnderSt
 				IItemConduit conduit = (IItemConduit)entity;
 				ForgeDirection from = ForgeDirection.getOrientation(opposite(side));
 				stack = conduit.insertItem(from, stack, false);
+			} else if(entity instanceof IPipeTile) { // BC compatibility
+				IPipeTile pipe = (IPipeTile)entity;
+				ForgeDirection from = ForgeDirection.getOrientation(opposite(side));
+				int received = pipe.injectItem(stack, true, from);
+				stack.stackSize -= received;
 			} else if(entity instanceof IInventory) {
 				IInventory inv = (IInventory)entity;
 				for(int slot = 0; slot < inv.getSizeInventory(); slot++) {

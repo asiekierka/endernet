@@ -1,3 +1,6 @@
+beta3:
++ Add BuildCraft pipe support for Receivers!
+
 beta2:
 + Add "getID" to the ComputerCraft APIs, to get the ID of the current device.
 + Add "hasItem" and "canSendItem" to ComputerCraft Ender Transmitter API - that way you can automate item sending better.
