@@ -56,7 +56,7 @@ import net.minecraftforge.common.DimensionManager;
 import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.common.Property;
 
-@Mod(modid="endernet", name="EnderNet", version="0.1.1")
+@Mod(modid="endernet", name="EnderNet", version="0.1.2")
 @NetworkMod(channels={"EnderNet"}, clientSideRequired=true, packetHandler=NetworkHandler.class)
 public class EnderNet {
 	public Configuration config;
@@ -87,7 +87,7 @@ public class EnderNet {
 	private static boolean treatBlacklistAsWhitelist;
 	
 	private static ArrayList<Integer> blacklistedItems;
-	
+	private static ArrayList<Integer> whitelistedDimensions;
 	private File serverFile;
 	
 	@EventHandler
@@ -122,12 +122,21 @@ public class EnderNet {
 		blacklistedItems.comment = "Comma-separated IDs of blocks and items that should be blacklisted. For example: 42,46";
 		parseBlacklistedItems(blacklistedItems.getString());
 		
-		treatBlacklistAsWhitelist = config.get("comm", "useBlacklistAsWhitelist", false).getBoolean(false);
+		Property whitelistedDimensions = config.get("comm", "whitelistedDimensions", "");
+		whitelistedDimensions.comment = "Comma-separated IDs of whitelisted dimensions. If empty, all dimensions are whitelisted.";
+		parseWhitelistedDimensions(whitelistedDimensions.getString());
+		
+		treatBlacklistAsWhitelist = config.get("comm", "blacklistedItemsAsWhiteList", false).getBoolean(false);
 	}
 	
 	public static boolean isItemBlacklisted(int id) {
 		boolean contained = blacklistedItems.contains(id);
 		return treatBlacklistAsWhitelist ? !contained : contained;
+	}
+	
+	public static boolean isDimensionBlacklisted(int id) {
+		if(whitelistedDimensions.size() == 0) return false;
+		else return !whitelistedDimensions.contains(id);
 	}
 	
 	private void parseBlacklistedItems(String s) {
@@ -153,6 +162,18 @@ public class EnderNet {
 		}
 	}
 
+	private void parseWhitelistedDimensions(String s) {
+		whitelistedDimensions = new ArrayList<Integer>();
+		String[] dims = s.split(",");
+		for(String dim: dims) {
+			try {
+				whitelistedDimensions.add(new Integer(dim.trim()).intValue());
+			} catch(NumberFormatException e) {
+				
+			}
+		}
+	}
+	
 	@EventHandler
 	public void serverLoad(FMLServerStartingEvent event)
 	{

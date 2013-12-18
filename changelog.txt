@@ -1,5 +1,6 @@
 beta3:
 + Add BuildCraft pipe support for Receivers!
++ Add the ability to whitelist dimensions.
 
 beta2:
 + Add "getID" to the ComputerCraft APIs, to get the ID of the current device.

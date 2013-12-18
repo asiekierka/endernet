@@ -85,10 +85,12 @@ public class TileEntityEnderTransmitter extends TileEntityEnder implements IInve
 		return isReceiveable;
 	}
 	
-	private boolean updateReceive() {
+	private boolean updateReceive(boolean checkRemotely) {
+		if(EnderNet.isDimensionBlacklisted(this.worldObj.provider.dimensionId)) return false;
 		if(inventory[0] == null) return true; // I can always receive air, you know... :3
 		if(this.worldObj.isRemote) return true; // No pinging on the client
-		return EnderRedirector.canReceive(address, inventory[0]);
+		if(checkRemotely) return EnderRedirector.canReceive(address, inventory[0]);
+		else return isReceiveable;
 	}
 	
 	private int clientRenderMessage = 0; // 1 - spawn particles
@@ -97,7 +99,7 @@ public class TileEntityEnderTransmitter extends TileEntityEnder implements IInve
 		HTTPResponse response = EnderRedirector.receive(address, inventory[0]);
 		if(response.success) {
 			this.decrStackSize(0, response.amountSent);
-			this.isReceiveable = updateReceive();
+			this.isReceiveable = updateReceive(true);
 			this.clientRenderMessage = 1;
 		} else this.isReceiveable = false;
 		this.worldObj.markBlockForUpdate(xCoord, yCoord, zCoord);
@@ -115,7 +117,7 @@ public class TileEntityEnderTransmitter extends TileEntityEnder implements IInve
         public void run() {
             if(action == 1) entity.sendToReceiver();
             else if(action == 2) {
-            	entity.isReceiveable = entity.updateReceive();
+            	entity.isReceiveable = entity.updateReceive(true);
             	entity.worldObj.markBlockForUpdate(xCoord, yCoord, zCoord);
             	entity.startSending = true;
             }
@@ -222,8 +224,8 @@ public class TileEntityEnderTransmitter extends TileEntityEnder implements IInve
 
 	@Override
 	public void openChest() {
+        this.updateReceive(false); // Fix the possibility of blacklisted dim not showing
 		this.worldObj.markBlockForUpdate(xCoord, yCoord, zCoord);
-		//EnderNet.log.info("My id is " + this.enderNetID);
 	}
 
 	@Override
