@@ -2,6 +2,7 @@ package pl.asie.endernet.lib;
 
 import net.minecraft.inventory.IInventory;
 import net.minecraft.inventory.Slot;
+import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.tileentity.TileEntityFurnace;
 
@@ -11,11 +12,7 @@ public class SlotEnergy extends Slot {
 	}
 	
 	public static boolean isValid(ItemStack stack) {
-		if(TileEntityFurnace.getItemBurnTime(stack) == 0) {
-			// TODO: check for batteries and stuff
-			return false;
-		}
-		return true;
+		return (stack.getItem() == Item.enderPearl || stack.getItem() == Item.eyeOfEnder);
 	}
 
 	@Override

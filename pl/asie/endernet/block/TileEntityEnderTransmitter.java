@@ -7,6 +7,7 @@ import pl.asie.endernet.http.HTTPResponse;
 import pl.asie.endernet.lib.BlockConversionException;
 import pl.asie.endernet.lib.EnderID;
 import pl.asie.endernet.lib.EnderRedirector;
+import pl.asie.endernet.lib.EnderServer;
 import pl.asie.endernet.lib.SlotEnergy;
 import cpw.mods.fml.client.FMLClientHandler;
 import dan200.computer.api.IComputerAccess;
@@ -23,7 +24,11 @@ import net.minecraft.network.packet.Packet132TileEntityData;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.tileentity.TileEntityFurnace;
 
-public class TileEntityEnderTransmitter extends TileEntityEnder implements IInventory {
+public class TileEntityEnderTransmitter extends TileEntityEnderModem implements IInventory {
+	public TileEntityEnderTransmitter() {
+		super(false, true); // transmit only
+	}
+	
 	protected ItemStack[] inventory = new ItemStack[2];
 	
 	@Override
@@ -124,19 +129,6 @@ public class TileEntityEnderTransmitter extends TileEntityEnder implements IInve
         }
     }
 	
-	private class StringSendThread extends Thread {
-        private String address, text;
-        
-        StringSendThread(String address, String text) {
-            this.address = address;
-            this.text = text;
-        }
-
-        public void run() {
-        	EnderRedirector.sendString(address, text);
-        }
-    }
-
 	private ReceiveThread rt = null;
 	
 	@Override
@@ -305,16 +297,8 @@ public class TileEntityEnderTransmitter extends TileEntityEnder implements IInve
 		this.progress = i;
 	}
 	
-	public void sendString(String address, String s) {
-		StringSendThread sst = new StringSendThread(address, s);
-		sst.start();
-	}
+	// ComputerCraft compat begin
 	
-	public void sendString(String s) {
-		sendString(address, s);
-	}
-	
-	// COMPUTERCRAFT COMPATIBILITY BEGIN
 	@Override
 	public String[] getMethodNames() {
 		String[] names = new String[]{ "getAddress", "setAddress", "getID", "send", "hasItem", "canSendItem" };
@@ -322,24 +306,10 @@ public class TileEntityEnderTransmitter extends TileEntityEnder implements IInve
 	}
 	
 	@Override
-	public String getType() {
-		return "endernet_transmitter";
-	}
-	
-	@Override
 	public Object[] callMethod(IComputerAccess computer, ILuaContext context,
 			int method, Object[] arguments) throws Exception {
-		if(method < 3) return super.callMethod(computer, context, method, arguments);
+		if(method < 4) return super.callMethod(computer, context, method, arguments);
 		else switch(method) {
-			case 3: // send
-				if(arguments.length == 2) {
-					if(!(arguments[0] instanceof String) && !(arguments[1] instanceof String)) return null;
-					sendString((String)arguments[0], (String)arguments[1]);
-				} else if(arguments.length == 1) {
-					if(!(arguments[0] instanceof String)) return null;
-					sendString((String)arguments[0]);
-				}
-				break;
 			case 4: { // hasItem
 				Boolean[] output = new Boolean[1];
 				output[0] = inventory[0] != null && inventory[0].stackSize > 0;

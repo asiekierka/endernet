@@ -2,6 +2,7 @@ package pl.asie.endernet.block;
 
 import buildcraft.api.transport.IPipeTile;
 import dan200.computer.api.IComputerAccess;
+import dan200.computer.api.ILuaContext;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.inventory.IInventory;
 import net.minecraft.inventory.ISidedInventory;
@@ -13,7 +14,11 @@ import pl.asie.endernet.api.IEnderStringReceiver;
 import pl.asie.endernet.lib.EnderID;
 import pl.asie.endernet.lib.EnderServer;
 
-public class TileEntityEnderReceiver extends TileEntityEnder implements IEnderStringReceiver, IInventory {
+public class TileEntityEnderReceiver extends TileEntityEnderModem implements IEnderStringReceiver, IInventory {
+	public TileEntityEnderReceiver() {
+		super(true, false); // receive only
+	}
+	
 	private static final int[][] DIRECTIONS = {
 		{0, -1, 0}, {0, 1, 0}, {0, 0, -1}, {0, 0, 1}, {-1, 0, 0}, {1, 0, 0}
 	};
@@ -93,21 +98,6 @@ public class TileEntityEnderReceiver extends TileEntityEnder implements IEnderSt
 		}
 		int amountPost = stack != null ? stack.stackSize : 0;
 		return amountPre - amountPost;
-	}
-
-	// COMPUTERCRAFT COMPATIBILITY BEGIN
-	
-	@Override
-	public boolean receiveString(EnderServer server, String string) {
-		if(super.computers.size() == 0) return false;
-		for(IComputerAccess computer: super.computers) {
-			Object[] arguments = new Object[3];
-			arguments[0] = (server != null ? server.name : "unknown");
-			arguments[1] = string;
-			arguments[2] = computer.getAttachmentName();
-			computer.queueEvent("endernet_message", arguments);
-		}
-		return true;
 	}
 	
 	@Override

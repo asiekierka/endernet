@@ -1,8 +1,10 @@
 beta3:
++ Add Ender Modems! They are far cheaper CC-message-only transceivers.
 + Add BuildCraft pipe support for Receivers!
 + Add the ability to whitelist dimensions.
 + Add "registerURIHandler" (String: class name) to register an IURIHandler via IMC.
 * Refactored IURIHandler to require far less boilerplate code.
+* The energy slot now takes Ender Pearls and Eyes of Ender. (Still not implemented)
 
 beta2:
 + Add "getID" to the ComputerCraft APIs, to get the ID of the current device.

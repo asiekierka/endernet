@@ -28,6 +28,7 @@ public class EnderRedirector {
 			return false;
 		}
 	}
+	
 	public static boolean canReceive(String address, ItemStack stack) {
 		try {
 			if(isLocal(getServerName(address))) {
