@@ -198,6 +198,7 @@ public class EnderNet {
 		
 		LanguageRegistry.instance().addStringLocalization("tile.endernet.enderTransmitter.name", "Ender Transmitter");
 		LanguageRegistry.instance().addStringLocalization("tile.endernet.enderReceiver.name", "Ender Receiver");
+		LanguageRegistry.instance().addStringLocalization("tile.endernet.enderModem.name", "Ender Modem");
 		LanguageRegistry.instance().addStringLocalization("command.endernet.info", "Gives you dev information on the currently held inventory item.");
 		LanguageRegistry.instance().addStringLocalization("command.endernet.reload", "Reloads the endernet-servers.json file.");
 		LanguageRegistry.instance().addStringLocalization("command.endernet.reload.success", "Successfully reloaded!");
