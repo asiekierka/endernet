@@ -4,6 +4,8 @@ import java.io.IOException;
 import java.util.HashMap;
 import java.util.Map;
 
+import com.google.gson.Gson;
+
 import pl.asie.endernet.EnderNet;
 import pl.asie.endernet.api.IURIHandler;
 import fi.iki.elonen.NanoHTTPD;
@@ -31,7 +33,16 @@ public class EnderHTTPServer extends NanoHTTPD {
 			if(!EnderNet.servers.canReceive(address, handler.getPermissionName())) {
 				return new Response(Response.Status.FORBIDDEN, MIME_PLAINTEXT, "NNOPE");
 			} else {
-				return handler.serve(session);
+				Map<String, String> params = session.getParms();
+				String[] requiredParams = handler.getRequiredParams();
+				if(requiredParams != null) for(String param: requiredParams) {
+					if(!params.containsKey(param)) {
+						return new Response(Response.Status.BAD_REQUEST, MIME_PLAINTEXT, "Key " + param + " missing!");
+					}
+				}
+				Gson gson = new Gson();
+				params.put("remoteServer", EnderNet.servers.findByAddress(address).name);
+				return new Response(Response.Status.OK, MIME_PLAINTEXT, gson.toJson(handler.serve(params)));
 			}
 		}
         return new Response(Response.Status.NOT_FOUND, MIME_PLAINTEXT, "URI " + session.getUri() + " not found!");

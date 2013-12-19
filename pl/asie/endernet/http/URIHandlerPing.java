@@ -1,5 +1,7 @@
 package pl.asie.endernet.http;
 
+import java.util.Map;
+
 import pl.asie.endernet.api.IURIHandler;
 import fi.iki.elonen.NanoHTTPD;
 import fi.iki.elonen.NanoHTTPD.IHTTPSession;
@@ -8,8 +10,8 @@ import fi.iki.elonen.NanoHTTPD.Response;
 
 public class URIHandlerPing implements IURIHandler {
 	@Override
-	public Response serve(IHTTPSession session) {
-		return new Response(Response.Status.OK, NanoHTTPD.MIME_PLAINTEXT, "PONG");
+	public Object serve(Map<String, String> params) {
+		return "Pong!";
 	}
 
 	@Override
@@ -20,5 +22,10 @@ public class URIHandlerPing implements IURIHandler {
 	@Override
 	public String getURI() {
 		return "/ping";
+	}
+
+	@Override
+	public String[] getRequiredParams() {
+		return new String[0];
 	}
 }

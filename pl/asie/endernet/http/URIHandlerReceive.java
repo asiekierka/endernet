@@ -20,17 +20,9 @@ import fi.iki.elonen.NanoHTTPD.Method;
 import fi.iki.elonen.NanoHTTPD.Response;
 
 public class URIHandlerReceive implements IURIHandler {
-	public String actuallyServe(IHTTPSession session) {
+	@Override
+	public Object serve(Map<String, String> params) {
 		String fail = new HTTPResponse(false).toJson();
-		Map<String, String> params = session.getParms();
-		if(!params.containsKey("object")) {
-			EnderNet.log.info("/receive did not contain object!");
-			return fail;
-		}
-		if(!params.containsKey("target")) {
-			EnderNet.log.info("/receive did not contain target ID!");
-			return fail;
-		}
 		Gson gson = new Gson();
 		EnderID block = gson.fromJson(params.get("object"), EnderID.class);
 		if(!block.isReceiveable()) return fail;
@@ -43,14 +35,6 @@ public class URIHandlerReceive implements IURIHandler {
 	}
 	
 	@Override
-	public Response serve(IHTTPSession session) {
-		try {
-			session.parseBody(null);
-		} catch(Exception e) { e.printStackTrace(); }
-		return new Response(Response.Status.OK, NanoHTTPD.MIME_PLAINTEXT, actuallyServe(session));
-	}
-	
-	@Override
 	public String getPermissionName() {
 		return "item";
 	}
@@ -58,5 +42,10 @@ public class URIHandlerReceive implements IURIHandler {
 	@Override
 	public String getURI() {
 		return "/receive";
+	}
+	
+	@Override
+	public String[] getRequiredParams() {
+		return new String[]{"object", "target"};
 	}
 }

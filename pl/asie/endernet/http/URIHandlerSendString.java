@@ -22,32 +22,15 @@ import fi.iki.elonen.NanoHTTPD.Method;
 import fi.iki.elonen.NanoHTTPD.Response;
 
 public class URIHandlerSendString implements IURIHandler {
-	public boolean actuallyServe(IHTTPSession session) {
-		Map<String, String> params = session.getParms();
-		if(!params.containsKey("string")) {
-			EnderNet.log.info("/sendString did not contain string!");
-			return false;
-		}
-		if(!params.containsKey("target")) {
-			EnderNet.log.info("/sendString did not contain target ID!");
-			return false;
-		}
+	public Object serve(Map<String, String> params) {
 		int target = new Integer(params.get("target")).intValue();
 		TileEntity entity = EnderNet.registry.getTileEntity(target);
 		if(entity == null || !(entity instanceof IEnderStringReceiver)) return false;
 		IEnderStringReceiver receiver = (IEnderStringReceiver)entity;
-		EnderServer server = EnderNet.servers.findByAddress(session.getHeaders().get("remote-addr"));
+		EnderServer server = EnderNet.servers.get(params.get("remoteServer"));
 		return receiver.receiveString(server, params.get("string"));
 	}
 	
-	@Override
-	public Response serve(IHTTPSession session) {
-		try {
-			session.parseBody(null);
-		} catch(Exception e) { e.printStackTrace(); }
-		return new Response(Response.Status.OK, NanoHTTPD.MIME_PLAINTEXT, new HTTPResponse(actuallyServe(session)).toJson());
-	}
-
 	@Override
 	public String getPermissionName() {
 		return "message";
@@ -56,5 +39,10 @@ public class URIHandlerSendString implements IURIHandler {
 	@Override
 	public String getURI() {
 		return "/sendString";
+	}
+	
+	@Override
+	public String[] getRequiredParams() {
+		return new String[]{"string", "target"};
 	}
 }

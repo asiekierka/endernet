@@ -15,23 +15,10 @@ import fi.iki.elonen.NanoHTTPD.Response;
 
 public class URIHandlerCanReceive implements IURIHandler {
 
-	public boolean actuallyServe(IHTTPSession session) {
-		Map<String, String> params = session.getParms();
-		if(!params.containsKey("object")) {
-			EnderNet.log.info("/canReceive did not contain object!");
-			return false;
-		}
+	public Object serve(Map<String, String> params) {
 		Gson gson = new Gson();
 		EnderID block = gson.fromJson(params.get("object"), EnderID.class);
-		return block.isReceiveable();
-	}
-	
-	@Override
-	public Response serve(IHTTPSession session) {
-		try {
-			session.parseBody(null);
-		} catch(Exception e) { e.printStackTrace(); }
-		return new Response(Response.Status.OK, NanoHTTPD.MIME_PLAINTEXT, new HTTPResponse(actuallyServe(session)).toJson());
+		return new HTTPResponse(block.isReceiveable());
 	}
 
 	@Override
@@ -42,5 +29,10 @@ public class URIHandlerCanReceive implements IURIHandler {
 	@Override
 	public String getURI() {
 		return "/canReceive";
+	}
+	
+	@Override
+	public String[] getRequiredParams() {
+		return new String[]{"object"};
 	}
 }
