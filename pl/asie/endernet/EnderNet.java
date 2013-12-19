@@ -7,6 +7,7 @@ import java.util.logging.Logger;
 
 import com.google.common.collect.ImmutableList;
 
+import pl.asie.endernet.api.IURIHandler;
 import pl.asie.endernet.block.BlockEnderReceiver;
 import pl.asie.endernet.block.BlockEnderTransmitter;
 import pl.asie.endernet.block.TileEntityEnder;
@@ -223,6 +224,15 @@ public class EnderNet {
 			}
 			if(msg.key.equals("BlacklistItem")) {
 				EnderID.blacklistedItems.add(EnderID.getItemIdentifierFor(msg.getItemStackValue()));
+			}
+			if(msg.key.equals("RegisterURIHandler")) {
+				try {
+					Class handlerClass = this.getClass().getClassLoader().loadClass(msg.getStringValue());
+					httpServer.registerHandler((IURIHandler)handlerClass.newInstance());
+				} catch(Exception e) {
+					e.printStackTrace();
+					log.severe("Could not load handler " + msg.getStringValue() + "!");
+				}
 			}
 		}
 	}

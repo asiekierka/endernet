@@ -1,6 +1,8 @@
 beta3:
 + Add BuildCraft pipe support for Receivers!
 + Add the ability to whitelist dimensions.
++ Add "registerURIHandler" (String: class name) to register an IURIHandler via IMC.
+* Refactored IURIHandler to require far less boilerplate code.
 
 beta2:
 + Add "getID" to the ComputerCraft APIs, to get the ID of the current device.
