@@ -3,6 +3,7 @@ beta3:
 + Add BuildCraft pipe support for Receivers!
 + Add the ability to whitelist dimensions.
 + Add "registerURIHandler" (String: class name) to register an IURIHandler via IMC.
++ Add the "disableCraftingRecipes" config option.
 * Refactored IURIHandler to require far less boilerplate code.
 * The energy slot now takes Ender Pearls and Eyes of Ender. (Still not implemented)
 

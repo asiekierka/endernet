@@ -203,10 +203,12 @@ public class EnderNet {
 		LanguageRegistry.instance().addStringLocalization("command.endernet.reload.success", "Successfully reloaded!");
 		LanguageRegistry.instance().addStringLocalization("command.endernet.reload.failure", "Failed to reload!");
 		
-		GameRegistry.addRecipe(new ItemStack(enderTransmitter, 1), "odo", "ded", "odo", 'd', new ItemStack(Item.diamond, 1), 'e', new ItemStack(Item.enderPearl, 1), 'o', new ItemStack(Item.redstone, 1));
-		GameRegistry.addRecipe(new ItemStack(enderTransmitter, 1), "dod", "oeo", "dod", 'd', new ItemStack(Item.diamond, 1), 'e', new ItemStack(Item.enderPearl, 1), 'o', new ItemStack(Item.redstone, 1));
-		GameRegistry.addRecipe(new ItemStack(enderReceiver, 1), "odo", "ded", "odo", 'd', new ItemStack(Item.diamond, 1), 'e', new ItemStack(Item.enderPearl, 1), 'o', new ItemStack(Item.dyePowder, 1, 4));
-		GameRegistry.addRecipe(new ItemStack(enderReceiver, 1), "dod", "oeo", "dod", 'd', new ItemStack(Item.diamond, 1), 'e', new ItemStack(Item.enderPearl, 1), 'o', new ItemStack(Item.dyePowder, 1, 4));
+		if(!config.get("misc", "disableCraftingRecipes", false).getBoolean(false)) {
+			GameRegistry.addRecipe(new ItemStack(enderTransmitter, 1), "odo", "ded", "odo", 'd', new ItemStack(Item.diamond, 1), 'e', new ItemStack(Item.enderPearl, 1), 'o', new ItemStack(Item.redstone, 1));
+			GameRegistry.addRecipe(new ItemStack(enderTransmitter, 1), "dod", "oeo", "dod", 'd', new ItemStack(Item.diamond, 1), 'e', new ItemStack(Item.enderPearl, 1), 'o', new ItemStack(Item.redstone, 1));
+			GameRegistry.addRecipe(new ItemStack(enderReceiver, 1), "odo", "ded", "odo", 'd', new ItemStack(Item.diamond, 1), 'e', new ItemStack(Item.enderPearl, 1), 'o', new ItemStack(Item.dyePowder, 1, 4));
+			GameRegistry.addRecipe(new ItemStack(enderReceiver, 1), "dod", "oeo", "dod", 'd', new ItemStack(Item.diamond, 1), 'e', new ItemStack(Item.enderPearl, 1), 'o', new ItemStack(Item.dyePowder, 1, 4));
+		}
 		
 		config.save();
 	}
