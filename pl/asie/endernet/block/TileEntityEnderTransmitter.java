@@ -86,12 +86,12 @@ public class TileEntityEnderTransmitter extends TileEntityEnderModem implements 
 	private boolean isReceiveable = true;
 	private boolean startSending = true;
 	
-	public boolean canReceive() {
+	public boolean canSendItem() {
 		return isReceiveable;
 	}
 	
-	private boolean updateReceive(boolean checkRemotely) {
-		if(EnderNet.isDimensionBlacklisted(this.worldObj.provider.dimensionId)) return false;
+	private boolean updateItemSendAbility(boolean checkRemotely) {
+		if(!this.canTransmit()) return false;
 		if(inventory[0] == null) return true; // I can always receive air, you know... :3
 		if(this.worldObj.isRemote) return true; // No pinging on the client
 		if(checkRemotely) return EnderRedirector.canReceive(address, inventory[0]);
@@ -104,7 +104,7 @@ public class TileEntityEnderTransmitter extends TileEntityEnderModem implements 
 		HTTPResponse response = EnderRedirector.receive(address, inventory[0]);
 		if(response.success) {
 			this.decrStackSize(0, response.amountSent);
-			this.isReceiveable = updateReceive(true);
+			this.isReceiveable = updateItemSendAbility(true);
 			this.clientRenderMessage = 1;
 		} else this.isReceiveable = false;
 		this.worldObj.markBlockForUpdate(xCoord, yCoord, zCoord);
@@ -122,7 +122,7 @@ public class TileEntityEnderTransmitter extends TileEntityEnderModem implements 
         public void run() {
             if(action == 1) entity.sendToReceiver();
             else if(action == 2) {
-            	entity.isReceiveable = entity.updateReceive(true);
+            	entity.isReceiveable = entity.updateItemSendAbility(true);
             	entity.worldObj.markBlockForUpdate(xCoord, yCoord, zCoord);
             	entity.startSending = true;
             }
@@ -134,8 +134,8 @@ public class TileEntityEnderTransmitter extends TileEntityEnderModem implements 
 	@Override
 	public void updateEntity() {
 		super.updateEntity();
-		if(!canReceive()) progress = 0;
-		if(inventory[0] != null && startSending && canReceive()) {
+		if(!canSendItem()) progress = 0;
+		if(inventory[0] != null && startSending && canSendItem()) {
 			if(progress < getMaxProgress()) {
 				progress++;
 			} else { // Finished
@@ -216,7 +216,7 @@ public class TileEntityEnderTransmitter extends TileEntityEnderModem implements 
 
 	@Override
 	public void openChest() {
-        this.updateReceive(false); // Fix the possibility of blacklisted dim not showing
+        this.updateItemSendAbility(false); // Fix the possibility of blacklisted dim not showing
 		this.worldObj.markBlockForUpdate(xCoord, yCoord, zCoord);
 	}
 
@@ -229,7 +229,7 @@ public class TileEntityEnderTransmitter extends TileEntityEnderModem implements 
 	}
 
 	private void writeNBTProgress(NBTTagCompound tagCompound) {
-		tagCompound.setBoolean("r", canReceive());
+		tagCompound.setBoolean("r", canSendItem());
 		tagCompound.setShort("p", (short)progress);
 	}
 	
@@ -316,7 +316,7 @@ public class TileEntityEnderTransmitter extends TileEntityEnderModem implements 
 				return output; }
 			case 7: { // canSendItem
 				Boolean[] output = new Boolean[1];
-				output[0] = canReceive();
+				output[0] = canSendItem();
 				return output; }
 		}
 		return null;

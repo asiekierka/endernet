@@ -46,6 +46,14 @@ public class TileEntityEnder extends TileEntity implements IPeripheral {
 		writeNBTEnderData(tagCompound);
 	}
 	
+	public boolean canTransmit() {
+		return EnderNet.isDimensionBlacklisted(this.worldObj.provider.dimensionId);
+	}
+	
+	public boolean canReceive() {
+		return EnderNet.isDimensionBlacklisted(this.worldObj.provider.dimensionId);
+	}
+	
 	// COMPUTERCRAFT COMPATIBILITY BEGIN
 	HashSet<IComputerAccess> computers = new HashSet<IComputerAccess>();
 	
@@ -56,7 +64,7 @@ public class TileEntityEnder extends TileEntity implements IPeripheral {
 	
 	@Override
 	public String[] getMethodNames() {
-		String[] names = new String[]{"getAddress", "setAddress", "getID", "canReceive"};
+		String[] names = new String[]{"getAddress", "setAddress", "getID", "canReceive", "canTransmit"};
 		return names;
 	}
 	
@@ -78,7 +86,11 @@ public class TileEntityEnder extends TileEntity implements IPeripheral {
 				return out; }
 			case 3: { // canReceive
 				Boolean[] out = new Boolean[1];
-				out[0] = EnderNet.isDimensionBlacklisted(this.worldObj.provider.dimensionId);
+				out[0] = canReceive();
+				return out; }
+			case 4: { // canTransmit
+				Boolean[] out = new Boolean[1];
+				out[0] = canTransmit();
 				return out; }
 		}
 		return null;

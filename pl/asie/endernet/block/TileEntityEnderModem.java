@@ -51,6 +51,16 @@ public class TileEntityEnderModem extends TileEntityEnder implements IEnderStrin
 		sendString(address, s);
 	}
 	
+	@Override
+	public boolean canTransmit() {
+		return CAN_TRANSMIT_MODEM ? super.canTransmit() : false;
+	}
+	
+	@Override
+	public boolean canReceive() {
+		return CAN_RECEIVE_MODEM ? super.canReceive() : false;
+	}
+	
 	// COMPUTERCRAFT COMPATIBILITY BEGIN
 	@Override
 	public String[] getMethodNames() {
@@ -63,19 +73,10 @@ public class TileEntityEnderModem extends TileEntityEnder implements IEnderStrin
 	@Override
 	public Object[] callMethod(IComputerAccess computer, ILuaContext context,
 			int method, Object[] arguments) throws Exception {
-		if(method < 3) return super.callMethod(computer, context, method, arguments);
+		if(method < 5) return super.callMethod(computer, context, method, arguments);
 		else switch(method) {
-			case 3: { // canReceive
-				if(CAN_RECEIVE_MODEM) return super.callMethod(computer, context, method, arguments);
-				Boolean[] out = new Boolean[1];
-				out[0] = false;
-				return out; }
-			case 4: { // canTransmit
-				Boolean[] out = new Boolean[1];
-				out[0] = CAN_TRANSMIT_MODEM;
-				return out; }
 			case 5: // send
-				if(!CAN_TRANSMIT_MODEM) return null;
+				if(!canTransmit()) return null;
 				if(arguments.length == 2) {
 					if(!(arguments[0] instanceof String) && !(arguments[1] instanceof String)) return null;
 					sendString((String)arguments[0], (String)arguments[1]);
@@ -90,7 +91,7 @@ public class TileEntityEnderModem extends TileEntityEnder implements IEnderStrin
 	
 	@Override
 	public boolean receiveString(EnderServer server, String string) {
-		if(!CAN_RECEIVE_MODEM || super.computers.size() == 0) return false;
+		if(!canReceive() || super.computers.size() == 0) return false;
 		for(IComputerAccess computer: super.computers) {
 			Object[] arguments = new Object[3];
 			arguments[0] = (server != null ? server.name : "unknown");

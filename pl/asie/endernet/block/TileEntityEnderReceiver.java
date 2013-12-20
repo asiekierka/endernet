@@ -61,6 +61,7 @@ public class TileEntityEnderReceiver extends TileEntityEnderModem implements IEn
 	}
 	
 	public int receiveItem(EnderID item) {
+		if(!canReceive()) return 0;
 		ItemStack stack = item.createItemStack();
 		if(stack == null) return 0;
 		int amountPre = stack.stackSize;
