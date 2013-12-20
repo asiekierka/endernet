@@ -84,7 +84,7 @@ public class EnderServerManager {
 		} catch(Exception e) { e.printStackTrace(); return null; }
 	}
 	
-	public boolean canReceive(String remoteAddr, String permission) {
+	public boolean canReceiveFrom(String remoteAddr, String permission) {
 		if(permission == null || permission.equals("") || permission.equals("none")) return true;
 		if(remoteAddr.equals("127.0.0.1") || !EnderNet.onlyAllowDefined) return true;
 		EnderServer es = findByAddress(remoteAddr);

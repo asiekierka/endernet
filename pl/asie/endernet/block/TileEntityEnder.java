@@ -56,7 +56,7 @@ public class TileEntityEnder extends TileEntity implements IPeripheral {
 	
 	@Override
 	public String[] getMethodNames() {
-		String[] names = new String[]{"getAddress", "setAddress", "getID"};
+		String[] names = new String[]{"getAddress", "setAddress", "getID", "canReceive"};
 		return names;
 	}
 	
@@ -75,6 +75,10 @@ public class TileEntityEnder extends TileEntity implements IPeripheral {
 			case 2: { // getID
 				Integer[] out = new Integer[1];
 				out[0] = this.enderNetID;
+				return out; }
+			case 3: { // canReceive
+				Boolean[] out = new Boolean[1];
+				out[0] = EnderNet.isDimensionBlacklisted(this.worldObj.provider.dimensionId);
 				return out; }
 		}
 		return null;

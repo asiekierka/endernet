@@ -4,6 +4,7 @@ beta3:
 + Add the ability to whitelist dimensions.
 + Add "registerURIHandler" (String: class name) to register an IURIHandler via IMC.
 + Add the "disableCraftingRecipes" config option.
++ Add "canReceive" and "canTransmit" functions, returning booleans, to CC API.
 * Refactored IURIHandler to require far less boilerplate code.
 * The energy slot now takes Ender Pearls and Eyes of Ender. (Still not implemented)
 

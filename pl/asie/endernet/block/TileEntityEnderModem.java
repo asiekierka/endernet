@@ -10,6 +10,7 @@ import net.minecraft.item.ItemStack;
 import net.minecraft.tileentity.TileEntity;
 import cofh.api.transport.IItemConduit;
 import net.minecraftforge.common.ForgeDirection;
+import pl.asie.endernet.EnderNet;
 import pl.asie.endernet.api.IEnderStringReceiver;
 import pl.asie.endernet.lib.EnderID;
 import pl.asie.endernet.lib.EnderRedirector;
@@ -54,8 +55,8 @@ public class TileEntityEnderModem extends TileEntityEnder implements IEnderStrin
 	@Override
 	public String[] getMethodNames() {
 		String[] names;
-		if(CAN_TRANSMIT_MODEM) names = new String[]{ "getAddress", "setAddress", "getID", "send" };
-		else names = new String[]{ "getAddress", "setAddress", "getID" };
+		if(CAN_TRANSMIT_MODEM) names = new String[]{ "getAddress", "setAddress", "getID", "canReceive", "canTransmit", "send" };
+		else names = new String[]{ "getAddress", "setAddress", "getID", "canReceive", "canTransmit" };
 		return names;
 	}
 	
@@ -64,7 +65,16 @@ public class TileEntityEnderModem extends TileEntityEnder implements IEnderStrin
 			int method, Object[] arguments) throws Exception {
 		if(method < 3) return super.callMethod(computer, context, method, arguments);
 		else switch(method) {
-			case 3: // send
+			case 3: { // canReceive
+				if(CAN_RECEIVE_MODEM) return super.callMethod(computer, context, method, arguments);
+				Boolean[] out = new Boolean[1];
+				out[0] = false;
+				return out; }
+			case 4: { // canTransmit
+				Boolean[] out = new Boolean[1];
+				out[0] = CAN_TRANSMIT_MODEM;
+				return out; }
+			case 5: // send
 				if(!CAN_TRANSMIT_MODEM) return null;
 				if(arguments.length == 2) {
 					if(!(arguments[0] instanceof String) && !(arguments[1] instanceof String)) return null;

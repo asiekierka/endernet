@@ -30,8 +30,8 @@ public class EnderHTTPServer extends NanoHTTPD {
 		String address = session.getHeaders().get("remote-addr");
 		if(handlers.containsKey(session.getUri())) {
 			IURIHandler handler = handlers.get(session.getUri());
-			if(!EnderNet.servers.canReceive(address, handler.getPermissionName())) {
-				return new Response(Response.Status.FORBIDDEN, MIME_PLAINTEXT, "NNOPE");
+			if(!EnderNet.servers.canReceiveFrom(address, handler.getPermissionName())) {
+				return new Response(Response.Status.FORBIDDEN, MIME_PLAINTEXT, "Not whitelisted!");
 			} else {
 				Map<String, String> params = session.getParms();
 				String[] requiredParams = handler.getRequiredParams();
@@ -41,7 +41,10 @@ public class EnderHTTPServer extends NanoHTTPD {
 					}
 				}
 				Gson gson = new Gson();
-				params.put("remoteServer", EnderNet.servers.findByAddress(address).name);
+				if(EnderNet.servers.findByAddress(address) != null)
+					params.put("remoteServer", EnderNet.servers.findByAddress(address).name);
+				else
+					params.put("remoteServer", "unknown");
 				return new Response(Response.Status.OK, MIME_PLAINTEXT, gson.toJson(handler.serve(params)));
 			}
 		}

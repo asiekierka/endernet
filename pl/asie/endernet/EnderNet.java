@@ -8,9 +8,11 @@ import java.util.logging.Logger;
 import com.google.common.collect.ImmutableList;
 
 import pl.asie.endernet.api.IURIHandler;
+import pl.asie.endernet.block.BlockEnderModem;
 import pl.asie.endernet.block.BlockEnderReceiver;
 import pl.asie.endernet.block.BlockEnderTransmitter;
 import pl.asie.endernet.block.TileEntityEnder;
+import pl.asie.endernet.block.TileEntityEnderModem;
 import pl.asie.endernet.block.TileEntityEnderReceiver;
 import pl.asie.endernet.block.TileEntityEnderTransmitter;
 import pl.asie.endernet.http.EnderHTTPServer;
@@ -27,6 +29,7 @@ import pl.asie.endernet.lib.EnderServer;
 import pl.asie.endernet.lib.EnderServerManager;
 import cpw.mods.fml.client.registry.RenderingRegistry;
 import cpw.mods.fml.common.FMLLog;
+import cpw.mods.fml.common.Loader;
 import cpw.mods.fml.common.Mod;
 import cpw.mods.fml.common.Mod.EventHandler;
 import cpw.mods.fml.common.Mod.Instance;
@@ -80,6 +83,7 @@ public class EnderNet {
 	
 	public static BlockEnderTransmitter enderTransmitter;
 	public static BlockEnderReceiver enderReceiver;
+	public static BlockEnderModem enderModem;
 	public static EnderRegistry registry;
 	public static EnderServerManager servers;
 	
@@ -110,9 +114,14 @@ public class EnderNet {
 			enderReceiver = new BlockEnderReceiver(config.getBlock("enderReceiver", 2351).getInt());
 			GameRegistry.registerBlock(enderReceiver, "enderReceiver");
 		}
+		if(Loader.isModLoaded("ComputerCraft") && isBlock("enderModem", 2352)) {
+			enderModem = new BlockEnderModem(config.getBlock("enderModem", 2352).getInt());
+			GameRegistry.registerBlock(enderModem, "enderModem");
+		}
 		
 		GameRegistry.registerTileEntity(TileEntityEnderTransmitter.class, "enderTransmitter");
 		GameRegistry.registerTileEntity(TileEntityEnderReceiver.class, "enderReceiver");
+		GameRegistry.registerTileEntity(TileEntityEnderModem.class, "enderModem");
 		MinecraftForge.EVENT_BUS.register(new pl.asie.endernet.EventHandler());
 		
 		spawnParticles = config.get("misc", "spawnTransmitterParticles", true).getBoolean(true);

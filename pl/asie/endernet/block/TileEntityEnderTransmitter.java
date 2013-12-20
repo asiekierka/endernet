@@ -301,20 +301,20 @@ public class TileEntityEnderTransmitter extends TileEntityEnderModem implements 
 	
 	@Override
 	public String[] getMethodNames() {
-		String[] names = new String[]{ "getAddress", "setAddress", "getID", "send", "hasItem", "canSendItem" };
+		String[] names = new String[]{ "getAddress", "setAddress", "getID", "canReceive", "canTransmit", "send", "hasItem", "canSendItem" };
 		return names;
 	}
 	
 	@Override
 	public Object[] callMethod(IComputerAccess computer, ILuaContext context,
 			int method, Object[] arguments) throws Exception {
-		if(method < 4) return super.callMethod(computer, context, method, arguments);
+		if(method < 6) return super.callMethod(computer, context, method, arguments);
 		else switch(method) {
-			case 4: { // hasItem
+			case 6: { // hasItem
 				Boolean[] output = new Boolean[1];
 				output[0] = inventory[0] != null && inventory[0].stackSize > 0;
 				return output; }
-			case 5: { // canSendItem
+			case 7: { // canSendItem
 				Boolean[] output = new Boolean[1];
 				output[0] = canReceive();
 				return output; }
