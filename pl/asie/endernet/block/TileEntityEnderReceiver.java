@@ -17,6 +17,7 @@ import pl.asie.endernet.lib.EnderServer;
 
 public class TileEntityEnderReceiver extends TileEntityEnderModem implements IEnderRedstone, IEnderStringReceiver, IInventory {
 	private int redstoneValue;
+	private boolean updateNextTick;
 
 	public TileEntityEnderReceiver() {
 		super(true, false); // receive only
@@ -105,6 +106,15 @@ public class TileEntityEnderReceiver extends TileEntityEnderModem implements IEn
 	}
 	
 	@Override
+	public void updateEntity() {
+		super.updateEntity();
+		if(updateNextTick) {
+			updateNextTick = false;
+	        this.worldObj.notifyBlocksOfNeighborChange(xCoord, yCoord, zCoord, this.worldObj.getBlockId(xCoord, yCoord, zCoord));
+		}
+	}
+	
+	@Override
 	public String getType() {
 		return "endernet_receiver";
 	}
@@ -169,7 +179,7 @@ public class TileEntityEnderReceiver extends TileEntityEnderModem implements IEn
 	@Override
 	public boolean setRedstone(int value) {
 		this.redstoneValue = value;
-        this.worldObj.notifyBlocksOfNeighborChange(xCoord, yCoord, zCoord, this.worldObj.getBlockId(xCoord, yCoord, zCoord));
+		this.updateNextTick = true;
 		return true;
 	}
 
