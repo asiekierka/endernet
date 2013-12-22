@@ -29,6 +29,18 @@ public class BlockEnderModem extends BlockEnder {
 	}
 	
 	@Override
+	public boolean onBlockActivated(World world, int x, int y, int z, EntityPlayer player, int par6, float par7, float par8, float par9) {
+		if(!world.isRemote && !player.isSneaking()) {
+			ChatMessageComponent chat = new ChatMessageComponent();
+			TileEntityEnder ender = (TileEntityEnder)world.getBlockTileEntity(x, y, z);
+			if(!ender.canReceive()) chat.addText("Cannot transceive here!");
+			else chat.addText("This Modem's ID is " + ender.enderNetID);
+			player.sendChatToPlayer(chat);
+		}
+		return true;
+	}
+	
+	@Override
 	@SideOnly(Side.CLIENT)
     public Icon getIcon(int side, int meta) {
         return (side < 2 ? iconTop : iconSide);
