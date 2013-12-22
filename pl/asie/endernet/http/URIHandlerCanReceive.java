@@ -35,4 +35,9 @@ public class URIHandlerCanReceive implements IURIHandler {
 	public String[] getRequiredParams() {
 		return new String[]{"object"};
 	}
+
+	@Override
+	public Class getOutputType() {
+		return HTTPResponse.class;
+	}
 }

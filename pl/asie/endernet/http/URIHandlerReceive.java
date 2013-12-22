@@ -22,7 +22,7 @@ import fi.iki.elonen.NanoHTTPD.Response;
 public class URIHandlerReceive implements IURIHandler {
 	@Override
 	public Object serve(Map<String, String> params) {
-		String fail = new HTTPResponse(false).toJson();
+		HTTPResponse fail = new HTTPResponse(false);
 		Gson gson = new Gson();
 		EnderID block = gson.fromJson(params.get("object"), EnderID.class);
 		if(!block.isReceiveable()) return fail;
@@ -31,7 +31,7 @@ public class URIHandlerReceive implements IURIHandler {
 		if(entity == null || !(entity instanceof TileEntityEnderReceiver)) return fail;
 		TileEntityEnderReceiver receiver = (TileEntityEnderReceiver)entity;
 		int amountSent = receiver.receiveItem(block);
-		return new HTTPResponse(amountSent > 0, amountSent).toJson();
+		return new HTTPResponse(amountSent > 0, amountSent);
 	}
 	
 	@Override
@@ -47,5 +47,10 @@ public class URIHandlerReceive implements IURIHandler {
 	@Override
 	public String[] getRequiredParams() {
 		return new String[]{"object", "target"};
+	}
+	
+	@Override
+	public Class getOutputType() {
+		return HTTPResponse.class;
 	}
 }

@@ -3,6 +3,7 @@ package pl.asie.endernet;
 import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.Random;
 import java.util.logging.Logger;
 
 import com.google.common.collect.ImmutableList;
@@ -63,6 +64,9 @@ import net.minecraftforge.common.Property;
 @Mod(modid="endernet", name="EnderNet", version="0.1.2")
 @NetworkMod(channels={"EnderNet"}, clientSideRequired=true, packetHandler=NetworkHandler.class)
 public class EnderNet {
+	// Dev environment parameter. Remember to remove for release!
+	public static boolean DEV = false;
+	
 	public Configuration config;
 	public static Logger log;
 	
@@ -88,7 +92,7 @@ public class EnderNet {
 	public static EnderServerManager servers;
 	
 	public static boolean spawnParticles;
-	public static boolean onlyAllowDefined;
+	public static boolean onlyAllowDefinedReceive, onlyAllowDefinedTransmit;
 	private static boolean treatBlacklistAsWhitelist;
 	
 	private static ArrayList<Integer> blacklistedItems;
@@ -125,8 +129,11 @@ public class EnderNet {
 		MinecraftForge.EVENT_BUS.register(new pl.asie.endernet.EventHandler());
 		
 		spawnParticles = config.get("misc", "spawnTransmitterParticles", true).getBoolean(true);
-		onlyAllowDefined = config.get("comm", "receiveFromDefinedOnly", true).getBoolean(true);
+		onlyAllowDefinedReceive = config.get("comm", "receiveFromDefinedOnly", true).getBoolean(true);
+		onlyAllowDefinedTransmit = config.get("comm", "transmitToDefinedOnly", true).getBoolean(true);
 		serverFile = new File(event.getModConfigurationDirectory(), "endernet-servers.json");
+		
+		if(DEV) onlyAllowDefinedTransmit = false; // Testing localhost sending
 		
 		Property blacklistedItems = config.get("comm", "blacklistedItems", "");
 		blacklistedItems.comment = "Comma-separated IDs of blocks and items that should be blacklisted. For example: 42,46";
@@ -279,15 +286,18 @@ public class EnderNet {
 		servers.saveToJSON(serverFile);
 	}
 	
+	private Random rand = new Random();
+	
 	private void startHTTPServer() {
-		httpServer = new EnderHTTPServer(config.get("comm", "httpServerPort", 21500).getInt());
+		int port = DEV ? rand.nextInt(20000)+10000 : config.get("comm", "httpServerPort", 21500).getInt();
+		httpServer = new EnderHTTPServer(port);
 		try {
 			if(config.get("comm", "httpServerEnabled", true).getBoolean(true)) httpServer.start();
 		} catch(IOException e) {
 			e.printStackTrace();
 		}
 		if(httpServer.wasStarted()) {
-			log.info("HTTP server ready!");
+			log.info("HTTP server ready on port " + port + "!");
 		} else {
 			log.warning("HTTP server not initialized; EnderNet will transmit *ONLY*!");
 		}

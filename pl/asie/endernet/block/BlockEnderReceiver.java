@@ -33,7 +33,7 @@ public class BlockEnderReceiver extends BlockEnder {
 		if(!world.isRemote && !player.isSneaking()) {
 			ChatMessageComponent chat = new ChatMessageComponent();
 			TileEntityEnder ender = (TileEntityEnder)world.getBlockTileEntity(x, y, z);
-			if(EnderNet.isDimensionBlacklisted(world.provider.dimensionId)) chat.addText("Cannot receive in this dimension!");
+			if(!ender.canReceive()) chat.addText("Cannot receive here!");
 			else chat.addText("This Receiver's ID is " + ender.enderNetID);
 			player.sendChatToPlayer(chat);
 		}

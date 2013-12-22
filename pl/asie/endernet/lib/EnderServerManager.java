@@ -26,7 +26,8 @@ public class EnderServerManager {
 	}
 	
 	public EnderServer get(String name) {
-		return servers.get(name);
+		if(!EnderNet.onlyAllowDefinedTransmit && !servers.containsKey(name) && name.indexOf(":") != 0 && name.indexOf(".") != 0) return new EnderServer(name, name);
+		else return servers.get(name);
 	}
 	
 	public String getAddress(String name) {
@@ -86,7 +87,7 @@ public class EnderServerManager {
 	
 	public boolean canReceiveFrom(String remoteAddr, String permission) {
 		if(permission == null || permission.equals("") || permission.equals("none")) return true;
-		if(remoteAddr.equals("127.0.0.1") || !EnderNet.onlyAllowDefined) return true;
+		if(remoteAddr.equals("127.0.0.1") || !EnderNet.onlyAllowDefinedReceive) return true;
 		EnderServer es = findByAddress(remoteAddr);
 		if(es != null) {
 			return this.can(es, permission);

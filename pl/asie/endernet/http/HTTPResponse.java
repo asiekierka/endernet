@@ -15,6 +15,7 @@ public class HTTPResponse {
 		this.amountSent = amountSent;
 	}
 	
+	@Deprecated
 	public String toJson() {
 		Gson gson = new Gson();
 		return gson.toJson(this);

@@ -1,6 +1,11 @@
 package pl.asie.endernet.lib;
 
+import java.util.Arrays;
 import java.util.HashMap;
+import java.util.List;
+
+import org.apache.commons.lang3.ArrayUtils;
+import org.apache.commons.lang3.StringUtils;
 
 import pl.asie.endernet.EnderNet;
 import pl.asie.endernet.api.IEnderStringReceiver;
@@ -40,6 +45,7 @@ public class EnderRedirector {
 				return HTTPClient.canReceive(serverAddress, new EnderID(stack));
 			}
 		} catch(Exception e) {
+			e.printStackTrace();
 			return false;
 		}
 	}
@@ -65,14 +71,18 @@ public class EnderRedirector {
 	}
 	
 	public static String getServerName(String server) {
-		return server.split("\\.")[0];
+		String[] list = server.split("\\.");
+		list = ArrayUtils.remove(list, list.length - 1);
+		EnderNet.log.info("Server name ["+server+"] -> " + StringUtils.join(list, "."));
+		return StringUtils.join(list, ".");
 	}
 	
 	public static int getServerEnderID(String server) {
-		return new Integer(server.split("\\.")[1]).intValue();
+		String[] id = server.split("\\.");
+		return new Integer(id[id.length - 1]).intValue();
 	}
 	
 	public static boolean isLocal(String name) {
-		return (name.equals("0") || name.equals("local") || name.equals("localhost") || name.equals(""));
+		return (name.equals("local") || name.equals(""));
 	}
 }

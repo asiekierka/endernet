@@ -28,7 +28,7 @@ public class URIHandlerSendString implements IURIHandler {
 		if(entity == null || !(entity instanceof IEnderStringReceiver)) return false;
 		IEnderStringReceiver receiver = (IEnderStringReceiver)entity;
 		EnderServer server = EnderNet.servers.get(params.get("remoteServer"));
-		return receiver.receiveString(server, params.get("string"));
+		return new HTTPResponse(receiver.receiveString(server, params.get("string")));
 	}
 	
 	@Override
@@ -44,5 +44,10 @@ public class URIHandlerSendString implements IURIHandler {
 	@Override
 	public String[] getRequiredParams() {
 		return new String[]{"string", "target"};
+	}
+	
+	@Override
+	public Class getOutputType() {
+		return HTTPResponse.class;
 	}
 }

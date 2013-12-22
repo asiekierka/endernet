@@ -28,4 +28,9 @@ public class URIHandlerPing implements IURIHandler {
 	public String[] getRequiredParams() {
 		return new String[0];
 	}
+	
+	@Override
+	public Class getOutputType() {
+		return String.class;
+	}
 }

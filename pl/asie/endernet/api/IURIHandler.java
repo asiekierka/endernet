@@ -13,4 +13,6 @@ public interface IURIHandler {
 	public String getPermissionName();
 	
 	public String getURI();
+	
+	public Class getOutputType();
 }

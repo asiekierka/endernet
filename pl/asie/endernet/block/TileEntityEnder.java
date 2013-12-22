@@ -47,11 +47,11 @@ public class TileEntityEnder extends TileEntity implements IPeripheral {
 	}
 	
 	public boolean canTransmit() {
-		return EnderNet.isDimensionBlacklisted(this.worldObj.provider.dimensionId);
+		return !EnderNet.isDimensionBlacklisted(this.worldObj.provider.dimensionId);
 	}
 	
 	public boolean canReceive() {
-		return EnderNet.isDimensionBlacklisted(this.worldObj.provider.dimensionId);
+		return !EnderNet.isDimensionBlacklisted(this.worldObj.provider.dimensionId);
 	}
 	
 	// COMPUTERCRAFT COMPATIBILITY BEGIN
