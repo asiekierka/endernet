@@ -225,6 +225,9 @@ public class EnderNet {
 			GameRegistry.addRecipe(new ItemStack(enderTransmitter, 1), "dod", "oeo", "dod", 'd', new ItemStack(Item.diamond, 1), 'e', new ItemStack(Item.enderPearl, 1), 'o', new ItemStack(Item.redstone, 1));
 			GameRegistry.addRecipe(new ItemStack(enderReceiver, 1), "odo", "ded", "odo", 'd', new ItemStack(Item.diamond, 1), 'e', new ItemStack(Item.enderPearl, 1), 'o', new ItemStack(Item.dyePowder, 1, 4));
 			GameRegistry.addRecipe(new ItemStack(enderReceiver, 1), "dod", "oeo", "dod", 'd', new ItemStack(Item.diamond, 1), 'e', new ItemStack(Item.enderPearl, 1), 'o', new ItemStack(Item.dyePowder, 1, 4));
+			if(enderModem != null) {
+				GameRegistry.addRecipe(new ItemStack(enderModem, 1), "gdg", "geg", "ggg", 'd', new ItemStack(Item.diamond, 1), 'e', new ItemStack(Item.enderPearl, 1), 'g', new ItemStack(Item.dyePowder, 1, 2));
+			}
 		}
 		
 		config.save();
