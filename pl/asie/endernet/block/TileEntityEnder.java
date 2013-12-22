@@ -7,12 +7,13 @@ import dan200.computer.api.IComputerAccess;
 import dan200.computer.api.ILuaContext;
 import dan200.computer.api.IPeripheral;
 import pl.asie.endernet.EnderNet;
+import pl.asie.endernet.api.IEnderRedstone;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.nbt.NBTTagList;
 import net.minecraft.tileentity.TileEntity;
 
-public class TileEntityEnder extends TileEntity implements IPeripheral {
+public class TileEntityEnder extends TileEntity implements IEnderRedstone, IPeripheral {
 	public int enderNetID = -1;
 	protected String address = "local.0";
 	
@@ -108,5 +109,15 @@ public class TileEntityEnder extends TileEntity implements IPeripheral {
 	@Override
 	public void detach(IComputerAccess computer) {
 		computers.remove(computer);
+	}
+	
+	@Override
+	public boolean setRedstone(int value) {
+		return false;
+	}
+
+	@Override
+	public int getRedstone() {
+		return 0;
 	}
 }

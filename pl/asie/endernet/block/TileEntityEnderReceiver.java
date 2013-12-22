@@ -10,11 +10,14 @@ import net.minecraft.item.ItemStack;
 import net.minecraft.tileentity.TileEntity;
 import cofh.api.transport.IItemConduit;
 import net.minecraftforge.common.ForgeDirection;
+import pl.asie.endernet.api.IEnderRedstone;
 import pl.asie.endernet.api.IEnderStringReceiver;
 import pl.asie.endernet.lib.EnderID;
 import pl.asie.endernet.lib.EnderServer;
 
-public class TileEntityEnderReceiver extends TileEntityEnderModem implements IEnderStringReceiver, IInventory {
+public class TileEntityEnderReceiver extends TileEntityEnderModem implements IEnderRedstone, IEnderStringReceiver, IInventory {
+	private int redstoneValue;
+
 	public TileEntityEnderReceiver() {
 		super(true, false); // receive only
 	}
@@ -161,5 +164,17 @@ public class TileEntityEnderReceiver extends TileEntityEnderModem implements IEn
 	@Override
 	public boolean isItemValidForSlot(int slot, ItemStack stack) {
 		return false;
+	}
+
+	@Override
+	public boolean setRedstone(int value) {
+		this.redstoneValue = value;
+        this.worldObj.notifyBlocksOfNeighborChange(xCoord, yCoord, zCoord, this.worldObj.getBlockId(xCoord, yCoord, zCoord));
+		return true;
+	}
+
+	@Override
+	public int getRedstone() {
+		return redstoneValue;
 	}
 }

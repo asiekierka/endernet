@@ -1,3 +1,6 @@
+beta4:
++ EnderNet transmitters and receivers can now send redstone signals!
+
 beta3:
 + Add Ender Modems! They are far cheaper CC-message-only transceivers.
 + Add BuildCraft pipe support for Receivers!

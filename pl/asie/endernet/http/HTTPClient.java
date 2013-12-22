@@ -47,7 +47,7 @@ public class HTTPClient {
 	    }
 	}
 	
-	public static HTTPResponse readAnswer(BufferedReader br) {
+	public static HTTPResponse readHTTPResponse(BufferedReader br) {
 		if(br == null) return new HTTPResponse(false);
 		try {
 			String s = br.readLine();
@@ -66,7 +66,7 @@ public class HTTPClient {
 		// send string to the good ol' friend http server
 		HashMap<String, String> params = new HashMap<String, String>();
 		params.put("object", itemString);
-		return readAnswer(sendPost(server, "/canReceive", params)).success;
+		return readHTTPResponse(sendPost(server, "/canReceive", params)).success;
 	}
 	
 	public static HTTPResponse receive(String server, int enderID, EnderID item) {
@@ -76,13 +76,13 @@ public class HTTPClient {
 		HashMap<String, String> params = new HashMap<String, String>();
 		params.put("object", itemString);
 		params.put("target", enderID+"");
-		return readAnswer(sendPost(server, "/receive", params));
+		return readHTTPResponse(sendPost(server, "/receive", params));
 	}
 
 	public static boolean sendString(String server, int enderID, String string) {
 		HashMap<String, String> params = new HashMap<String, String>();
 		params.put("object", string);
 		params.put("target", enderID+"");
-		return readAnswer(sendPost(server, "/sendString", params)).success;
+		return readHTTPResponse(sendPost(server, "/sendString", params)).success;
 	}
 }

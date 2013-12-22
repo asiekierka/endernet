@@ -125,6 +125,8 @@ public class TileEntityEnderTransmitter extends TileEntityEnderModem implements 
             	entity.isReceiveable = entity.updateItemSendAbility(true);
             	entity.worldObj.markBlockForUpdate(xCoord, yCoord, zCoord);
             	entity.startSending = true;
+            } else if(action == 3) {
+            	EnderRedirector.sendRedstone(entity.address, entity.rsValue);
             }
         }
     }
@@ -134,6 +136,7 @@ public class TileEntityEnderTransmitter extends TileEntityEnderModem implements 
 	@Override
 	public void updateEntity() {
 		super.updateEntity();
+		if(rt != null && !rt.isAlive()) rt = null;
 		if(!canSendItem()) progress = 0;
 		if(inventory[0] != null && startSending && canSendItem()) {
 			if(progress < getMaxProgress()) {
@@ -143,7 +146,7 @@ public class TileEntityEnderTransmitter extends TileEntityEnderModem implements 
 					if(rt == null) {
 						rt = new ReceiveThread(this, 1);
 						rt.start();
-					} else if(!rt.isAlive()) rt = null;
+					}
 				}
 			}
 		}
@@ -320,5 +323,14 @@ public class TileEntityEnderTransmitter extends TileEntityEnderModem implements 
 				return output; }
 		}
 		return null;
+	}
+	
+	private int rsValue = 0;
+
+	public void sendRedstone(int value) {
+		if(rsValue == value) return; // already sent
+		rsValue = value;
+		ReceiveThread rt = new ReceiveThread(this, 3);
+		rt.start();
 	}
 }

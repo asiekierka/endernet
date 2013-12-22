@@ -12,6 +12,7 @@ import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.ChatMessageComponent;
 import net.minecraft.util.Icon;
+import net.minecraft.world.IBlockAccess;
 import net.minecraft.world.World;
 
 public class BlockEnderReceiver extends BlockEnder {
@@ -52,4 +53,13 @@ public class BlockEnderReceiver extends BlockEnder {
 		iconTop = reg.registerIcon("endernet:ender_receiver_top");
 		iconSide = reg.registerIcon("endernet:ender_receiver_side");
 	}
+	
+	@Override
+	public boolean canProvidePower() { return true; }
+	
+    @Override
+	public int isProvidingWeakPower(IBlockAccess access, int x, int y, int z, int side) {
+    	TileEntityEnderReceiver entity = (TileEntityEnderReceiver)access.getBlockTileEntity(x, y, z);
+        return entity.getRedstone() > 0 ? 15 : 0;
+    }
 }

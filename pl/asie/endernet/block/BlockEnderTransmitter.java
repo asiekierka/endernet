@@ -46,4 +46,12 @@ public class BlockEnderTransmitter extends BlockEnder {
 		iconTop = reg.registerIcon("endernet:ender_transmitter_top");
 		iconSide = reg.registerIcon("endernet:ender_transmitter_side");
 	}
+	
+	@Override
+    public void onNeighborBlockChange(World world, int x, int y, int z, int side) {
+		int value = this.getRedstoneValue(world, x, y, z);
+		TileEntity entity = world.getBlockTileEntity(x, y, z);
+		if(!(entity instanceof TileEntityEnderTransmitter)) return;
+		((TileEntityEnderTransmitter)entity).sendRedstone(value);
+	}
 }

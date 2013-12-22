@@ -7,27 +7,52 @@ import java.util.List;
 import org.apache.commons.lang3.ArrayUtils;
 import org.apache.commons.lang3.StringUtils;
 
+import com.google.gson.Gson;
+
 import pl.asie.endernet.EnderNet;
 import pl.asie.endernet.api.IEnderStringReceiver;
 import pl.asie.endernet.block.TileEntityEnderReceiver;
 import pl.asie.endernet.http.HTTPClient;
 import pl.asie.endernet.http.HTTPResponse;
+import pl.asie.endernet.http.URIHandlerReceive;
+import pl.asie.endernet.http.URIHandlerSendRedstone;
+import pl.asie.endernet.http.URIHandlerSendString;
 import net.minecraft.item.ItemStack;
 import net.minecraft.tileentity.TileEntity;
 
 public class EnderRedirector {
+	private static final Gson gson = new Gson();
+	
+	public static String getRemoteAddress(String address) {
+		return EnderNet.servers.getAddress(getServerName(address));
+	}
 	
 	public static boolean sendString(String address, String string) {
 		try {
+			HashMap<String, String> params = new HashMap<String, String>();		
+			params.put("target", ""+getServerEnderID(address));
+			params.put("string", string);
 			if(isLocal(getServerName(address))) {
-				TileEntity entity = EnderNet.registry.getTileEntity(getServerEnderID(address));
-				if(entity == null || !(entity instanceof IEnderStringReceiver)) return false;
-				return ((IEnderStringReceiver)entity).receiveString(new EnderServer("local", "127.0.0.1"), string);
+				URIHandlerSendString handler = new URIHandlerSendString();
+				return ((HTTPResponse)handler.serve(params)).success;
 			} else {
-				String serverName = getServerName(address);
-				String serverAddress = EnderNet.servers.getAddress(serverName);
-				if(serverAddress == null) return false;
-				return HTTPClient.sendString(serverAddress, getServerEnderID(address), string);
+				return HTTPClient.readHTTPResponse(HTTPClient.sendPost(getRemoteAddress(address), "/sendString", params)).success;
+			}
+		} catch(Exception e) {
+			return false;
+		}
+	}
+	
+	public static boolean sendRedstone(String address, int value) {
+		try {
+			HashMap<String, String> params = new HashMap<String, String>();		
+			params.put("target", ""+getServerEnderID(address));
+			params.put("value", ""+value);
+			if(isLocal(getServerName(address))) {
+				URIHandlerSendRedstone handler = new URIHandlerSendRedstone();
+				return ((HTTPResponse)handler.serve(params)).success;
+			} else {
+				return HTTPClient.readHTTPResponse(HTTPClient.sendPost(getRemoteAddress(address), "/sendRedstone", params)).success;
 			}
 		} catch(Exception e) {
 			return false;
@@ -39,10 +64,9 @@ public class EnderRedirector {
 			if(isLocal(getServerName(address))) {
 				return new EnderID(stack).isReceiveable();
 			} else {
-				String serverName = getServerName(address);
-				String serverAddress = EnderNet.servers.getAddress(serverName);
-				if(serverAddress == null) return false;
-				return HTTPClient.canReceive(serverAddress, new EnderID(stack));
+				HashMap<String, String> params = new HashMap<String, String>();
+				params.put("object", gson.toJson(new EnderID(stack)));
+				return HTTPClient.readHTTPResponse(HTTPClient.sendPost(getRemoteAddress(address), "/canReceive", params)).success;
 			}
 		} catch(Exception e) {
 			e.printStackTrace();
@@ -52,18 +76,14 @@ public class EnderRedirector {
 	
 	public static HTTPResponse receive(String address, ItemStack stack) {
 		try {
+			HashMap<String, String> params = new HashMap<String, String>();		
+			params.put("target", ""+getServerEnderID(address));
+			params.put("object", gson.toJson(new EnderID(stack)));
 			if(isLocal(getServerName(address))) {
-				if(new EnderID(stack).isReceiveable()) {
-					TileEntity entity = EnderNet.registry.getTileEntity(getServerEnderID(address));
-					if(entity == null || !(entity instanceof TileEntityEnderReceiver)) return new HTTPResponse(false);
-					int amountSent = ((TileEntityEnderReceiver)entity).receiveItem(new EnderID(stack));
-					return new HTTPResponse(amountSent > 0, amountSent);
-				} else return new HTTPResponse(false);
+				URIHandlerReceive handler = new URIHandlerReceive();
+				return (HTTPResponse)handler.serve(params);
 			} else {
-				String serverName = getServerName(address);
-				String serverAddress = EnderNet.servers.getAddress(serverName);
-				if(serverAddress == null) return new HTTPResponse(false);
-				return HTTPClient.receive(serverAddress, getServerEnderID(address), new EnderID(stack));
+				return HTTPClient.readHTTPResponse(HTTPClient.sendPost(getRemoteAddress(address), "/canReceive", params));
 			}
 		} catch(Exception e) {
 			return new HTTPResponse(false);
