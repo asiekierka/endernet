@@ -2,9 +2,6 @@ package pl.asie.endernet.api;
 
 import java.util.Map;
 
-import fi.iki.elonen.NanoHTTPD.IHTTPSession;
-import fi.iki.elonen.NanoHTTPD.Response;
-
 public interface IURIHandler {
 	public Object serve(Map<String, String> params);
 
