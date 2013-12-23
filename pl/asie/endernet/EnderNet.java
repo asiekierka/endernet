@@ -100,6 +100,8 @@ public class EnderNet {
 	public static boolean onlyAllowDefinedReceive, onlyAllowDefinedTransmit;
 	private static boolean treatBlacklistAsWhitelist;
 	
+	public static int HEARING_DISTANCE, SPEAKING_DISTANCE;
+	
 	private static ArrayList<Integer> blacklistedItems;
 	private static ArrayList<Integer> whitelistedDimensions;
 	private File serverFile;
@@ -137,6 +139,10 @@ public class EnderNet {
 		GameRegistry.registerTileEntity(TileEntityEnderModem.class, "enderModem");
 		GameRegistry.registerTileEntity(TileEntityEnderChatBox.class, "enderChatBox");
 		MinecraftForge.EVENT_BUS.register(new pl.asie.endernet.EventHandler());
+		
+		HEARING_DISTANCE = config.get("chat", "hearingDistance", 12).getInt();
+		if(!config.get("chat", "allowHearing", true).getBoolean(true)) HEARING_DISTANCE = 0;
+		SPEAKING_DISTANCE = config.get("chat", "speakingDistance", 12).getInt();
 		
 		spawnParticles = config.get("misc", "spawnTransmitterParticles", true).getBoolean(true);
 		onlyAllowDefinedReceive = config.get("comm", "receiveFromDefinedOnly", true).getBoolean(true);

@@ -9,10 +9,14 @@ import java.io.Reader;
 import com.google.gson.Gson;
 
 import pl.asie.endernet.block.TileEntityEnder;
+import pl.asie.endernet.block.TileEntityEnderChatBox;
 import pl.asie.endernet.lib.EnderRegistry;
+import pl.asie.endernet.lib.EntityCoord;
 import pl.asie.endernet.lib.FileUtils;
+import net.minecraft.tileentity.TileEntity;
 import net.minecraftforge.common.DimensionManager;
 import net.minecraftforge.event.ForgeSubscribe;
+import net.minecraftforge.event.ServerChatEvent;
 import net.minecraftforge.event.world.ChunkEvent;
 import net.minecraftforge.event.world.WorldEvent;
 
@@ -45,6 +49,20 @@ public class EventHandler {
 				System.out.println("Marking block for update");
 				event.world.markBlockForUpdate(e.xCoord, e.yCoord, e.zCoord);
 			}
+		}
+	}
+	
+	@ForgeSubscribe
+	public void chatEvent(ServerChatEvent event) {
+		if(EnderNet.HEARING_DISTANCE == 0) return;
+		int dim = event.player.worldObj.provider.dimensionId;
+		for(EntityCoord ec: EnderNet.registry.entities) {
+			if(dim != ec.dimensionID) continue;
+			int distance = (int)Math.round(event.player.getDistance(ec.x, ec.y, ec.z));
+			if(distance > EnderNet.SPEAKING_DISTANCE) continue;
+			TileEntity te = event.player.worldObj.getBlockTileEntity(ec.x, ec.y, ec.z);
+			if(!(te instanceof TileEntityEnderChatBox)) continue;
+			((TileEntityEnderChatBox)te).receiveChatMessage(event.username, event.message);
 		}
 	}
 }

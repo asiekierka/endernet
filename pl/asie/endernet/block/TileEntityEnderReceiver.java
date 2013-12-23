@@ -3,6 +3,7 @@ package pl.asie.endernet.block;
 import buildcraft.api.transport.IPipeTile;
 import dan200.computer.api.IComputerAccess;
 import dan200.computer.api.ILuaContext;
+import mods.immibis.redlogic.api.wiring.IBundledEmitter;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.inventory.IInventory;
 import net.minecraft.inventory.ISidedInventory;
@@ -15,7 +16,7 @@ import pl.asie.endernet.api.IEnderStringReceiver;
 import pl.asie.endernet.lib.EnderID;
 import pl.asie.endernet.lib.EnderServer;
 
-public class TileEntityEnderReceiver extends TileEntityEnderModem implements IEnderRedstone, IEnderStringReceiver, IInventory {
+public class TileEntityEnderReceiver extends TileEntityEnderModem implements IBundledEmitter, IEnderRedstone, IEnderStringReceiver, IInventory {
 	private int redstoneValue;
 	private boolean updateNextTick;
 
@@ -186,5 +187,14 @@ public class TileEntityEnderReceiver extends TileEntityEnderModem implements IEn
 	@Override
 	public int getRedstone() {
 		return redstoneValue;
+	}
+
+	@Override
+	public byte[] getBundledCableStrength(int blockFace, int toDirection) {
+		byte[] values = new byte[16];
+		for(int i = 0; i < 16; i++) {
+			values[i] = (this.redstoneValue & (1<<i)) > 0 ? (byte)255 : (byte)0;
+		}
+		return values;
 	}
 }

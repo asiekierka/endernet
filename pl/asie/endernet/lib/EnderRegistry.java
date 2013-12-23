@@ -13,7 +13,7 @@ import net.minecraft.world.World;
 import net.minecraftforge.common.DimensionManager;
 
 public class EnderRegistry {
-	private ArrayList<EntityCoord> entities = new ArrayList<EntityCoord>();
+	public ArrayList<EntityCoord> entities = new ArrayList<EntityCoord>();
 	
 	public EntityCoord getEntityCoord(int id) {
 		return entities.size() > id ? entities.get(id) : null;
