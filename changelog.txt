@@ -1,6 +1,8 @@
 beta4:
 + EnderNet transmitters and receivers can now send redstone signals!
 + Added Ender Chat Boxes. They will print out all messages they receive, as well as have a say(...) command to be able to say things.
++ Added playerRadius! It's a custom chat-radius system, works essentially like the one in Essentials.
++ Added randomHTTPPort parameter for LAN users. See console output for port for now.
 
 beta3:
 + Add Ender Modems! They are far cheaper CC-message-only transceivers.

@@ -65,7 +65,7 @@ import net.minecraftforge.common.DimensionManager;
 import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.common.Property;
 
-@Mod(modid="endernet", name="EnderNet", version="0.1.2")
+@Mod(modid="endernet", name="EnderNet", version="0.1.3")
 @NetworkMod(channels={"EnderNet"}, clientSideRequired=true, packetHandler=NetworkHandler.class)
 public class EnderNet {
 	// Dev environment parameter. Remember to remove for release!
@@ -96,11 +96,11 @@ public class EnderNet {
 	public static EnderRegistry registry;
 	public static EnderServerManager servers;
 	
-	public static boolean spawnParticles;
+	public static boolean spawnParticles, shoutEnabled, randomHTTPPort;
 	public static boolean onlyAllowDefinedReceive, onlyAllowDefinedTransmit;
 	private static boolean treatBlacklistAsWhitelist;
 	
-	public static int HEARING_DISTANCE, SPEAKING_DISTANCE;
+	public static int HEARING_DISTANCE, SPEAKING_DISTANCE, CHAT_RADIUS;
 	
 	private static ArrayList<Integer> blacklistedItems;
 	private static ArrayList<Integer> whitelistedDimensions;
@@ -141,9 +141,11 @@ public class EnderNet {
 		MinecraftForge.EVENT_BUS.register(new pl.asie.endernet.EventHandler());
 		
 		HEARING_DISTANCE = config.get("chat", "hearingDistance", 12).getInt();
-		if(!config.get("chat", "allowHearing", true).getBoolean(true)) HEARING_DISTANCE = 0;
 		SPEAKING_DISTANCE = config.get("chat", "speakingDistance", 12).getInt();
+		CHAT_RADIUS = config.get("chat", "playerRadius", 0).getInt();
+		shoutEnabled = config.get("chat", "shoutEnabled", false).getBoolean(false);
 		
+		randomHTTPPort = config.get("comm", "randomHTTPPort", false).getBoolean(false);
 		spawnParticles = config.get("misc", "spawnTransmitterParticles", true).getBoolean(true);
 		onlyAllowDefinedReceive = config.get("comm", "receiveFromDefinedOnly", true).getBoolean(true);
 		onlyAllowDefinedTransmit = config.get("comm", "transmitToDefinedOnly", true).getBoolean(true);
@@ -317,7 +319,8 @@ public class EnderNet {
 	private Random rand = new Random();
 	
 	private void startHTTPServer() {
-		int port = DEV ? rand.nextInt(20000)+10000 : config.get("comm", "httpServerPort", 21500).getInt();
+		if(DEV) randomHTTPPort = true;
+		int port = randomHTTPPort ? rand.nextInt(23000)+8000 : config.get("comm", "httpServerPort", 21500).getInt();
 		httpServer = new EnderHTTPServer(port);
 		try {
 			if(config.get("comm", "httpServerEnabled", true).getBoolean(true)) httpServer.start();

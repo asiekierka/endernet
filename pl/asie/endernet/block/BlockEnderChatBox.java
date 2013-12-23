@@ -20,7 +20,7 @@ public class BlockEnderChatBox extends BlockEnder {
 	public BlockEnderChatBox(int id) {
 		super(id);
 		this.setTextureName("endernet:ender_chatbox");
-		this.setUnlocalizedName("endernet.enderChatbox");
+		this.setUnlocalizedName("endernet.enderChatBox");
 	}
 
 	@Override
