@@ -65,7 +65,7 @@ import net.minecraftforge.common.DimensionManager;
 import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.common.Property;
 
-@Mod(modid="endernet", name="EnderNet", version="0.1.3")
+@Mod(modid="endernet", name="EnderNet", version="0.1.4")
 @NetworkMod(channels={"EnderNet"}, clientSideRequired=true, packetHandler=NetworkHandler.class)
 public class EnderNet {
 	// Dev environment parameter. Remember to remove for release!

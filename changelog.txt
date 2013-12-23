@@ -1,3 +1,6 @@
+beta5:
+* Fixed a bug that caused chat crashing on non-test-environment SMP servers.
+
 beta4:
 + EnderNet transmitters and receivers can now send redstone signals!
 + Added Ender Chat Boxes. They will print out all messages they receive, as well as have a say(...) command to be able to say things.

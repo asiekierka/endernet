@@ -66,7 +66,7 @@ public class EventHandler {
 		if(EnderNet.HEARING_DISTANCE == 0) return;
 		int dim = event.player.worldObj.provider.dimensionId;
 		for(EntityCoord ec: EnderNet.registry.entities) {
-			if(dim != ec.dimensionID) continue;
+			if(ec == null || dim != ec.dimensionID) continue;
 			int distance = (int)Math.round(event.player.getDistance(ec.x, ec.y, ec.z));
 			if(distance > EnderNet.HEARING_DISTANCE) continue;
 			TileEntity te = event.player.worldObj.getBlockTileEntity(ec.x, ec.y, ec.z);
@@ -75,6 +75,7 @@ public class EventHandler {
 		}
 		if(EnderNet.CHAT_RADIUS > 0) { // Chat radius
 			event.setCanceled(true);
+			if(MinecraftServer.getServer() == null) return;
 			ChatMessageComponent chat = new ChatMessageComponent();
 			if(event.message.startsWith("!") && EnderNet.shoutEnabled) {
 				chat.addText(EnumChatFormatting.YELLOW + "[Shout] " + EnumChatFormatting.RESET + "<" + event.username +
