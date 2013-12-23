@@ -1,5 +1,6 @@
 beta4:
 + EnderNet transmitters and receivers can now send redstone signals!
++ Added Ender Chat Boxes. They will print out all messages they receive, as well as have a say(...) command to be able to say things.
 
 beta3:
 + Add Ender Modems! They are far cheaper CC-message-only transceivers.

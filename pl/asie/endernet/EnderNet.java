@@ -9,10 +9,12 @@ import java.util.logging.Logger;
 import com.google.common.collect.ImmutableList;
 
 import pl.asie.endernet.api.IURIHandler;
+import pl.asie.endernet.block.BlockEnderChatBox;
 import pl.asie.endernet.block.BlockEnderModem;
 import pl.asie.endernet.block.BlockEnderReceiver;
 import pl.asie.endernet.block.BlockEnderTransmitter;
 import pl.asie.endernet.block.TileEntityEnder;
+import pl.asie.endernet.block.TileEntityEnderChatBox;
 import pl.asie.endernet.block.TileEntityEnderModem;
 import pl.asie.endernet.block.TileEntityEnderReceiver;
 import pl.asie.endernet.block.TileEntityEnderTransmitter;
@@ -49,6 +51,7 @@ import cpw.mods.fml.common.registry.EntityRegistry;
 import cpw.mods.fml.common.registry.GameRegistry;
 import cpw.mods.fml.common.registry.LanguageRegistry;
 import mcp.mobius.waila.api.IWailaRegistrar;
+import net.minecraft.block.Block;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.renderer.entity.RenderItem;
 import net.minecraft.client.renderer.entity.RenderManager;
@@ -89,6 +92,7 @@ public class EnderNet {
 	public static BlockEnderTransmitter enderTransmitter;
 	public static BlockEnderReceiver enderReceiver;
 	public static BlockEnderModem enderModem;
+	public static BlockEnderChatBox enderChatBox;
 	public static EnderRegistry registry;
 	public static EnderServerManager servers;
 	
@@ -123,10 +127,15 @@ public class EnderNet {
 			enderModem = new BlockEnderModem(config.getBlock("enderModem", 2352).getInt());
 			GameRegistry.registerBlock(enderModem, "enderModem");
 		}
+		if(Loader.isModLoaded("ComputerCraft") && isBlock("enderChatBox", 2353)) {
+			enderChatBox = new BlockEnderChatBox(config.getBlock("enderChatBox", 2353).getInt());
+			GameRegistry.registerBlock(enderChatBox, "enderChatBox");
+		}
 		
 		GameRegistry.registerTileEntity(TileEntityEnderTransmitter.class, "enderTransmitter");
 		GameRegistry.registerTileEntity(TileEntityEnderReceiver.class, "enderReceiver");
 		GameRegistry.registerTileEntity(TileEntityEnderModem.class, "enderModem");
+		GameRegistry.registerTileEntity(TileEntityEnderChatBox.class, "enderChatBox");
 		MinecraftForge.EVENT_BUS.register(new pl.asie.endernet.EventHandler());
 		
 		spawnParticles = config.get("misc", "spawnTransmitterParticles", true).getBoolean(true);
@@ -217,18 +226,26 @@ public class EnderNet {
 		LanguageRegistry.instance().addStringLocalization("tile.endernet.enderTransmitter.name", "Ender Transmitter");
 		LanguageRegistry.instance().addStringLocalization("tile.endernet.enderReceiver.name", "Ender Receiver");
 		LanguageRegistry.instance().addStringLocalization("tile.endernet.enderModem.name", "Ender Modem");
+		LanguageRegistry.instance().addStringLocalization("tile.endernet.enderChatBox.name", "Ender Chat Box");
 		LanguageRegistry.instance().addStringLocalization("command.endernet.info", "Gives you dev information on the currently held inventory item.");
 		LanguageRegistry.instance().addStringLocalization("command.endernet.reload", "Reloads the endernet-servers.json file.");
 		LanguageRegistry.instance().addStringLocalization("command.endernet.reload.success", "Successfully reloaded!");
 		LanguageRegistry.instance().addStringLocalization("command.endernet.reload.failure", "Failed to reload!");
 		
 		if(!config.get("misc", "disableCraftingRecipes", false).getBoolean(false)) {
-			GameRegistry.addRecipe(new ItemStack(enderTransmitter, 1), "odo", "ded", "odo", 'd', new ItemStack(Item.diamond, 1), 'e', new ItemStack(Item.enderPearl, 1), 'o', new ItemStack(Item.redstone, 1));
-			GameRegistry.addRecipe(new ItemStack(enderTransmitter, 1), "dod", "oeo", "dod", 'd', new ItemStack(Item.diamond, 1), 'e', new ItemStack(Item.enderPearl, 1), 'o', new ItemStack(Item.redstone, 1));
-			GameRegistry.addRecipe(new ItemStack(enderReceiver, 1), "odo", "ded", "odo", 'd', new ItemStack(Item.diamond, 1), 'e', new ItemStack(Item.enderPearl, 1), 'o', new ItemStack(Item.dyePowder, 1, 4));
-			GameRegistry.addRecipe(new ItemStack(enderReceiver, 1), "dod", "oeo", "dod", 'd', new ItemStack(Item.diamond, 1), 'e', new ItemStack(Item.enderPearl, 1), 'o', new ItemStack(Item.dyePowder, 1, 4));
+			if(enderTransmitter != null) {
+				GameRegistry.addRecipe(new ItemStack(enderTransmitter, 1), "odo", "ded", "odo", 'd', new ItemStack(Item.diamond, 1), 'e', new ItemStack(Item.enderPearl, 1), 'o', new ItemStack(Item.redstone, 1));
+				GameRegistry.addRecipe(new ItemStack(enderTransmitter, 1), "dod", "oeo", "dod", 'd', new ItemStack(Item.diamond, 1), 'e', new ItemStack(Item.enderPearl, 1), 'o', new ItemStack(Item.redstone, 1));
+			}
+			if(enderReceiver != null) {
+				GameRegistry.addRecipe(new ItemStack(enderReceiver, 1), "odo", "ded", "odo", 'd', new ItemStack(Item.diamond, 1), 'e', new ItemStack(Item.enderPearl, 1), 'o', new ItemStack(Item.dyePowder, 1, 4));
+				GameRegistry.addRecipe(new ItemStack(enderReceiver, 1), "dod", "oeo", "dod", 'd', new ItemStack(Item.diamond, 1), 'e', new ItemStack(Item.enderPearl, 1), 'o', new ItemStack(Item.dyePowder, 1, 4));
+			}
 			if(enderModem != null) {
 				GameRegistry.addRecipe(new ItemStack(enderModem, 1), "gdg", "geg", "ggg", 'd', new ItemStack(Item.diamond, 1), 'e', new ItemStack(Item.enderPearl, 1), 'g', new ItemStack(Item.dyePowder, 1, 2));
+				if(enderChatBox != null) {
+					GameRegistry.addRecipe(new ItemStack(enderChatBox, 1), " n ", "nmn", " n ", 'n', new ItemStack(Block.music, 1), 'm', new ItemStack(enderModem, 1));
+				}
 			}
 		}
 		
