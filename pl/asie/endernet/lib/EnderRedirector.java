@@ -96,7 +96,6 @@ public class EnderRedirector {
 	public static String getServerName(String server) {
 		String[] list = server.split("\\.");
 		list = ArrayUtils.remove(list, list.length - 1);
-		EnderNet.log.info("Server name ["+server+"] -> " + StringUtils.join(list, "."));
 		return StringUtils.join(list, ".");
 	}
 	

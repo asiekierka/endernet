@@ -1,3 +1,8 @@
+beta6:
++ Added an "all" permission if you want to be 200% sure all is allowed.
+* Fixed global permissions. The mod should work properly now.
+* Removed debug message spam.
+
 beta5:
 * Fixed a bug that caused chat crashing on non-test-environment SMP servers.
 

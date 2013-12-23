@@ -18,7 +18,8 @@ public class EnderServerManager {
 	
 	public EnderServerManager(String globalPermissions) {
 		for(String s: globalPermissions.split(",")) {
-			permissions.add(s.toLowerCase().trim());
+			String perm = s.toLowerCase().trim();
+			if(perm.length() > 0) permissions.add(perm);
 		}
 	}
 	
@@ -28,12 +29,13 @@ public class EnderServerManager {
 	
 	public boolean can(EnderServer server, String permission) {
 		if(permissions.size() > 0) { // global checks
+			if(permissions.contains("all")) return true;
 			if(permissions.contains("none")) return false;
 			if(!permissions.contains(permission)) return false;
 		}
-		if(server.permissions.size() == 0) return true; // no perms - all allowed
+		if(server.permissions.size() == 0 || server.permissions.contains("all")) return true; // no perms - all allowed
 		if(server.permissions.contains("none")) return false; // none as a permission - nothing allowed
-		return server.permissions.contains(permission);
+		return server.permissions.contains(permission.toLowerCase());
 	}
 	
 	public boolean canLocal(String permission) {
