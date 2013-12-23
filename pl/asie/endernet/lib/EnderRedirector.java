@@ -34,6 +34,7 @@ public class EnderRedirector {
 			params.put("string", string);
 			if(isLocal(getServerName(address))) {
 				URIHandlerSendString handler = new URIHandlerSendString();
+				if(!EnderNet.servers.canLocal(handler.getPermissionName())) return false;
 				return ((HTTPResponse)handler.serve(params)).success;
 			} else {
 				return HTTPClient.readHTTPResponse(HTTPClient.sendPost(getRemoteAddress(address), "/sendString", params)).success;
@@ -50,6 +51,7 @@ public class EnderRedirector {
 			params.put("value", ""+value);
 			if(isLocal(getServerName(address))) {
 				URIHandlerSendRedstone handler = new URIHandlerSendRedstone();
+				if(!EnderNet.servers.canLocal(handler.getPermissionName())) return false;
 				return ((HTTPResponse)handler.serve(params)).success;
 			} else {
 				return HTTPClient.readHTTPResponse(HTTPClient.sendPost(getRemoteAddress(address), "/sendRedstone", params)).success;
@@ -81,6 +83,7 @@ public class EnderRedirector {
 			params.put("object", gson.toJson(new EnderID(stack)));
 			if(isLocal(getServerName(address))) {
 				URIHandlerReceive handler = new URIHandlerReceive();
+				if(!EnderNet.servers.canLocal(handler.getPermissionName())) return new HTTPResponse(false);
 				return (HTTPResponse)handler.serve(params);
 			} else {
 				return HTTPClient.readHTTPResponse(HTTPClient.sendPost(getRemoteAddress(address), "/canReceive", params));

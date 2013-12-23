@@ -160,6 +160,9 @@ public class EnderNet {
 		Property whitelistedDimensions = config.get("comm", "whitelistedDimensions", "");
 		whitelistedDimensions.comment = "Comma-separated IDs of whitelisted dimensions. If empty, all dimensions are whitelisted.";
 		parseWhitelistedDimensions(whitelistedDimensions.getString());
+
+		Property globalPermissions = config.get("comm", "globalPermissions", "");
+		globalPermissions.comment = "Comma-separated list of permissions, like item,message.";
 		
 		treatBlacklistAsWhitelist = config.get("comm", "blacklistedItemsAsWhiteList", false).getBoolean(false);
 	}
@@ -287,7 +290,8 @@ public class EnderNet {
 	}
 	
 	private void startServerManager() {
-		servers = new EnderServerManager();
+		Property globalPermissions = config.get("comm", "globalPermissions", "");
+		servers = new EnderServerManager(globalPermissions.getString());
 		reloadServerFile();
 		
 		ConfigCategory serverC = config.getCategory("servers");
