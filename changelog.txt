@@ -1,5 +1,7 @@
 beta7:
++ Allow you to change the chat message format completely. See chat.messageFormat and the EnderNet website for more details.
 + Add optional /me, /hug and /slap commands.
++ Add the ability to add custom (/hug-like) action commands! Fun!
 * Fix compatibility with Bukkit plugins and other Forge mods for shouting. I think.
 
 beta6:
