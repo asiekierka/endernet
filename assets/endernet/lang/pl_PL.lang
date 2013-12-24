@@ -1,0 +1,11 @@
+tile.endernet.enderTransmitter.name=Nadajnik EnderNet
+tile.endernet.enderReceiver.name=Odbiornik EnderNet
+tile.endernet.enderModem.name=Modem EnderNet
+tile.endernet.enderChatBox.name=Moduł Czatu EnderNet
+error.endernet.dimension=EnderNet nie działa na tym świecie!
+info.endernet.id=ID EnderNet tego bloku to %s
+command.endernet.info.usage=Podaje informacje dotyczące tego bloku, przydatne dla programistów.
+command.endernet.reload.usage=Przeładowuje plik endernet-servers.json.
+command.endernet.reload.success=Przeładowanie pomyślne!
+command.endernet.reload.failure=Błąd przeładowania!
+        
