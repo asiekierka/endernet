@@ -5,6 +5,7 @@ import java.io.DataOutputStream;
 
 import org.lwjgl.opengl.GL11;
 
+import pl.asie.endernet.EnderNet;
 import cpw.mods.fml.common.network.PacketDispatcher;
 import net.minecraft.client.gui.GuiTextField;
 import net.minecraft.client.gui.inventory.GuiContainer;
@@ -19,7 +20,7 @@ public class GuiEnderTransmitter extends GuiContainer {
     private boolean canReceive = true;
     private GuiTextField address;
     private String oldAddress = "";
-    
+
 	public GuiEnderTransmitter(Container par1Container, TileEntityEnderTransmitter transmitter) {
 		super(par1Container);
 		this.transmitter = transmitter;
@@ -57,6 +58,9 @@ public class GuiEnderTransmitter extends GuiContainer {
         this.mc.getTextureManager().bindTexture(texture);
         this.drawTexturedModalRect(xo, yo, 0, 0, this.xSize, this.ySize);
         if(!canReceive) this.drawTexturedModalRect(xo+66, yo+33, 0, 172, 18, 18);
+        if(!EnderNet.enableEnergy) {
+        	this.drawTexturedModalRect(xo+92, yo+33, 14, 14, 26, 18);
+        }
         int progressWidth = Math.min(44, transmitter.getProgress() * 44 / transmitter.getMaxProgress());
         this.drawTexturedModalRect(xo+66, yo+53, 44-progressWidth, 167, progressWidth, 4);
         this.address.drawTextBox();

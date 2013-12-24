@@ -21,7 +21,7 @@ public class CommandEndernetInfo extends CommandBase
 	@Override
     public String getCommandUsage(ICommandSender par1ICommandSender)
     {
-        return "commands.endernet.info";
+        return "commands.endernet.info.usage";
     }
 	
 	@Override

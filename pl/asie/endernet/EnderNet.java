@@ -97,7 +97,7 @@ public class EnderNet {
 	public static EnderRegistry registry;
 	public static EnderServerManager servers;
 	
-	public static boolean spawnParticles, randomHTTPPort;
+	public static boolean spawnParticles, randomHTTPPort, enableEnergy;
 	public static boolean onlyAllowDefinedReceive, onlyAllowDefinedTransmit;
 	private static boolean treatBlacklistAsWhitelist;
 	public static ChatHandler chat;
@@ -147,6 +147,8 @@ public class EnderNet {
 		spawnParticles = config.get("misc", "spawnTransmitterParticles", true).getBoolean(true);
 		onlyAllowDefinedReceive = config.get("comm", "receiveFromDefinedOnly", true).getBoolean(true);
 		onlyAllowDefinedTransmit = config.get("comm", "transmitToDefinedOnly", true).getBoolean(true);
+		enableEnergy = config.get("comm", "useEnergyForTransmission", false).getBoolean(false);
+		
 		serverFile = new File(event.getModConfigurationDirectory(), "endernet-servers.json");
 		
 		if(DEV) onlyAllowDefinedTransmit = false; // Testing localhost sending
@@ -232,15 +234,6 @@ public class EnderNet {
 		httpServer.registerHandler(new URIHandlerReceive());
 		httpServer.registerHandler(new URIHandlerSendString());
 		httpServer.registerHandler(new URIHandlerSendRedstone());
-		
-		LanguageRegistry.instance().addStringLocalization("tile.endernet.enderTransmitter.name", "Ender Transmitter");
-		LanguageRegistry.instance().addStringLocalization("tile.endernet.enderReceiver.name", "Ender Receiver");
-		LanguageRegistry.instance().addStringLocalization("tile.endernet.enderModem.name", "Ender Modem");
-		LanguageRegistry.instance().addStringLocalization("tile.endernet.enderChatBox.name", "Ender Chat Box");
-		LanguageRegistry.instance().addStringLocalization("command.endernet.info", "Gives you dev information on the currently held inventory item.");
-		LanguageRegistry.instance().addStringLocalization("command.endernet.reload", "Reloads the endernet-servers.json file.");
-		LanguageRegistry.instance().addStringLocalization("command.endernet.reload.success", "Successfully reloaded!");
-		LanguageRegistry.instance().addStringLocalization("command.endernet.reload.failure", "Failed to reload!");
 		
 		if(!config.get("misc", "disableCraftingRecipes", false).getBoolean(false)) {
 			if(enderTransmitter != null) {

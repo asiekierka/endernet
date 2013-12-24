@@ -1,5 +1,6 @@
 package pl.asie.endernet.block;
 
+import pl.asie.endernet.EnderNet;
 import pl.asie.endernet.lib.SlotEnergy;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.entity.player.InventoryPlayer;
@@ -12,7 +13,7 @@ public class ContainerEnderTransmitter extends Container {
 	public ContainerEnderTransmitter(TileEntityEnderTransmitter entity, InventoryPlayer inventoryPlayer) {
 		super();
 		addSlotToContainer(new Slot(entity, 0, 67, 34));
-		addSlotToContainer(new SlotEnergy(entity, 1, 93, 34));
+		if(EnderNet.enableEnergy) addSlotToContainer(new SlotEnergy(entity, 1, 93, 34));
         bindPlayerInventory(inventoryPlayer, 8, 84);
         entity.openChest();
 	}

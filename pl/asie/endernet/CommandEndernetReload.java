@@ -21,7 +21,7 @@ public class CommandEndernetReload extends CommandBase
 	@Override
     public String getCommandUsage(ICommandSender par1ICommandSender)
     {
-        return "commands.endernet.reload";
+        return "commands.endernet.reload.usage";
     }
 	
 	@Override

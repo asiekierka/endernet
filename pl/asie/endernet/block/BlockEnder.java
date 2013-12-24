@@ -7,10 +7,12 @@ import net.minecraft.block.BlockContainer;
 import net.minecraft.block.material.Material;
 import net.minecraft.creativetab.CreativeTabs;
 import net.minecraft.entity.item.EntityItem;
+import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.inventory.IInventory;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.tileentity.TileEntity;
+import net.minecraft.util.ChatMessageComponent;
 import net.minecraft.world.Explosion;
 import net.minecraft.world.World;
 
@@ -23,6 +25,18 @@ public class BlockEnder extends BlockContainer {
 	@Override
 	public TileEntity createNewTileEntity(World world) {
 		return null;
+	}
+	
+	@Override
+	public boolean onBlockActivated(World world, int x, int y, int z, EntityPlayer player, int par6, float par7, float par8, float par9) {
+		if(!world.isRemote && !player.isSneaking()) {
+			ChatMessageComponent chat = new ChatMessageComponent();
+			TileEntityEnder ender = (TileEntityEnder)world.getBlockTileEntity(x, y, z);
+			if(!ender.canReceive()) chat.addKey("error.endernet.dimension");
+			else chat.addFormatted("info.endernet.id", new Object[]{""+ender.enderNetID});
+			player.sendChatToPlayer(chat);
+		}
+		return true;
 	}
 
 	public void onBlockDestroyed(World world, int x, int y, int z, int meta) {

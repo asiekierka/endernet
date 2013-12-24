@@ -35,6 +35,7 @@ public class ChatHandler {
 		enableGreentext = config.get("chat", "enableGreentext", false).getBoolean(false);
 		colorAction = config.get("chat", "colorAction", "5").getString();
 		messageFormat = config.get("chat", "messageFormat", "<%u> %m").getString();
+		
 		ConfigCategory chatActions = config.getCategory("chatactions");
 		chatActions.setComment("Define chat actions here. S:commandName=action. Only works when enableChatFeatures is true. If empty, will add in the default ones.");
 		if(chatActions.isEmpty()) {
