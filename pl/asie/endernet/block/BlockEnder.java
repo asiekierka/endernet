@@ -3,6 +3,10 @@ package pl.asie.endernet.block;
 import java.util.Random;
 
 import pl.asie.endernet.EnderNet;
+import powercrystals.minefactoryreloaded.api.rednet.IConnectableRedNet;
+import powercrystals.minefactoryreloaded.api.rednet.RedNetConnectionType;
+import mods.immibis.redlogic.api.wiring.IConnectable;
+import mods.immibis.redlogic.api.wiring.IWire;
 import net.minecraft.block.BlockContainer;
 import net.minecraft.block.material.Material;
 import net.minecraft.creativetab.CreativeTabs;
@@ -15,8 +19,9 @@ import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.ChatMessageComponent;
 import net.minecraft.world.Explosion;
 import net.minecraft.world.World;
+import net.minecraftforge.common.ForgeDirection;
 
-public class BlockEnder extends BlockContainer {
+public class BlockEnder extends BlockContainer implements IConnectableRedNet {
 	public BlockEnder(int id) {
 		super(id, Material.iron);
 		this.setCreativeTab(CreativeTabs.tabMisc);
@@ -104,4 +109,32 @@ public class BlockEnder extends BlockContainer {
     public int getRedstoneValue(World world, int x, int y, int z) {
     	return (world.isBlockIndirectlyGettingPowered(x, y, z)  ? 1 : 0);
     }
+
+	@Override
+	public RedNetConnectionType getConnectionType(World world, int x, int y,
+			int z, ForgeDirection side) {
+		return RedNetConnectionType.None;
+	}
+
+	@Override
+	public int[] getOutputValues(World world, int x, int y, int z,
+			ForgeDirection side) {
+		return null;
+	}
+
+	@Override
+	public int getOutputValue(World world, int x, int y, int z,
+			ForgeDirection side, int subnet) {
+		return 0;
+	}
+
+	@Override
+	public void onInputsChanged(World world, int x, int y, int z,
+			ForgeDirection side, int[] inputValues) {
+	}
+
+	@Override
+	public void onInputChanged(World world, int x, int y, int z,
+			ForgeDirection side, int inputValue) {
+	}
 }

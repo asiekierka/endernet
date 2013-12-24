@@ -14,7 +14,7 @@ import net.minecraft.util.ChatMessageComponent;
 
 public class CommandMe extends CommandBase
 {
-    public String getCommandName()
+	public String getCommandName()
     {
         return "me";
     }

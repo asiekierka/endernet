@@ -12,6 +12,8 @@ import pl.asie.endernet.lib.SlotEnergy;
 import cpw.mods.fml.client.FMLClientHandler;
 import dan200.computer.api.IComputerAccess;
 import dan200.computer.api.ILuaContext;
+import mods.immibis.redlogic.api.wiring.IBundledUpdatable;
+import mods.immibis.redlogic.api.wiring.IBundledWire;
 import net.minecraft.client.gui.GuiScreen;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.inventory.IInventory;
@@ -23,8 +25,9 @@ import net.minecraft.network.packet.Packet;
 import net.minecraft.network.packet.Packet132TileEntityData;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.tileentity.TileEntityFurnace;
+import net.minecraftforge.common.ForgeDirection;
 
-public class TileEntityEnderTransmitter extends TileEntityEnderModem implements IInventory {
+public class TileEntityEnderTransmitter extends TileEntityEnderModem implements IInventory, IBundledUpdatable {
 	public TileEntityEnderTransmitter() {
 		super(false, true); // transmit only
 	}
@@ -332,5 +335,33 @@ public class TileEntityEnderTransmitter extends TileEntityEnderModem implements 
 		rsValue = value;
 		ReceiveThread rt = new ReceiveThread(this, 3);
 		rt.start();
+	}
+	
+	// REDLOGIC COMPATIBILITY
+
+	@Override
+	public void onBundledInputChanged() {
+		// Immibis, please, get a better API.
+		for(ForgeDirection dir: ForgeDirection.VALID_DIRECTIONS) {
+			TileEntity te = worldObj.getBlockTileEntity(xCoord+dir.offsetX, yCoord+dir.offsetY, zCoord+dir.offsetZ);
+			if(te instanceof IBundledWire) {
+				IBundledWire wire = (IBundledWire)te;
+				byte[] data = null;
+				for(int i = -1; i < 6; i++) {
+					if(wire.wireConnectsInDirection(i, (dir.ordinal()))) {
+						data = wire.getBundledCableStrength(i, (dir.ordinal()));
+						break;
+					}
+				}
+				if(data != null) {
+					int value = 0;
+					for(int i = 0; i < 16; i++) {
+						if(data[i] != 0) value |= 1<<i;
+					}
+					System.out.println(value);
+					this.sendRedstone(value);
+				}
+			}
+		}
 	}
 }

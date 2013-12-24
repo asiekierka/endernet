@@ -3,6 +3,8 @@ package pl.asie.endernet.block;
 import cpw.mods.fml.relauncher.Side;
 import cpw.mods.fml.relauncher.SideOnly;
 import pl.asie.endernet.EnderNet;
+import powercrystals.minefactoryreloaded.api.rednet.IConnectableRedNet;
+import powercrystals.minefactoryreloaded.api.rednet.RedNetConnectionType;
 import net.minecraft.block.Block;
 import net.minecraft.block.BlockContainer;
 import net.minecraft.block.material.Material;
@@ -14,6 +16,7 @@ import net.minecraft.util.ChatMessageComponent;
 import net.minecraft.util.Icon;
 import net.minecraft.world.IBlockAccess;
 import net.minecraft.world.World;
+import net.minecraftforge.common.ForgeDirection;
 
 public class BlockEnderReceiver extends BlockEnder {
 	private Icon iconTop, iconSide;
@@ -50,4 +53,23 @@ public class BlockEnderReceiver extends BlockEnder {
     	TileEntityEnderReceiver entity = (TileEntityEnderReceiver)access.getBlockTileEntity(x, y, z);
         return entity.getRedstone() > 0 ? 15 : 0;
     }
+
+	@Override
+	public RedNetConnectionType getConnectionType(World world, int x, int y,
+			int z, ForgeDirection side) {
+		return RedNetConnectionType.CableSingle;
+	}
+
+	@Override
+	public int[] getOutputValues(World world, int x, int y, int z,
+			ForgeDirection side) {
+		return null;
+	}
+
+	@Override
+	public int getOutputValue(World world, int x, int y, int z,
+			ForgeDirection side, int subnet) {
+    	TileEntityEnderReceiver entity = (TileEntityEnderReceiver)world.getBlockTileEntity(x, y, z);
+        return entity.getRedstone();
+	}
 }

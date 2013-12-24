@@ -8,12 +8,14 @@ import dan200.computer.api.ILuaContext;
 import dan200.computer.api.IPeripheral;
 import pl.asie.endernet.EnderNet;
 import pl.asie.endernet.api.IEnderRedstone;
+import mods.immibis.redlogic.api.wiring.IConnectable;
+import mods.immibis.redlogic.api.wiring.IWire;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.nbt.NBTTagList;
 import net.minecraft.tileentity.TileEntity;
 
-public class TileEntityEnder extends TileEntity implements IEnderRedstone, IPeripheral {
+public class TileEntityEnder extends TileEntity implements IEnderRedstone, IPeripheral, IConnectable {
 	public int enderNetID = -1;
 	protected String address = "local.0";
 	
@@ -119,5 +121,16 @@ public class TileEntityEnder extends TileEntity implements IEnderRedstone, IPeri
 	@Override
 	public int getRedstone() {
 		return 0;
+	}
+
+	@Override
+	public boolean connects(IWire wire, int blockFace, int fromDirection) {
+		return true;
+	} 
+
+	@Override
+	public boolean connectsAroundCorner(IWire wire, int blockFace,
+			int fromDirection) {
+		return false;
 	}
 }
