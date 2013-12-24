@@ -147,7 +147,9 @@ public class EnderNet {
 		spawnParticles = config.get("misc", "spawnTransmitterParticles", true).getBoolean(true);
 		onlyAllowDefinedReceive = config.get("comm", "receiveFromDefinedOnly", true).getBoolean(true);
 		onlyAllowDefinedTransmit = config.get("comm", "transmitToDefinedOnly", true).getBoolean(true);
-		enableEnergy = config.get("comm", "useEnergyForTransmission", false).getBoolean(false);
+		
+		//enableEnergy = config.get("comm", "useEnergyForTransmission", false).getBoolean(false); TODO ACTUALLY IMPLEMENT
+		enableEnergy = false;
 		
 		serverFile = new File(event.getModConfigurationDirectory(), "endernet-servers.json");
 		
