@@ -4,6 +4,7 @@ import buildcraft.api.transport.IPipeTile;
 import dan200.computer.api.IComputerAccess;
 import dan200.computer.api.ILuaContext;
 import mods.immibis.redlogic.api.wiring.IBundledEmitter;
+import mrtjp.projectred.api.IBundledTile;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.inventory.IInventory;
 import net.minecraft.inventory.ISidedInventory;
@@ -16,7 +17,7 @@ import pl.asie.endernet.api.IEnderStringReceiver;
 import pl.asie.endernet.lib.EnderID;
 import pl.asie.endernet.lib.EnderServer;
 
-public class TileEntityEnderReceiver extends TileEntityEnderModem implements IBundledEmitter, IEnderRedstone, IEnderStringReceiver, IInventory {
+public class TileEntityEnderReceiver extends TileEntityEnderModem implements IBundledTile, IBundledEmitter, IEnderRedstone, IEnderStringReceiver, IInventory {
 	private int redstoneValue;
 	private boolean updateNextTick;
 
@@ -196,5 +197,15 @@ public class TileEntityEnderReceiver extends TileEntityEnderModem implements IBu
 			values[i] = (this.redstoneValue & (1<<i)) > 0 ? (byte)255 : (byte)0;
 		}
 		return values;
+	}
+	
+	@Override
+	public byte[] getBundledSignal(int side) {
+		return getBundledCableStrength(side, -1);
+	}
+
+	@Override
+	public boolean canConnectBundled(int side) {
+		return true;
 	}
 }

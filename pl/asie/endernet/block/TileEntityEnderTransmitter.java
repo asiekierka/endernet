@@ -14,6 +14,7 @@ import dan200.computer.api.IComputerAccess;
 import dan200.computer.api.ILuaContext;
 import mods.immibis.redlogic.api.wiring.IBundledUpdatable;
 import mods.immibis.redlogic.api.wiring.IBundledWire;
+import mrtjp.projectred.api.IBundledTile;
 import net.minecraft.client.gui.GuiScreen;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.inventory.IInventory;
@@ -27,7 +28,7 @@ import net.minecraft.tileentity.TileEntity;
 import net.minecraft.tileentity.TileEntityFurnace;
 import net.minecraftforge.common.ForgeDirection;
 
-public class TileEntityEnderTransmitter extends TileEntityEnderModem implements IInventory, IBundledUpdatable {
+public class TileEntityEnderTransmitter extends TileEntityEnderModem implements IInventory, IBundledUpdatable, IBundledTile {
 	public TileEntityEnderTransmitter() {
 		super(false, true); // transmit only
 	}
@@ -363,5 +364,15 @@ public class TileEntityEnderTransmitter extends TileEntityEnderModem implements 
 				}
 			}
 		}
+	}
+
+	@Override
+	public byte[] getBundledSignal(int side) {
+		return new byte[16];
+	}
+
+	@Override
+	public boolean canConnectBundled(int side) {
+		return false; // TODO: IMPLEMENT
 	}
 }
