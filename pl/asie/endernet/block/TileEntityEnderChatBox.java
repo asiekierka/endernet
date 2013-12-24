@@ -61,7 +61,7 @@ public class TileEntityEnderChatBox extends TileEntityEnderModem {
 						distance = ((Integer)arguments[1]).intValue();
 					if(arguments.length >= 2 && (arguments[1] instanceof Long))
 						distance = ((Long)arguments[1]).intValue();
-					if(distance == 0) distance = EnderNet.SPEAKING_DISTANCE;
+					if(distance == 0) distance = EnderNet.chat.SPEAKING_DISTANCE;
 					sendChatMessage((String)arguments[0], distance);
 				}
 				break;

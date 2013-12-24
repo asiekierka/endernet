@@ -1,3 +1,7 @@
+beta7:
++ Add optional /me, /hug and /slap commands.
+* Fix compatibility with Bukkit plugins and other Forge mods for shouting. I think.
+
 beta6:
 + Added an "all" permission if you want to be 200% sure all is allowed.
 * Fixed global permissions. The mod should work properly now.

@@ -18,6 +18,7 @@ import pl.asie.endernet.block.TileEntityEnderChatBox;
 import pl.asie.endernet.block.TileEntityEnderModem;
 import pl.asie.endernet.block.TileEntityEnderReceiver;
 import pl.asie.endernet.block.TileEntityEnderTransmitter;
+import pl.asie.endernet.chat.ChatHandler;
 import pl.asie.endernet.http.EnderHTTPServer;
 import pl.asie.endernet.http.HTTPClient;
 import pl.asie.endernet.http.URIHandlerCanReceive;
@@ -96,11 +97,10 @@ public class EnderNet {
 	public static EnderRegistry registry;
 	public static EnderServerManager servers;
 	
-	public static boolean spawnParticles, shoutEnabled, randomHTTPPort;
+	public static boolean spawnParticles, randomHTTPPort;
 	public static boolean onlyAllowDefinedReceive, onlyAllowDefinedTransmit;
 	private static boolean treatBlacklistAsWhitelist;
-	
-	public static int HEARING_DISTANCE, SPEAKING_DISTANCE, CHAT_RADIUS;
+	public static ChatHandler chat;
 	
 	private static ArrayList<Integer> blacklistedItems;
 	private static ArrayList<Integer> whitelistedDimensions;
@@ -140,10 +140,8 @@ public class EnderNet {
 		GameRegistry.registerTileEntity(TileEntityEnderChatBox.class, "enderChatBox");
 		MinecraftForge.EVENT_BUS.register(new pl.asie.endernet.EventHandler());
 		
-		HEARING_DISTANCE = config.get("chat", "hearingDistance", 12).getInt();
-		SPEAKING_DISTANCE = config.get("chat", "speakingDistance", 12).getInt();
-		CHAT_RADIUS = config.get("chat", "playerRadius", 0).getInt();
-		shoutEnabled = config.get("chat", "shoutEnabled", false).getBoolean(false);
+		chat = new ChatHandler(config);
+		MinecraftForge.EVENT_BUS.register(chat);
 		
 		randomHTTPPort = config.get("comm", "randomHTTPPort", false).getBoolean(false);
 		spawnParticles = config.get("misc", "spawnTransmitterParticles", true).getBoolean(true);
@@ -218,6 +216,7 @@ public class EnderNet {
 		if(config.get("misc", "enableDevCommands", true).getBoolean(true))
 			event.registerServerCommand(new CommandEndernetInfo());
 		event.registerServerCommand(new CommandEndernetReload());
+		chat.registerCommands(event);
 	}
 	 
 	@EventHandler
