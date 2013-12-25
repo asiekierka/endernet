@@ -37,9 +37,12 @@ public class EnderHTTPServer extends NanoHTTPD {
 					session.parseBody(null);
 					Map<String, String> params = session.getParms();
 					String[] requiredParams = handler.getRequiredParams();
-					for(String param: params.keySet()) {
-						EnderNet.log.info("Param " + param + " found");
+					if(EnderNet.DEV) {
+						for(String param: params.keySet()) {
+							EnderNet.log.info("Param " + param + " found");
+						}
 					}
+					if(!params.containsKey("endpoint")) params.put("endpoint", ""); // pre-beta8 compat, adding in dummy endpoints
 					if(requiredParams != null) for(String param: requiredParams) {
 						if(!params.containsKey(param)) {
 							EnderNet.log.info("Was missing key " + param + " for request " + handler.getURI() + "!");

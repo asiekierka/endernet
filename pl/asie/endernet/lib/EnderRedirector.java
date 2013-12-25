@@ -29,8 +29,7 @@ public class EnderRedirector {
 	
 	public static boolean sendString(String address, String string) {
 		try {
-			HashMap<String, String> params = new HashMap<String, String>();		
-			params.put("target", ""+getServerEnderID(address));
+			HashMap<String, String> params = hashMapFromAddress(address);		
 			params.put("string", string);
 			if(isLocal(getServerName(address))) {
 				URIHandlerSendString handler = new URIHandlerSendString();
@@ -43,11 +42,10 @@ public class EnderRedirector {
 			return false;
 		}
 	}
-	
+
 	public static boolean sendRedstone(String address, int value) {
 		try {
-			HashMap<String, String> params = new HashMap<String, String>();		
-			params.put("target", ""+getServerEnderID(address));
+			HashMap<String, String> params = hashMapFromAddress(address);
 			params.put("value", ""+value);
 			if(isLocal(getServerName(address))) {
 				URIHandlerSendRedstone handler = new URIHandlerSendRedstone();
@@ -66,7 +64,7 @@ public class EnderRedirector {
 			if(isLocal(getServerName(address))) {
 				return new EnderID(stack).isReceiveable();
 			} else {
-				HashMap<String, String> params = new HashMap<String, String>();
+				HashMap<String, String> params = hashMapFromAddress(address);
 				params.put("object", gson.toJson(new EnderID(stack)));
 				return HTTPClient.readHTTPResponse(HTTPClient.sendPost(getRemoteAddress(address), "/canReceive", params)).success;
 			}
@@ -78,8 +76,7 @@ public class EnderRedirector {
 	
 	public static HTTPResponse receive(String address, ItemStack stack) {
 		try {
-			HashMap<String, String> params = new HashMap<String, String>();		
-			params.put("target", ""+getServerEnderID(address));
+			HashMap<String, String> params = hashMapFromAddress(address);
 			params.put("object", gson.toJson(new EnderID(stack)));
 			if(isLocal(getServerName(address))) {
 				URIHandlerReceive handler = new URIHandlerReceive();
@@ -94,17 +91,34 @@ public class EnderRedirector {
 	}
 	
 	public static String getServerName(String server) {
-		String[] list = server.split("\\.");
+		String[] list = removeEndpoint(server).split("\\.");
 		list = ArrayUtils.remove(list, list.length - 1);
 		return StringUtils.join(list, ".");
 	}
 	
 	public static int getServerEnderID(String server) {
-		String[] id = server.split("\\.");
+		String[] id = removeEndpoint(server).split("\\.");
 		return new Integer(id[id.length - 1]).intValue();
+	}
+	
+	public static String removeEndpoint(String server) {
+		return server.split("\\/")[0];
+	}
+	
+	public static String getEndpoint(String server) {
+		String[] endpoints = server.split("\\/");
+		if(endpoints.length < 2) return "";
+		else return endpoints[endpoints.length - 1];
 	}
 	
 	public static boolean isLocal(String name) {
 		return (name.equals("local") || name.equals(""));
+	}
+	
+	private static HashMap<String, String> hashMapFromAddress(String address) {
+		HashMap<String, String> params = new HashMap<String, String>();
+		params.put("target", ""+getServerEnderID(address));
+		params.put("endpoint", getEndpoint(address));
+		return params;
 	}
 }
