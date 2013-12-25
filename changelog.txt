@@ -1,9 +1,12 @@
-beta8:
+rc1 (0.2.0):
 + Add Endpoints! They are extra pathnames you specify on the end of the address
   / For example: "local.2/path"
 + Ender Receivers can use Endpoints to specify the side (north/south/east/west/up/down or top/bottom or front/back... many variations)
 + Ender Modems output the name of the Endpoint now.
 + Destroying an Ender block with a Wrench will now retain its EnderNet ID.
+/ WARNINGS FOR THIS UPDATE:
+  + receiveFromDefinedOnly has been replaced with undefinedReceivePermissions and is now a list like globalPermissions.
+  + transmitToDefinedOnly is now OFF by default, as it poses no practical security risk.
 
 beta7:
 + Ender Transmitters and Receivers now send MFR RedNet information (single channel). Woo!

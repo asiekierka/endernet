@@ -67,7 +67,7 @@ import net.minecraftforge.common.DimensionManager;
 import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.common.Property;
 
-@Mod(modid="endernet", name="EnderNet", version="0.1.5")
+@Mod(modid="endernet", name="EnderNet", version="0.2.0")
 @NetworkMod(channels={"EnderNet"}, clientSideRequired=true, packetHandler=NetworkHandler.class)
 public class EnderNet {
 	// Dev environment parameter. Remember to remove for release!
@@ -98,8 +98,7 @@ public class EnderNet {
 	public static EnderRegistry registry;
 	public static EnderServerManager servers;
 	
-	public static boolean spawnParticles, randomHTTPPort, enableEnergy;
-	public static boolean onlyAllowDefinedReceive, onlyAllowDefinedTransmit;
+	public static boolean spawnParticles, randomHTTPPort, enableEnergy, onlyAllowDefinedTransmit;
 	private static boolean treatBlacklistAsWhitelist;
 	public static ChatHandler chat;
 	
@@ -146,8 +145,7 @@ public class EnderNet {
 		
 		randomHTTPPort = config.get("comm", "randomHTTPPort", false).getBoolean(false);
 		spawnParticles = config.get("misc", "spawnTransmitterParticles", true).getBoolean(true);
-		onlyAllowDefinedReceive = config.get("comm", "receiveFromDefinedOnly", true).getBoolean(true);
-		onlyAllowDefinedTransmit = config.get("comm", "transmitToDefinedOnly", true).getBoolean(true);
+		onlyAllowDefinedTransmit = config.get("comm", "transmitToDefinedOnly", false).getBoolean(false);
 		
 		//enableEnergy = config.get("comm", "useEnergyForTransmission", false).getBoolean(false); TODO ACTUALLY IMPLEMENT
 		enableEnergy = false;
@@ -166,6 +164,9 @@ public class EnderNet {
 
 		Property globalPermissions = config.get("comm", "globalPermissions", "");
 		globalPermissions.comment = "Comma-separated list of permissions, like item,message.";
+
+		Property undefinedPermissions = config.get("comm", "undefinedReceivePermissions", "");
+		undefinedPermissions.comment = "Permissions given for undefined servers. None by default. (Consider adding message here)";
 		
 		treatBlacklistAsWhitelist = config.get("comm", "blacklistedItemsAsWhiteList", false).getBoolean(false);
 	}
@@ -286,7 +287,8 @@ public class EnderNet {
 	
 	private void startServerManager() {
 		Property globalPermissions = config.get("comm", "globalPermissions", "");
-		servers = new EnderServerManager(globalPermissions.getString());
+		Property undefinedPermissions = config.get("comm", "undefinedReceivePermissions", "");
+		servers = new EnderServerManager(globalPermissions.getString(), undefinedPermissions.getString());
 		reloadServerFile();
 		
 		ConfigCategory serverC = config.getCategory("servers");

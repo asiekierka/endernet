@@ -28,7 +28,7 @@ public class ItemBlockEnder extends ItemBlock {
 	@Override
     public boolean placeBlockAt(ItemStack stack, EntityPlayer player, World world, int x, int y, int z, int side, float hitX, float hitY, float hitZ, int metadata) {
 		if(super.placeBlockAt(stack, player, world, x, y, z, side, hitX, hitY, hitZ, metadata)) {
-			if(stack.getTagCompound().hasKey("eid")) {
+			if(stack.getTagCompound() != null && stack.getTagCompound().hasKey("eid")) {
 				TileEntityEnder ender = (TileEntityEnder)(((ITileEntityProvider)Block.blocksList[this.getBlockID()]).createNewTileEntity(world));
 				ender.xCoord = x;
 				ender.yCoord = y;

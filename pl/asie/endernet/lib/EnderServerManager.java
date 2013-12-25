@@ -15,11 +15,16 @@ import com.google.gson.reflect.TypeToken;
 public class EnderServerManager {
 	private HashMap<String, EnderServer> servers = new HashMap<String, EnderServer>();
 	private ArrayList<String> permissions = new ArrayList<String>();
+	private ArrayList<String> undefinedPermissions = new ArrayList<String>();
 	
-	public EnderServerManager(String globalPermissions) {
+	public EnderServerManager(String globalPermissions, String undefinedPermissions) {
 		for(String s: globalPermissions.split(",")) {
 			String perm = s.toLowerCase().trim();
-			if(perm.length() > 0) permissions.add(perm);
+			if(perm.length() > 0) this.permissions.add(perm);
+		}
+		for(String s: undefinedPermissions.split(",")) {
+			String perm = s.toLowerCase().trim();
+			if(perm.length() > 0) this.undefinedPermissions.add(perm);
 		}
 	}
 	
@@ -28,14 +33,20 @@ public class EnderServerManager {
 	}
 	
 	public boolean can(EnderServer server, String permission) {
-		if(permissions.size() > 0) { // global checks
-			if(permissions.contains("all")) return true;
-			if(permissions.contains("none")) return false;
-			if(!permissions.contains(permission)) return false;
+		permission = permission.toLowerCase().trim();
+		if(server == null) { // Server is undefined
+			if(undefinedPermissions.contains("all") || undefinedPermissions.contains(permission)) return true;
+			return false;
+		} else { // Server is defined
+			if(permissions.size() > 0) { // global checks
+				if(permissions.contains("all")) return true;
+				if(permissions.contains("none")) return false;
+				if(!permissions.contains(permission)) return false;
+			}
+			if(server.permissions.size() == 0 || server.permissions.contains("all")) return true; // no perms - all allowed
+			if(server.permissions.contains("none")) return false; // none as a permission - nothing allowed
+			return server.permissions.contains(permission.toLowerCase());
 		}
-		if(server.permissions.size() == 0 || server.permissions.contains("all")) return true; // no perms - all allowed
-		if(server.permissions.contains("none")) return false; // none as a permission - nothing allowed
-		return server.permissions.contains(permission.toLowerCase());
 	}
 	
 	public boolean canLocal(String permission) {
@@ -104,10 +115,8 @@ public class EnderServerManager {
 	
 	public boolean canReceiveFrom(String remoteAddr, String permission) {
 		if(permission == null || permission.equals("") || permission.equals("none")) return true;
-		if(remoteAddr.equals("127.0.0.1") || !EnderNet.onlyAllowDefinedReceive) return true;
+		if(remoteAddr.equals("127.0.0.1")) return true;
 		EnderServer es = findByAddress(remoteAddr);
-		if(es != null) {
-			return this.can(es, permission);
-		} else return false;
+		return this.can(es, permission);
 	}
 }
