@@ -13,6 +13,7 @@ import pl.asie.endernet.block.BlockEnderChatBox;
 import pl.asie.endernet.block.BlockEnderModem;
 import pl.asie.endernet.block.BlockEnderReceiver;
 import pl.asie.endernet.block.BlockEnderTransmitter;
+import pl.asie.endernet.block.ItemBlockEnder;
 import pl.asie.endernet.block.TileEntityEnder;
 import pl.asie.endernet.block.TileEntityEnderChatBox;
 import pl.asie.endernet.block.TileEntityEnderModem;
@@ -119,19 +120,19 @@ public class EnderNet {
 		
 		if(isBlock("enderTransmitter", 2350)) {
 			enderTransmitter = new BlockEnderTransmitter(config.getBlock("enderTransmitter", 2350).getInt());
-			GameRegistry.registerBlock(enderTransmitter, "enderTransmitter");
+			GameRegistry.registerBlock(enderTransmitter, ItemBlockEnder.class, "enderTransmitter");
 		}
 		if(isBlock("enderReceiver", 2351)) {
 			enderReceiver = new BlockEnderReceiver(config.getBlock("enderReceiver", 2351).getInt());
-			GameRegistry.registerBlock(enderReceiver, "enderReceiver");
+			GameRegistry.registerBlock(enderReceiver, ItemBlockEnder.class, "enderReceiver");
 		}
 		if(Loader.isModLoaded("ComputerCraft") && isBlock("enderModem", 2352)) {
 			enderModem = new BlockEnderModem(config.getBlock("enderModem", 2352).getInt());
-			GameRegistry.registerBlock(enderModem, "enderModem");
+			GameRegistry.registerBlock(enderModem, ItemBlockEnder.class, "enderModem");
 		}
 		if(Loader.isModLoaded("ComputerCraft") && isBlock("enderChatBox", 2353)) {
 			enderChatBox = new BlockEnderChatBox(config.getBlock("enderChatBox", 2353).getInt());
-			GameRegistry.registerBlock(enderChatBox, "enderChatBox");
+			GameRegistry.registerBlock(enderChatBox, ItemBlockEnder.class, "enderChatBox");
 		}
 		
 		GameRegistry.registerTileEntity(TileEntityEnderTransmitter.class, "enderTransmitter");

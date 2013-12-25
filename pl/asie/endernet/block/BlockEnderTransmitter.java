@@ -32,8 +32,10 @@ public class BlockEnderTransmitter extends BlockEnder{
 
 	@Override
 	public boolean onBlockActivated(World world, int x, int y, int z, EntityPlayer player, int par6, float par7, float par8, float par9) {
-		if(!world.isRemote && !player.isSneaking())
-			player.openGui(EnderNet.instance, 1, world, x, y, z);
+		if(!world.isRemote) {
+			if(player.isSneaking()) tryRemovingBlock(world, x, y, z, player);
+			else player.openGui(EnderNet.instance, 1, world, x, y, z);
+		}
 		return true;
 	}
 	

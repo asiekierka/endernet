@@ -7,6 +7,7 @@ import java.util.ArrayList;
 import com.google.gson.Gson;
 
 import pl.asie.endernet.EnderNet;
+import pl.asie.endernet.block.TileEntityEnder;
 import pl.asie.endernet.block.TileEntityEnderTransmitter;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.world.World;
@@ -47,5 +48,18 @@ public class EnderRegistry {
 			EnderNet.log.info("Removing entity!");
 			entities.set(entities.indexOf(ec), null);
 		}
+	}
+
+	public int forceEntityID(TileEntityEnder entity, int eid) {
+		try {
+			if(entities.get(eid) != null) {
+				EntityCoord ec = entities.get(eid);
+				EnderNet.log.warning("Entity already found for ID " + eid + "! Location: " + entities.get(eid).toString());
+				return -1;
+			}
+			entities.set(eid, new EntityCoord(entity));
+			saveJSON();
+			return eid;
+		} catch(Exception e) { e.printStackTrace(); return -1; }
 	}
 }

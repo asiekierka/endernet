@@ -3,6 +3,7 @@ beta8:
   / For example: "local.2/path"
 + Ender Receivers can use Endpoints to specify the side (north/south/east/west/up/down or top/bottom or front/back... many variations)
 + Ender Modems output the name of the Endpoint now.
++ Destroying an Ender block with a Wrench will now retain its EnderNet ID.
 
 beta7:
 + Ender Transmitters and Receivers now send MFR RedNet information (single channel). Woo!

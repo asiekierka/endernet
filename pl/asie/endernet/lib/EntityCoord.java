@@ -27,4 +27,9 @@ public class EntityCoord {
 		if(world == null) return null;
 		else return world.getBlockTileEntity(x, y, z);
 	}
+	
+	@Override
+	public String toString() {
+		return "[DIM "+this.dimensionID+";"+this.x+","+this.y+","+this.z+"]";
+	}
 }

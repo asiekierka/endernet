@@ -133,4 +133,8 @@ public class TileEntityEnder extends TileEntity implements IEnderRedstone, IPeri
 			int fromDirection) {
 		return false;
 	}
+	
+	public void putEnderID(int eid) {
+		enderNetID = EnderNet.registry.forceEntityID(this, eid);
+	}
 }
