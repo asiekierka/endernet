@@ -1,3 +1,6 @@
+rc2 (0.2.1):
++ Vanilla redstone now connects properly to Ender Transmitters and Receivers.
+
 rc1 (0.2.0):
 + Add Endpoints! They are extra pathnames you specify on the end of the address
   / For example: "local.2/path"

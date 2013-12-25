@@ -28,7 +28,7 @@ public class URIHandlerSendRedstone implements IURIHandler {
 		TileEntity entity = EnderNet.registry.getTileEntity(target);
 		if(entity == null || !(entity instanceof IEnderRedstone)) return false;
 		IEnderRedstone receiver = (IEnderRedstone)entity;
-		return new HTTPResponse(receiver.setRedstone(new Integer(params.get("value")).intValue()));
+		return new HTTPResponse(receiver.receiveRedstoneValue(new Integer(params.get("value")).intValue()));
 	}
 	
 	@Override

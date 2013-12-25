@@ -20,7 +20,7 @@ public class BlockEnderTransmitter extends BlockEnder{
 	private Icon iconTop, iconSide;
 	
 	public BlockEnderTransmitter(int id) {
-		super(id);
+		super(id, true);
 		this.setTextureName("endernet:ender_transmitter");
 		this.setUnlocalizedName("endernet.enderTransmitter");
 	}
@@ -50,28 +50,5 @@ public class BlockEnderTransmitter extends BlockEnder{
 	public void registerIcons(IconRegister reg) {
 		iconTop = reg.registerIcon("endernet:ender_transmitter_top");
 		iconSide = reg.registerIcon("endernet:ender_transmitter_side");
-	}
-	
-	private void setRedstone(World world, int x, int y, int z, int value) {
-		TileEntity entity = world.getBlockTileEntity(x, y, z);
-		if(!(entity instanceof TileEntityEnderTransmitter)) return;
-		((TileEntityEnderTransmitter)entity).sendRedstone(value);
-	}
-	
-	@Override
-    public void onNeighborBlockChange(World world, int x, int y, int z, int side) {
-		setRedstone(world, x, y, z, this.getRedstoneValue(world, x, y, z));
-	}
-	
-	@Override
-	public RedNetConnectionType getConnectionType(World world, int x, int y,
-			int z, ForgeDirection side) {
-		return RedNetConnectionType.CableSingle;
-	}
-	
-	@Override
-	public void onInputChanged(World world, int x, int y, int z,
-			ForgeDirection side, int inputValue) {
-		setRedstone(world, x, y, z, inputValue);
 	}
 }

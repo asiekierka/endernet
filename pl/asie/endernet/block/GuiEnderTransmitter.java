@@ -68,7 +68,7 @@ public class GuiEnderTransmitter extends GuiContainer {
 	
 	@Override
     protected void drawGuiContainerForegroundLayer(int par1, int par2) {
-        this.drawString(this.fontRenderer, "ID " + transmitter.enderNetID, 6, 6, 16777215);
+        this.drawString(this.fontRenderer, "ID " + transmitter.getEnderNetID(), 6, 6, 16777215);
     }
 
 	public void syncNBTFromClient(NBTTagCompound data) {
@@ -83,7 +83,7 @@ public class GuiEnderTransmitter extends GuiContainer {
 		DataOutputStream data = new DataOutputStream(baos);
 		try {
 			data.writeByte((byte)1);
-			data.writeInt(transmitter.enderNetID);
+			data.writeInt(transmitter.getEnderNetID());
 			data.writeUTF(this.address.getText());
 			PacketDispatcher.sendPacketToServer(new Packet250CustomPayload("EnderNet", baos.toByteArray()));
 		} catch(Exception e) { e.printStackTrace(); }

@@ -34,7 +34,7 @@ public class ItemBlockEnder extends ItemBlock {
 				ender.yCoord = y;
 				ender.zCoord = z;
 				ender.worldObj = world;
-				ender.putEnderID(stack.getTagCompound().getInteger("eid"));
+				ender.initWithEnderID(stack.getTagCompound().getInteger("eid"));
 		        world.setBlockTileEntity(x, y, z, ender);
 			}
 			return true;

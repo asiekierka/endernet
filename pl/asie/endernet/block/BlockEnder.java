@@ -21,15 +21,14 @@ import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.ChatMessageComponent;
 import net.minecraft.world.Explosion;
+import net.minecraft.world.IBlockAccess;
 import net.minecraft.world.World;
 import net.minecraftforge.common.ForgeDirection;
 import net.minecraftforge.event.ForgeEventFactory;
 
-public class BlockEnder extends BlockContainer implements IConnectableRedNet {
-	public BlockEnder(int id) {
-		super(id, Material.iron);
-		this.setCreativeTab(CreativeTabs.tabMisc);
-		this.setHardness(1.5F);
+public class BlockEnder extends BlockBase {
+	public BlockEnder(int id, boolean connectsToRedstone) {
+		super(id, connectsToRedstone);
 	}
 	
 	@Override
@@ -46,7 +45,7 @@ public class BlockEnder extends BlockContainer implements IConnectableRedNet {
 			ChatMessageComponent chat = new ChatMessageComponent();
 			TileEntityEnder ender = (TileEntityEnder)world.getBlockTileEntity(x, y, z);
 			if(!ender.canReceive()) chat.addKey("error.endernet.dimension");
-			else chat.addFormatted("info.endernet.id", new Object[]{""+ender.enderNetID});
+			else chat.addFormatted("info.endernet.id", new Object[]{""+ender.getEnderNetID()});
 			player.sendChatToPlayer(chat);
 		}
 		return true;
@@ -64,7 +63,7 @@ public class BlockEnder extends BlockContainer implements IConnectableRedNet {
 			ItemStack item = new ItemStack(this, 1);
 			NBTTagCompound enderData = item.getTagCompound();
 			if(enderData == null) enderData = new NBTTagCompound();
-			enderData.setInteger("eid", ender.enderNetID);
+			enderData.setInteger("eid", ender.getEnderNetID());
 
 			this.breakBlock(world, x, y, z, this.blockID, 0);
 			world.setBlockToAir(x, y, z);
@@ -73,61 +72,12 @@ public class BlockEnder extends BlockContainer implements IConnectableRedNet {
 		}
 	}
 
+	@Override
 	public void onBlockDestroyed(World world, int x, int y, int z, int meta) {
 		TileEntity tileEntity = world.getBlockTileEntity(x, y, z);
 		if(tileEntity != null) {
 			EnderNet.registry.removeEntity(tileEntity);
 			tileEntity.invalidate();
 		}
-	}
-
-	@Override
-	public void onBlockDestroyedByPlayer(World world, int x, int y, int z, int meta) {
-		super.onBlockDestroyedByPlayer(world, x, y, z, meta);
-		this.onBlockDestroyed(world, x, y, z, meta);
-	}
-
-	@Override
-	public void onBlockDestroyedByExplosion(World world, int x, int y, int z, Explosion explosion) {
-		super.onBlockDestroyedByExplosion(world, x, y, z, explosion);
-		this.onBlockDestroyed(world, x, y, z, 0);
-	}
-	
-    @Override
-	public void breakBlock(World world, int x, int y, int z, int id, int meta) {
-    	this.onBlockDestroyed(world, x, y, z, meta);
-    	super.breakBlock(world, x, y, z, id, meta);
-	}
-    
-    public int getRedstoneValue(World world, int x, int y, int z) {
-    	return (world.isBlockIndirectlyGettingPowered(x, y, z)  ? 1 : 0);
-    }
-
-	@Override
-	public RedNetConnectionType getConnectionType(World world, int x, int y,
-			int z, ForgeDirection side) {
-		return RedNetConnectionType.None;
-	}
-
-	@Override
-	public int[] getOutputValues(World world, int x, int y, int z,
-			ForgeDirection side) {
-		return null;
-	}
-
-	@Override
-	public int getOutputValue(World world, int x, int y, int z,
-			ForgeDirection side, int subnet) {
-		return 0;
-	}
-
-	@Override
-	public void onInputsChanged(World world, int x, int y, int z,
-			ForgeDirection side, int[] inputValues) {
-	}
-
-	@Override
-	public void onInputChanged(World world, int x, int y, int z,
-			ForgeDirection side, int inputValue) {
 	}
 }

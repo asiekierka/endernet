@@ -66,7 +66,7 @@ public class TileEntityEnderModem extends TileEntityEnder implements IEnderStrin
 	public String[] getMethodNames() {
 		String[] names;
 		if(CAN_TRANSMIT_MODEM) names = new String[]{ "getAddress", "setAddress", "getID", "canReceive", "canTransmit", "send" };
-		else names = new String[]{ "getAddress", "setAddress", "getID", "canReceive", "canTransmit" };
+		else names = new String[]{ "getAddress", "setAddress", "getID", "canReceive", "canTransmit", "" };
 		return names;
 	}
 	

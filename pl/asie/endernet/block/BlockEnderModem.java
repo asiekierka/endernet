@@ -18,7 +18,7 @@ public class BlockEnderModem extends BlockEnder {
 	private Icon iconTop, iconSide;
 	
 	public BlockEnderModem(int id) {
-		super(id);
+		super(id, false);
 		this.setTextureName("endernet:ender_modem");
 		this.setUnlocalizedName("endernet.enderModem");
 	}

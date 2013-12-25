@@ -25,7 +25,7 @@ public class TileEntityEnderChatBox extends TileEntityEnderModem {
 		ChatMessageComponent chat = new ChatMessageComponent();
 		chat.setColor(EnumChatFormatting.GRAY);
 		chat.setItalic(true);
-		chat.addText(EnumChatFormatting.ITALIC + "[ChatBox "+this.enderNetID+"] ");
+		chat.addText(EnumChatFormatting.ITALIC + "[ChatBox "+this.getEnderNetID()+"] ");
 		chat.addText(EnumChatFormatting.RESET + "" + EnumChatFormatting.GRAY + string);
 		for(Object o: this.worldObj.playerEntities) {
 			if(!(o instanceof EntityPlayer)) continue;

@@ -17,8 +17,7 @@ import pl.asie.endernet.lib.EnderID;
 import pl.asie.endernet.lib.EnderServer;
 import pl.asie.endernet.lib.MiscUtils;
 
-public class TileEntityEnderReceiver extends TileEntityEnderModem implements IBundledEmitter, IEnderRedstone, IEnderStringReceiver, IInventory {
-	private int redstoneValue;
+public class TileEntityEnderReceiver extends TileEntityEnderModem implements IEnderRedstone, IEnderStringReceiver, IInventory {
 	private boolean updateNextTick;
 
 	public TileEntityEnderReceiver() {
@@ -181,23 +180,14 @@ public class TileEntityEnderReceiver extends TileEntityEnderModem implements IBu
 	}
 
 	@Override
-	public boolean setRedstone(int value) {
-		this.redstoneValue = value;
+	public int getRedstoneValue() {
+		return this.getRedstoneInternal();
+	}
+	
+	@Override
+	public boolean receiveRedstoneValue(int value) {
+		this.setRedstoneInternal(value);
 		this.updateNextTick = true;
 		return true;
-	}
-
-	@Override
-	public int getRedstone() {
-		return redstoneValue;
-	}
-
-	@Override
-	public byte[] getBundledCableStrength(int blockFace, int toDirection) {
-		byte[] values = new byte[16];
-		for(int i = 0; i < 16; i++) {
-			values[i] = (this.redstoneValue & (1<<i)) > 0 ? (byte)255 : (byte)0;
-		}
-		return values;
 	}
 }

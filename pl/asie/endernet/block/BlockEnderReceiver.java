@@ -22,7 +22,7 @@ public class BlockEnderReceiver extends BlockEnder {
 	private Icon iconTop, iconSide;
 	
 	public BlockEnderReceiver(int id) {
-		super(id);
+		super(id, true);
 		this.setTextureName("endernet:ender_receiver");
 		this.setUnlocalizedName("endernet.enderReceiver");
 	}
@@ -43,33 +43,5 @@ public class BlockEnderReceiver extends BlockEnder {
 	public void registerIcons(IconRegister reg) {
 		iconTop = reg.registerIcon("endernet:ender_receiver_top");
 		iconSide = reg.registerIcon("endernet:ender_receiver_side");
-	}
-	
-	@Override
-	public boolean canProvidePower() { return true; }
-	
-    @Override
-	public int isProvidingWeakPower(IBlockAccess access, int x, int y, int z, int side) {
-    	TileEntityEnderReceiver entity = (TileEntityEnderReceiver)access.getBlockTileEntity(x, y, z);
-        return entity.getRedstone() > 0 ? 15 : 0;
-    }
-
-	@Override
-	public RedNetConnectionType getConnectionType(World world, int x, int y,
-			int z, ForgeDirection side) {
-		return RedNetConnectionType.CableSingle;
-	}
-
-	@Override
-	public int[] getOutputValues(World world, int x, int y, int z,
-			ForgeDirection side) {
-		return null;
-	}
-
-	@Override
-	public int getOutputValue(World world, int x, int y, int z,
-			ForgeDirection side, int subnet) {
-    	TileEntityEnderReceiver entity = (TileEntityEnderReceiver)world.getBlockTileEntity(x, y, z);
-        return entity.getRedstone();
 	}
 }

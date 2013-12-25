@@ -3,21 +3,40 @@ package pl.asie.endernet.block;
 import java.util.ArrayList;
 import java.util.HashSet;
 
+import cpw.mods.fml.relauncher.Side;
+import cpw.mods.fml.relauncher.SideOnly;
 import dan200.computer.api.IComputerAccess;
 import dan200.computer.api.ILuaContext;
 import dan200.computer.api.IPeripheral;
 import pl.asie.endernet.EnderNet;
 import pl.asie.endernet.api.IEnderRedstone;
+import mods.immibis.redlogic.api.wiring.IBundledEmitter;
+import mods.immibis.redlogic.api.wiring.IBundledUpdatable;
+import mods.immibis.redlogic.api.wiring.IBundledWire;
 import mods.immibis.redlogic.api.wiring.IConnectable;
 import mods.immibis.redlogic.api.wiring.IWire;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.nbt.NBTTagList;
 import net.minecraft.tileentity.TileEntity;
+import net.minecraftforge.common.ForgeDirection;
 
-public class TileEntityEnder extends TileEntity implements IEnderRedstone, IPeripheral, IConnectable {
-	public int enderNetID = -1;
+public class TileEntityEnder extends TileEntityBase implements IEnderRedstone, IPeripheral {
+	private int enderNetID = -1;
 	protected String address = "local.0";
+
+	// API functions
+	public boolean canConnectRedstone() {
+		return ((BlockEnder)getBlockType()).canConnectRedstone();
+	}
+	
+	public boolean canTransmit() {
+		return !EnderNet.isDimensionBlacklisted(this.worldObj.provider.dimensionId);
+	}
+	
+	public boolean canReceive() {
+		return !EnderNet.isDimensionBlacklisted(this.worldObj.provider.dimensionId);
+	}
 	
 	public String getAddress() { return address; }
 	public void setAddress(String address) {
@@ -25,14 +44,39 @@ public class TileEntityEnder extends TileEntity implements IEnderRedstone, IPeri
 	}
 	
 	@Override
+	public int getRedstoneValue() {
+		return 0;
+	}
+
+	@Override
+	public boolean setRedstoneValue(int value) {
+		return false;
+	}
+	
+	@Override
+	public boolean receiveRedstoneValue(int value) {
+		return false;
+	}
+	
+	public int getEnderNetID() {
+		return enderNetID;
+	}
+	
+	@SideOnly(Side.CLIENT)
+	public void setEnderNetIDClient(int id) {
+		enderNetID = id;
+	}
+	
+	protected void initWithEnderID(int eid) {
+		enderNetID = EnderNet.registry.forceEntityID(this, eid);
+	}
+	
+	// Minecraft functions 
+	
+	@Override
 	public void updateEntity() {
 		super.updateEntity();
 		if(!this.worldObj.isRemote && enderNetID == -1) enderNetID = EnderNet.registry.getEntityID(this);
-	}
-	
-	protected void writeNBTEnderData(NBTTagCompound tagCompound) {
-		tagCompound.setInteger("eid", enderNetID);
-        tagCompound.setString("a", address);
 	}
 
 	@Override
@@ -49,12 +93,9 @@ public class TileEntityEnder extends TileEntity implements IEnderRedstone, IPeri
 		writeNBTEnderData(tagCompound);
 	}
 	
-	public boolean canTransmit() {
-		return !EnderNet.isDimensionBlacklisted(this.worldObj.provider.dimensionId);
-	}
-	
-	public boolean canReceive() {
-		return !EnderNet.isDimensionBlacklisted(this.worldObj.provider.dimensionId);
+	protected void writeNBTEnderData(NBTTagCompound tagCompound) {
+		tagCompound.setInteger("eid", enderNetID);
+        tagCompound.setString("a", address);
 	}
 	
 	// COMPUTERCRAFT COMPATIBILITY BEGIN
@@ -111,30 +152,5 @@ public class TileEntityEnder extends TileEntity implements IEnderRedstone, IPeri
 	@Override
 	public void detach(IComputerAccess computer) {
 		computers.remove(computer);
-	}
-	
-	@Override
-	public boolean setRedstone(int value) {
-		return false;
-	}
-
-	@Override
-	public int getRedstone() {
-		return 0;
-	}
-
-	@Override
-	public boolean connects(IWire wire, int blockFace, int fromDirection) {
-		return true;
-	} 
-
-	@Override
-	public boolean connectsAroundCorner(IWire wire, int blockFace,
-			int fromDirection) {
-		return false;
-	}
-	
-	public void putEnderID(int eid) {
-		enderNetID = EnderNet.registry.forceEntityID(this, eid);
 	}
 }

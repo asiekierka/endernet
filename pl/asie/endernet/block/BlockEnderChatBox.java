@@ -14,7 +14,7 @@ import net.minecraft.util.ChatMessageComponent;
 import net.minecraft.util.Icon;
 import net.minecraft.world.World;
 
-public class BlockEnderChatBox extends BlockEnder {
+public class BlockEnderChatBox extends BlockEnderModem {
 	private Icon iconTop, iconSide;
 	
 	public BlockEnderChatBox(int id) {
