@@ -90,13 +90,14 @@ public class TileEntityEnderModem extends TileEntityEnder implements IEnderStrin
 	}
 	
 	@Override
-	public boolean receiveString(EnderServer server, String string) {
+	public boolean receiveString(EnderServer server, String string, String endpoint) {
 		if(!canReceive() || super.computers.size() == 0) return false;
 		for(IComputerAccess computer: super.computers) {
-			Object[] arguments = new Object[3];
+			Object[] arguments = new Object[4];
 			arguments[0] = (server != null ? server.name : "unknown");
 			arguments[1] = string;
 			arguments[2] = computer.getAttachmentName();
+			arguments[3] = endpoint;
 			computer.queueEvent("endernet_message", arguments);
 		}
 		return true;

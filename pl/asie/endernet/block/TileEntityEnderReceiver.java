@@ -16,6 +16,7 @@ import pl.asie.endernet.api.IEnderRedstone;
 import pl.asie.endernet.api.IEnderStringReceiver;
 import pl.asie.endernet.lib.EnderID;
 import pl.asie.endernet.lib.EnderServer;
+import pl.asie.endernet.lib.MiscUtils;
 
 public class TileEntityEnderReceiver extends TileEntityEnderModem implements IBundledTile, IBundledEmitter, IEnderRedstone, IEnderStringReceiver, IInventory {
 	private int redstoneValue;
@@ -71,7 +72,7 @@ public class TileEntityEnderReceiver extends TileEntityEnderModem implements IBu
 		ItemStack stack = item.createItemStack();
 		if(stack == null) return 0;
 		int amountPre = stack.stackSize;
-		int predefinedSide = getSideFromName(endpoint);
+		int predefinedSide = MiscUtils.getSideFromName(endpoint);
 		for(int side = 0; side < 6; side++) {
 			if(predefinedSide >= 0 && side != predefinedSide) continue;
 			if(stack == null || stack.stackSize == 0) continue;
@@ -107,17 +108,6 @@ public class TileEntityEnderReceiver extends TileEntityEnderModem implements IBu
 		}
 		int amountPost = stack != null ? stack.stackSize : 0;
 		return amountPre - amountPost;
-	}
-	
-	private int getSideFromName(String endpoint) {
-		endpoint = endpoint.toLowerCase();
-		if(endpoint.equalsIgnoreCase("up") || endpoint.equalsIgnoreCase("top")) return 1;
-		if(endpoint.equalsIgnoreCase("down") || endpoint.equalsIgnoreCase("bottom")) return 0;
-		if(endpoint.equalsIgnoreCase("left") || endpoint.equalsIgnoreCase("west")) return 4;
-		if(endpoint.equalsIgnoreCase("right") || endpoint.equalsIgnoreCase("east")) return 5;
-		if(endpoint.equalsIgnoreCase("front") || endpoint.equalsIgnoreCase("forward") || endpoint.equalsIgnoreCase("north")) return 2;
-		if(endpoint.equalsIgnoreCase("back") || endpoint.equalsIgnoreCase("south")) return 3;
-		return -1;
 	}
 
 	@Override

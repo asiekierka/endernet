@@ -9,13 +9,6 @@ import dan200.computer.api.IComputerAccess;
 import dan200.computer.api.ILuaContext;
 
 public class TileEntityEnderChatBox extends TileEntityEnderModem {
-	@Override
-	public boolean receiveString(EnderServer server, String string) {
-		super.receiveString(server, string);
-		//sendChatMessage(string, EnderNet.SPEAKING_DISTANCE);
-		return true;
-	}
-	
 	public void receiveChatMessage(String username, String message) {
 		if(super.computers.size() > 0) {
 			for(IComputerAccess computer: super.computers) {
