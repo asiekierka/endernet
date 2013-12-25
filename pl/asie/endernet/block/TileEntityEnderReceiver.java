@@ -66,12 +66,14 @@ public class TileEntityEnderReceiver extends TileEntityEnderModem implements IBu
 		}
 	}
 	
-	public int receiveItem(EnderID item) {
+	public int receiveItem(EnderID item, String endpoint) {
 		if(!canReceive()) return 0;
 		ItemStack stack = item.createItemStack();
 		if(stack == null) return 0;
 		int amountPre = stack.stackSize;
+		int predefinedSide = getSideFromName(endpoint);
 		for(int side = 0; side < 6; side++) {
+			if(predefinedSide >= 0 && side != predefinedSide) continue;
 			if(stack == null || stack.stackSize == 0) continue;
 			int[] dir = DIRECTIONS[side];
 			TileEntity entity = worldObj.getBlockTileEntity(
@@ -107,6 +109,17 @@ public class TileEntityEnderReceiver extends TileEntityEnderModem implements IBu
 		return amountPre - amountPost;
 	}
 	
+	private int getSideFromName(String endpoint) {
+		endpoint = endpoint.toLowerCase();
+		if(endpoint.equalsIgnoreCase("up") || endpoint.equalsIgnoreCase("top")) return 1;
+		if(endpoint.equalsIgnoreCase("down") || endpoint.equalsIgnoreCase("bottom")) return 0;
+		if(endpoint.equalsIgnoreCase("left") || endpoint.equalsIgnoreCase("west")) return 4;
+		if(endpoint.equalsIgnoreCase("right") || endpoint.equalsIgnoreCase("east")) return 5;
+		if(endpoint.equalsIgnoreCase("front") || endpoint.equalsIgnoreCase("forward") || endpoint.equalsIgnoreCase("north")) return 2;
+		if(endpoint.equalsIgnoreCase("back") || endpoint.equalsIgnoreCase("south")) return 3;
+		return -1;
+	}
+
 	@Override
 	public void updateEntity() {
 		super.updateEntity();

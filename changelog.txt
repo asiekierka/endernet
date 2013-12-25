@@ -1,3 +1,8 @@
+beta8:
++ Add Endpoints! They are extra pathnames you specify on the end of the address
+  / For example: "local.2/path"
++ Ender Receivers can use Endpoints to specify the side (north/south/east/west/up/down or top/bottom or front/back... many variations)
+
 beta7:
 + Ender Transmitters and Receivers now send MFR RedNet information (single channel). Woo!
 + Ender Transmitters and Receivers now send RedLogic bundled cable information (yes, you can exchange it with MFR). Wooooo!

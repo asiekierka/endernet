@@ -30,7 +30,7 @@ public class URIHandlerReceive implements IURIHandler {
 		TileEntity entity = EnderNet.registry.getTileEntity(target);
 		if(entity == null || !(entity instanceof TileEntityEnderReceiver)) return fail;
 		TileEntityEnderReceiver receiver = (TileEntityEnderReceiver)entity;
-		int amountSent = receiver.receiveItem(block);
+		int amountSent = receiver.receiveItem(block, params.get("endpoint"));
 		return new HTTPResponse(amountSent > 0, amountSent);
 	}
 	
