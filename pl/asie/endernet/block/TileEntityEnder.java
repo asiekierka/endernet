@@ -26,10 +26,6 @@ public class TileEntityEnder extends TileEntityBase implements IEnderRedstone, I
 	protected String address = "local.0";
 
 	// API functions
-	public boolean canConnectRedstone() {
-		return ((BlockEnder)getBlockType()).canConnectRedstone();
-	}
-	
 	public boolean canTransmit() {
 		return !EnderNet.isDimensionBlacklisted(this.worldObj.provider.dimensionId);
 	}
@@ -62,6 +58,7 @@ public class TileEntityEnder extends TileEntityBase implements IEnderRedstone, I
 		return enderNetID;
 	}
 	
+	// Used for reading NBT data remotely.
 	@SideOnly(Side.CLIENT)
 	public void setEnderNetIDClient(int id) {
 		enderNetID = id;

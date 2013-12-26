@@ -1,17 +1,26 @@
 package pl.asie.endernet.block;
 
+import pl.asie.endernet.EnderNet;
 import mods.immibis.redlogic.api.wiring.IBundledEmitter;
 import mods.immibis.redlogic.api.wiring.IBundledUpdatable;
 import mods.immibis.redlogic.api.wiring.IBundledWire;
 import mods.immibis.redlogic.api.wiring.IConnectable;
 import mods.immibis.redlogic.api.wiring.IWire;
+import mrtjp.projectred.api.IBundledTile;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraftforge.common.ForgeDirection;
 
-public abstract class TileEntityBase extends TileEntity implements IBundledEmitter, IBundledUpdatable, IConnectable {
+public abstract class TileEntityBase extends TileEntity implements IBundledEmitter, IBundledUpdatable, IConnectable, IBundledTile {
 	private int redstoneValue = 0;
 	
-	public abstract boolean canConnectRedstone();
+	public boolean canInputRedstoneFromSide(int side) {
+		return false;
+	}
+	
+	public boolean canOutputRedstoneToSide(int side) {
+		return false;
+	}
+	
 	public abstract int getRedstoneValue();
 	public abstract boolean setRedstoneValue(int value);
 	
@@ -27,7 +36,7 @@ public abstract class TileEntityBase extends TileEntity implements IBundledEmitt
 	
 	@Override
 	public boolean connects(IWire wire, int blockFace, int fromDirection) {
-		return canConnectRedstone();
+		return canInputRedstoneFromSide(blockFace) || canOutputRedstoneToSide(blockFace);
 	} 
 
 	@Override
@@ -38,6 +47,7 @@ public abstract class TileEntityBase extends TileEntity implements IBundledEmitt
 
 	@Override
 	public byte[] getBundledCableStrength(int blockFace, int toDirection) {
+		if(!canOutputRedstoneToSide(blockFace)) return null;
 		byte[] values = new byte[16];
 		for(int i = 0; i < 16; i++) {
 			values[i] = (getRedstoneValue() & (1<<i)) > 0 ? (byte)255 : (byte)0;
@@ -52,6 +62,7 @@ public abstract class TileEntityBase extends TileEntity implements IBundledEmitt
 			if(te instanceof IBundledWire) {
 				IBundledWire wire = (IBundledWire)te;
 				for(int face = -1; face < 6; face++) {
+					if(!canInputRedstoneFromSide(face)) continue;
 					if(wire.wireConnectsInDirection(face, dir.ordinal())) {
 						int value = 0;
 						byte[] data = wire.getBundledCableStrength(face, dir.ordinal());
@@ -64,5 +75,17 @@ public abstract class TileEntityBase extends TileEntity implements IBundledEmitt
 				}
 			}
 		}
+	}
+
+	// Project: Red compatibility (uses RedLogic functions)
+	
+	@Override
+	public byte[] getBundledSignal(int side) {
+		return getBundledCableStrength(side, -1);
+	}
+
+	@Override
+	public boolean canConnectBundled(int side) {
+		return connects(null, side, -1);
 	}
 }

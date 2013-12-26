@@ -24,6 +24,11 @@ public class TileEntityEnderReceiver extends TileEntityEnderModem implements IEn
 		super(true, false); // receive only
 	}
 	
+	@Override
+	public boolean canOutputRedstoneToSide(int side) {
+		return true;
+	}
+	
 	private static final int[][] DIRECTIONS = {
 		{0, -1, 0}, {0, 1, 0}, {0, 0, -1}, {0, 0, 1}, {-1, 0, 0}, {1, 0, 0}
 	};

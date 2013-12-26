@@ -13,13 +13,10 @@ import net.minecraft.world.World;
 import net.minecraftforge.common.ForgeDirection;
 
 public abstract class BlockBase extends BlockContainer implements IConnectableRedNet {
-	private boolean canConnectRedstone;
-	
-	protected BlockBase(int id, boolean connectsToRedstone) {
+	protected BlockBase(int id) {
 		super(id, Material.iron);
 		this.setCreativeTab(CreativeTabs.tabMisc);
 		this.setHardness(1.5F);
-		this.canConnectRedstone = connectsToRedstone;
 	}
 	
 	// DESTROY HANDLERS
@@ -54,31 +51,44 @@ public abstract class BlockBase extends BlockContainer implements IConnectableRe
     // Helpers
     private void setRedstone(World world, int x, int y, int z, int value) {
 		TileEntity entity = world.getBlockTileEntity(x, y, z);
-		if(!(entity instanceof TileEntityEnder)) return;
-		((TileEntityEnder)entity).setRedstoneValue(value);
+		if(!(entity instanceof TileEntityBase)) return;
+		((TileEntityBase)entity).setRedstoneValue(value);
 	}
 	
 	@Override
     public void onNeighborBlockChange(World world, int x, int y, int z, int side) {
-		if(canConnectRedstone) setRedstone(world, x, y, z, this.getWorldRedstoneValue(world, x, y, z));
+		if(canInputRedstoneFromSide(world, x, y, z, side)) setRedstone(world, x, y, z, this.getWorldRedstoneValue(world, x, y, z));
+	}
+	
+	public boolean canInputRedstoneFromSide(IBlockAccess world, int x, int y, int z, int side) {
+		TileEntity entity = world.getBlockTileEntity(x, y, z);
+		if(!(entity instanceof TileEntityBase)) return true;
+		return ((TileEntityBase)entity).canInputRedstoneFromSide(side);
+	}
+	
+	public boolean canOutputRedstoneToSide(IBlockAccess world, int x, int y, int z, int side) {
+		TileEntity entity = world.getBlockTileEntity(x, y, z);
+		if(!(entity instanceof TileEntityBase)) return true;
+		return ((TileEntityBase)entity).canOutputRedstoneToSide(side);
 	}
 	
     // Vanilla redstone
 	
 	@Override
 	public boolean canConnectRedstone(IBlockAccess world, int x, int y, int z, int side) {
-		return canConnectRedstone;
+		return (canInputRedstoneFromSide(world,x,y,z,side) || canOutputRedstoneToSide(world,x,y,z,side));
 	}
 	
     public int getWorldRedstoneValue(World world, int x, int y, int z) {
-    	return (world.isBlockIndirectlyGettingPowered(x, y, z)  ? 1 : 0);
+    	return (world.isBlockIndirectlyGettingPowered(x, y, z) ? 1 : 0);
     }
 
 	@Override
-	public boolean canProvidePower() { return canConnectRedstone; }
+	public boolean canProvidePower() { return true; }
 	
     @Override
 	public int isProvidingWeakPower(IBlockAccess access, int x, int y, int z, int side) {
+    	if(!canOutputRedstoneToSide(access,x,y,z,side)) return 0;
     	TileEntityEnder entity = (TileEntityEnder)access.getBlockTileEntity(x, y, z);
         return entity.getRedstoneValue() > 0 ? 15 : 0;
     }
@@ -91,7 +101,7 @@ public abstract class BlockBase extends BlockContainer implements IConnectableRe
 	 */
 	public RedNetConnectionType getConnectionType(World world, int x, int y,
 			int z, ForgeDirection side) {
-		return canConnectRedstone ? RedNetConnectionType.CableSingle : RedNetConnectionType.None;
+		return canConnectRedstone(world, x, y, z, side.ordinal()) ? RedNetConnectionType.CableSingle : RedNetConnectionType.None;
 	}
 
 	@Override
@@ -103,6 +113,7 @@ public abstract class BlockBase extends BlockContainer implements IConnectableRe
 	@Override
 	public int getOutputValue(World world, int x, int y, int z,
 			ForgeDirection side, int subnet) {
+		if(!canOutputRedstoneToSide(world, x, y, z, side.ordinal())) return 0;
     	TileEntityEnder entity = (TileEntityEnder)world.getBlockTileEntity(x, y, z);
         return entity.getRedstoneValue();
 	}
@@ -115,8 +126,6 @@ public abstract class BlockBase extends BlockContainer implements IConnectableRe
 	@Override
 	public void onInputChanged(World world, int x, int y, int z,
 			ForgeDirection side, int inputValue) {
-		if(canConnectRedstone) setRedstone(world, x, y, z, inputValue);
+		if(canInputRedstoneFromSide(world, x, y, z, side.ordinal())) setRedstone(world, x, y, z, inputValue);
 	}
-	
-	public boolean canConnectRedstone() { return canConnectRedstone; }
 }

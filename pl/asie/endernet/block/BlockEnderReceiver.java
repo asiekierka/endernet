@@ -22,7 +22,7 @@ public class BlockEnderReceiver extends BlockEnder {
 	private Icon iconTop, iconSide;
 	
 	public BlockEnderReceiver(int id) {
-		super(id, true);
+		super(id);
 		this.setTextureName("endernet:ender_receiver");
 		this.setUnlocalizedName("endernet.enderReceiver");
 	}

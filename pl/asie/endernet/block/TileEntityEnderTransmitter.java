@@ -31,6 +31,11 @@ public class TileEntityEnderTransmitter extends TileEntityEnderModem implements 
 	public TileEntityEnderTransmitter() {
 		super(false, true); // transmit only
 	}
+
+	@Override
+	public boolean canInputRedstoneFromSide(int side) {
+		return true;
+	}
 	
 	protected ItemStack[] inventory = new ItemStack[2];
 	

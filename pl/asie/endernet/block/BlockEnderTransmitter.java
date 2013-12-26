@@ -20,7 +20,7 @@ public class BlockEnderTransmitter extends BlockEnder{
 	private Icon iconTop, iconSide;
 	
 	public BlockEnderTransmitter(int id) {
-		super(id, true);
+		super(id);
 		this.setTextureName("endernet:ender_transmitter");
 		this.setUnlocalizedName("endernet.enderTransmitter");
 	}

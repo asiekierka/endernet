@@ -27,8 +27,8 @@ import net.minecraftforge.common.ForgeDirection;
 import net.minecraftforge.event.ForgeEventFactory;
 
 public class BlockEnder extends BlockBase {
-	public BlockEnder(int id, boolean connectsToRedstone) {
-		super(id, connectsToRedstone);
+	public BlockEnder(int id) {
+		super(id);
 	}
 	
 	@Override
@@ -38,17 +38,19 @@ public class BlockEnder extends BlockBase {
 	
 	@Override
 	public boolean onBlockActivated(World world, int x, int y, int z, EntityPlayer player, int par6, float par7, float par8, float par9) {
-		if(world.isRemote) return true;
 		if(player.isSneaking()) {
 			tryRemovingBlock(world, x, y, z, player);
+			return true;
 		} else { // Not sneaking
-			ChatMessageComponent chat = new ChatMessageComponent();
-			TileEntityEnder ender = (TileEntityEnder)world.getBlockTileEntity(x, y, z);
-			if(!ender.canReceive()) chat.addKey("error.endernet.dimension");
-			else chat.addFormatted("info.endernet.id", new Object[]{""+ender.getEnderNetID()});
-			player.sendChatToPlayer(chat);
+			if(!world.isRemote) {
+				ChatMessageComponent chat = new ChatMessageComponent();
+				TileEntityEnder ender = (TileEntityEnder)world.getBlockTileEntity(x, y, z);
+				if(!ender.canReceive()) chat.addKey("error.endernet.dimension");
+				else chat.addFormatted("info.endernet.id", new Object[]{""+ender.getEnderNetID()});
+				player.sendChatToPlayer(chat);
+			}
+			return false;
 		}
-		return true;
 	}
 
 	public void tryRemovingBlock(World world, int x, int y, int z, EntityPlayer player) {
