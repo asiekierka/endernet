@@ -1,0 +1,10 @@
+tile.endernet.enderTransmitter.name=末影发信机
+tile.endernet.enderReceiver.name=末影接收器
+tile.endernet.enderModem.name=末影调制解调器
+tile.endernet.enderChatBox.name=末影聊天盒
+error.endernet.dimension=末影网在该位面无法连接!
+info.endernet.id=该方块的末影网id为%s
+command.endernet.info.usage=显示当前持有物品栏物品详细信息.
+command.endernet.reload.usage=重载endernet-servers.json文件.
+command.endernet.reload.success=重载成功!
+command.endernet.reload.failure=重载失败!
