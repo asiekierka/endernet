@@ -83,7 +83,7 @@ public class EnderRedirector {
 				if(!EnderNet.servers.canLocal(handler.getPermissionName())) return new HTTPResponse(false);
 				return (HTTPResponse)handler.serve(params);
 			} else {
-				return HTTPClient.readHTTPResponse(HTTPClient.sendPost(getRemoteAddress(address), "/canReceive", params));
+				return HTTPClient.readHTTPResponse(HTTPClient.sendPost(getRemoteAddress(address), "/receive", params));
 			}
 		} catch(Exception e) {
 			return new HTTPResponse(false);
