@@ -12,8 +12,6 @@ import java.util.HashMap;
 import java.util.Iterator;
 import java.util.Map;
 
-import openmods.Log;
-
 import com.google.gson.Gson;
 
 import pl.asie.endernet.EnderNet;
