@@ -82,14 +82,18 @@ public class ChatHandler {
 			}
 			
 			Date now = new Date();
-			String formattedMessage = EnumChatFormatting.RESET + messageFormat.replaceAll("&", "\u00a7")
-					.replaceAll("%u", username)
+			String formattedMessage = EnumChatFormatting.RESET + messageFormat;
+			try {
+				formattedMessage = formattedMessage.replaceAll("%u", username)
 					.replaceAll("%m", message)
 					.replaceAll("%w", event.player.worldObj.provider.getDimensionName())
 					.replaceAll("%H", pad(now.getHours()))
 					.replaceAll("%M", pad(now.getMinutes()))
 					.replaceAll("%S", pad(now.getSeconds()));
-			
+			} catch(Exception e) { e.printStackTrace(); formattedMessage = EnumChatFormatting.RESET + "<" + username + "" + EnumChatFormatting.RESET + "> " + message; }
+			try {
+				formattedMessage = formattedMessage.replaceAll("&", "\u00a7");
+			} catch(Exception e) { e.printStackTrace(); }
 			if(event.message.startsWith("!") && enableShout) {
 				chat.addText(EnumChatFormatting.YELLOW + "[Shout] " + formattedMessage);
 				disableRadius = true;

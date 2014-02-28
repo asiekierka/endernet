@@ -96,7 +96,7 @@ public class TileEntityEnderReceiver extends TileEntityEnderModem implements IEn
 			} else if(entity instanceof IItemConduit) { // TE3 compatibility
 				IItemConduit conduit = (IItemConduit)entity;
 				ForgeDirection from = ForgeDirection.getOrientation(opposite(side));
-				stack = conduit.insertItem(from, stack, false);
+				//stack = conduit.insertItem(from, stack, false);
 			} else if(entity instanceof IPipeTile) { // BC compatibility
 				IPipeTile pipe = (IPipeTile)entity;
 				ForgeDirection from = ForgeDirection.getOrientation(opposite(side));
