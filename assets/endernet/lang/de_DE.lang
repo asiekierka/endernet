@@ -1,0 +1,10 @@
+tile.endernet.enderTransmitter.name=Ender-Transmitter
+tile.endernet.enderReceiver.name=Ender-Receiver
+tile.endernet.enderModem.name=Endermodem
+tile.endernet.enderChatBox.name=Ender-Chatbox
+error.endernet.dimension=EnderNet kommuniziert nicht in dieser Dimension!
+info.endernet.id=Die EnderNet-ID dieses Blocks ist %s
+command.endernet.info.usage=Gibt dir Dev-Infos über das momentan gehaltene Item im Inventar.
+command.endernet.reload.usage=Lädt die Datei endernet-servers.json neu.
+command.endernet.reload.success=Erfolgreich neu geladen!
+command.endernet.reload.failure=Neuladen fehlgeschlagen!
