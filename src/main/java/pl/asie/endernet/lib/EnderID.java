@@ -8,6 +8,7 @@ import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.CompressedStreamTools;
 import net.minecraft.nbt.NBTBase;
+import net.minecraft.nbt.NBTSizeTracker;
 import net.minecraft.nbt.NBTTagCompound;
 import cpw.mods.fml.common.registry.GameRegistry;
 import cpw.mods.fml.common.registry.GameRegistry.UniqueIdentifier;
@@ -82,14 +83,15 @@ public class EnderID {
 	
 	public NBTTagCompound getTagCompound() {
 		try {
-			return CompressedStreamTools.decompress(compound);
+			return CompressedStreamTools.func_152457_a(compound, NBTSizeTracker.field_152451_a);
 		} catch(Exception e) { return null; }
 	}
 	
 	public ItemStack createItemStack() {
 		ItemStack stack = null;
 		if(this.modId.equals("Minecraft")) {
-			for(Item i: Item.itemsList) {
+			for(int j = 0; j < 32768; j++) {
+				Item i = Item.getItemById(j);
 				if(i == null) continue;
 				if(i.getUnlocalizedName().equals(this.name)) {
 					stack = new ItemStack(i, stackSize);
@@ -98,7 +100,7 @@ public class EnderID {
 			if(stack == null) return null;
 		} else stack = GameRegistry.findItemStack(modId, name, stackSize);
 		if(stack != null) {
-			if(EnderNet.isItemBlacklisted(stack.itemID)) return null;
+			if(EnderNet.isItemBlacklisted(stack.getItem())) return null;
 			stack.setItemDamage(metadata);
 			stack.setTagCompound(getTagCompound());
 		}
@@ -111,7 +113,7 @@ public class EnderID {
 		/* This routine checks for common patterns that are whitelisted. */
 		boolean onlyAllowed = true;
 		int bookCount = 0;
-		for(Object o: compound.getTags()) {
+		/*for(Object o: compound.func_150296_c()) {
 			NBTBase base = (NBTBase)o;
 			if(base.getName().equals("ench")) { }
 			else if(base.getName().equals("author") || base.getName().equals("title") || base.getName().equals("pages")) {
@@ -119,7 +121,7 @@ public class EnderID {
 			}
 			else onlyAllowed = false;
 			break;
-		}
+		}*/
 		if(bookCount != 0 && bookCount != 3) return false; // Books have all of these tags or none.
 		return onlyAllowed;
 	}

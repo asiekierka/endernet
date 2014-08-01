@@ -11,17 +11,13 @@ import pl.asie.endernet.lib.EntityCoord;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.inventory.Container;
 import net.minecraft.inventory.IInventory;
-import net.minecraft.network.INetworkManager;
-import net.minecraft.network.packet.Packet250CustomPayload;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.world.World;
 import cpw.mods.fml.common.network.IGuiHandler;
-import cpw.mods.fml.common.network.IPacketHandler;
-import cpw.mods.fml.common.network.Player;
 
-public class NetworkHandler implements IPacketHandler, IGuiHandler {
+public class NetworkHandler implements IGuiHandler {
 
-	@Override
+	/*@Override
 	public void onPacketData(INetworkManager manager,
 			Packet250CustomPayload packet, Player player) {
 		DataInputStream data = new DataInputStream(new ByteArrayInputStream(packet.data));
@@ -38,13 +34,13 @@ public class NetworkHandler implements IPacketHandler, IGuiHandler {
 					break;
 			}
 		} catch(Exception e) { e.printStackTrace(); }
-	}
+	}*/
 
 	@Override
 	public Object getServerGuiElement(int ID, EntityPlayer player, World world,
 			int x, int y, int z) {
 		if(ID == 1) {
-			return new ContainerEnderTransmitter((TileEntityEnderTransmitter)world.getBlockTileEntity(x, y, z),
+			return new ContainerEnderTransmitter((TileEntityEnderTransmitter)world.getTileEntity(x, y, z),
 					player.inventory);
 		}
 		return null;
@@ -55,7 +51,7 @@ public class NetworkHandler implements IPacketHandler, IGuiHandler {
 			int x, int y, int z) {
 		if(ID == 1) {
 			return new GuiEnderTransmitter((Container)getServerGuiElement(ID, player, world, x, y, z),
-					(TileEntityEnderTransmitter)world.getBlockTileEntity(x, y, z));
+					(TileEntityEnderTransmitter)world.getTileEntity(x, y, z));
 		}
 		return null;
 	}

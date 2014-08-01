@@ -8,7 +8,7 @@ import net.minecraft.command.ICommandSender;
 import net.minecraft.entity.player.EntityPlayerMP;
 import net.minecraft.item.ItemStack;
 import net.minecraft.server.MinecraftServer;
-import net.minecraft.util.ChatMessageComponent;
+import net.minecraft.util.ChatComponentTranslation;
 
 public class CommandEndernetReload extends CommandBase
 {
@@ -38,7 +38,6 @@ public class CommandEndernetReload extends CommandBase
 		
 		// Give success message
         EntityPlayerMP player = getCommandSenderAsPlayer(par1ICommandSender);
-        ChatMessageComponent chat = ChatMessageComponent.createFromTranslationKey(message);
-        player.sendChatToPlayer(chat);
+        player.addChatMessage(new ChatComponentTranslation(message));
     }
 }

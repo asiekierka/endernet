@@ -8,7 +8,7 @@ import net.minecraft.command.ICommandSender;
 import net.minecraft.entity.player.EntityPlayerMP;
 import net.minecraft.item.ItemStack;
 import net.minecraft.server.MinecraftServer;
-import net.minecraft.util.ChatMessageComponent;
+import net.minecraft.util.ChatComponentText;
 
 public class CommandEndernetInfo extends CommandBase
 {
@@ -35,9 +35,7 @@ public class CommandEndernetInfo extends CommandBase
     {
         EntityPlayerMP player = getCommandSenderAsPlayer(par1ICommandSender);
         ItemStack stack = player.inventory.getStackInSlot(player.inventory.currentItem);
-        ChatMessageComponent chat = new ChatMessageComponent();
-        chat.addText("UID: " + EnderID.getItemIdentifierFor(stack)
-        		+ " | NBT: " + (stack.hasTagCompound() ? "Yes" : "No"));
-        player.sendChatToPlayer(chat);
+        player.addChatMessage(new ChatComponentText("UID: " + EnderID.getItemIdentifierFor(stack)
+        		+ " | NBT: " + (stack.hasTagCompound() ? "Yes" : "No")));
     }
 }

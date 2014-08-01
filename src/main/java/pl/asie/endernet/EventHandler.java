@@ -8,25 +8,23 @@ import java.io.Reader;
 
 import com.google.gson.Gson;
 
+import cpw.mods.fml.common.eventhandler.SubscribeEvent;
 import pl.asie.endernet.block.TileEntityEnder;
-import pl.asie.endernet.block.TileEntityEnderChatBox;
 import pl.asie.endernet.lib.EnderRegistry;
 import pl.asie.endernet.lib.EntityCoord;
 import pl.asie.endernet.lib.FileUtils;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.server.MinecraftServer;
 import net.minecraft.tileentity.TileEntity;
-import net.minecraft.util.ChatMessageComponent;
 import net.minecraft.util.EnumChatFormatting;
 import net.minecraft.world.WorldServer;
 import net.minecraftforge.common.DimensionManager;
-import net.minecraftforge.event.ForgeSubscribe;
 import net.minecraftforge.event.ServerChatEvent;
 import net.minecraftforge.event.world.ChunkEvent;
 import net.minecraftforge.event.world.WorldEvent;
 
 public class EventHandler {
-	@ForgeSubscribe
+	@SubscribeEvent
 	public void worldLoadEvent(WorldEvent.Load event) {
 		File registryLocation = new File(DimensionManager.getCurrentSaveRootDirectory(), "enderRegistry.json");
 		if(registryLocation.exists()) {
@@ -46,7 +44,7 @@ public class EventHandler {
 		}
 	}
 	
-	@ForgeSubscribe
+	@SubscribeEvent
 	public void chunkLoadEvent(ChunkEvent.Load event) {
 		for(Object o: event.getChunk().chunkTileEntityMap.values()) {
 			if(o instanceof TileEntityEnder) {

@@ -2,8 +2,6 @@ package pl.asie.endernet.lib;
 
 import java.util.ArrayList;
 
-import net.minecraftforge.common.Property;
-
 public class EnderServer {
 	public EnderServer(String name, String address) {
 		this.name = name;

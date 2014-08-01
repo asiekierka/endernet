@@ -10,8 +10,6 @@ import pl.asie.endernet.lib.EnderRedirector;
 import pl.asie.endernet.lib.EnderServer;
 import pl.asie.endernet.lib.SlotEnergy;
 import cpw.mods.fml.client.FMLClientHandler;
-import dan200.computer.api.IComputerAccess;
-import dan200.computer.api.ILuaContext;
 import mods.immibis.redlogic.api.wiring.IBundledUpdatable;
 import mods.immibis.redlogic.api.wiring.IBundledWire;
 import net.minecraft.client.gui.GuiScreen;
@@ -25,7 +23,7 @@ import net.minecraft.network.packet.Packet;
 import net.minecraft.network.packet.Packet132TileEntityData;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.tileentity.TileEntityFurnace;
-import net.minecraftforge.common.ForgeDirection;
+import net.minecraftforge.common.util.ForgeDirection;
 
 public class TileEntityEnderTransmitter extends TileEntityEnderModem implements IInventory {
 	public TileEntityEnderTransmitter() {

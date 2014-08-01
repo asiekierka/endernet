@@ -1,16 +1,14 @@
 package pl.asie.endernet.block;
 
+import cofh.api.transport.IItemDuct;
 import buildcraft.api.transport.IPipeTile;
-import dan200.computer.api.IComputerAccess;
-import dan200.computer.api.ILuaContext;
 import mods.immibis.redlogic.api.wiring.IBundledEmitter;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.inventory.IInventory;
 import net.minecraft.inventory.ISidedInventory;
 import net.minecraft.item.ItemStack;
 import net.minecraft.tileentity.TileEntity;
-import cofh.api.transport.IItemConduit;
-import net.minecraftforge.common.ForgeDirection;
+import net.minecraftforge.common.util.ForgeDirection;
 import pl.asie.endernet.api.IEnderRedstone;
 import pl.asie.endernet.api.IEnderStringReceiver;
 import pl.asie.endernet.lib.EnderID;
@@ -80,7 +78,7 @@ public class TileEntityEnderReceiver extends TileEntityEnderModem implements IEn
 			if(predefinedSide >= 0 && side != predefinedSide) continue;
 			if(stack == null || stack.stackSize == 0) continue;
 			int[] dir = DIRECTIONS[side];
-			TileEntity entity = worldObj.getBlockTileEntity(
+			TileEntity entity = worldObj.getTileEntity(
 					xCoord+dir[0], yCoord+dir[1], zCoord+dir[2]
 							);
 			if(entity == null || (entity instanceof TileEntityEnderTransmitter)) continue;
@@ -93,10 +91,10 @@ public class TileEntityEnderReceiver extends TileEntityEnderModem implements IEn
 							tryMergeStacks(inv, slot, stack);
 						}
 					}
-			} else if(entity instanceof IItemConduit) { // TE3 compatibility
-				IItemConduit conduit = (IItemConduit)entity;
+			} else if(entity instanceof IItemDuct) { // TE3 compatibility
+				IItemDuct conduit = (IItemDuct)entity;
 				ForgeDirection from = ForgeDirection.getOrientation(opposite(side));
-				//stack = conduit.insertItem(from, stack, false);
+				stack = conduit.insertItem(from, stack);
 			} else if(entity instanceof IPipeTile) { // BC compatibility
 				IPipeTile pipe = (IPipeTile)entity;
 				ForgeDirection from = ForgeDirection.getOrientation(opposite(side));
@@ -118,7 +116,7 @@ public class TileEntityEnderReceiver extends TileEntityEnderModem implements IEn
 		super.updateEntity();
 		if(updateNextTick) {
 			updateNextTick = false;
-	        this.worldObj.notifyBlocksOfNeighborChange(xCoord, yCoord, zCoord, this.worldObj.getBlockId(xCoord, yCoord, zCoord));
+	        this.worldObj.notifyBlocksOfNeighborChange(xCoord, yCoord, zCoord, this.worldObj.getBlock(xCoord, yCoord, zCoord));
 		}
 	}
 	
@@ -155,13 +153,8 @@ public class TileEntityEnderReceiver extends TileEntityEnderModem implements IEn
 	public void setInventorySlotContents(int slot, ItemStack stack) { }
 	
 	@Override
-	public String getInvName() {
+	public String getInventoryName() {
 		return "asietweaks.enderreceiver.inventory";
-	}
-
-	@Override
-	public boolean isInvNameLocalized() {
-		return false;
 	}
 
 	@Override
@@ -173,11 +166,6 @@ public class TileEntityEnderReceiver extends TileEntityEnderModem implements IEn
 	public boolean isUseableByPlayer(EntityPlayer player) {
     	return false;
     }
-    
-    @Override
-	public void openChest() { }
-	@Override
-	public void closeChest() { }
 
 	@Override
 	public boolean isItemValidForSlot(int slot, ItemStack stack) {
@@ -194,5 +182,22 @@ public class TileEntityEnderReceiver extends TileEntityEnderModem implements IEn
 		this.setRedstoneInternal(value);
 		this.updateNextTick = true;
 		return true;
+	}
+
+	@Override
+	public boolean hasCustomInventoryName() {
+		return false;
+	}
+
+	@Override
+	public void openInventory() {
+		// TODO Auto-generated method stub
+		
+	}
+
+	@Override
+	public void closeInventory() {
+		// TODO Auto-generated method stub
+		
 	}
 }

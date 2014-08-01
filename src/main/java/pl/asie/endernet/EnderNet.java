@@ -4,22 +4,21 @@ import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Random;
-import java.util.logging.Logger;
+
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 
 import com.google.common.collect.ImmutableList;
 
 import pl.asie.endernet.api.IURIHandler;
-import pl.asie.endernet.block.BlockEnderChatBox;
 import pl.asie.endernet.block.BlockEnderModem;
 import pl.asie.endernet.block.BlockEnderReceiver;
 import pl.asie.endernet.block.BlockEnderTransmitter;
 import pl.asie.endernet.block.ItemBlockEnder;
 import pl.asie.endernet.block.TileEntityEnder;
-import pl.asie.endernet.block.TileEntityEnderChatBox;
 import pl.asie.endernet.block.TileEntityEnderModem;
 import pl.asie.endernet.block.TileEntityEnderReceiver;
 import pl.asie.endernet.block.TileEntityEnderTransmitter;
-import pl.asie.endernet.chat.ChatHandler;
 import pl.asie.endernet.http.EnderHTTPServer;
 import pl.asie.endernet.http.HTTPClient;
 import pl.asie.endernet.http.URIHandlerCanReceive;
@@ -47,7 +46,6 @@ import cpw.mods.fml.common.event.FMLInterModComms;
 import cpw.mods.fml.common.event.FMLPostInitializationEvent;
 import cpw.mods.fml.common.event.FMLPreInitializationEvent;
 import cpw.mods.fml.common.event.FMLServerStartingEvent;
-import cpw.mods.fml.common.network.NetworkMod;
 import cpw.mods.fml.common.network.NetworkRegistry;
 import cpw.mods.fml.common.registry.EntityRegistry;
 import cpw.mods.fml.common.registry.GameRegistry;
@@ -58,17 +56,17 @@ import net.minecraft.client.Minecraft;
 import net.minecraft.client.renderer.entity.RenderItem;
 import net.minecraft.client.renderer.entity.RenderManager;
 import net.minecraft.entity.passive.EntityVillager;
+import net.minecraft.init.Items;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.tileentity.TileEntity;
-import net.minecraftforge.common.ConfigCategory;
-import net.minecraftforge.common.Configuration;
 import net.minecraftforge.common.DimensionManager;
 import net.minecraftforge.common.MinecraftForge;
-import net.minecraftforge.common.Property;
+import net.minecraftforge.common.config.ConfigCategory;
+import net.minecraftforge.common.config.Configuration;
+import net.minecraftforge.common.config.Property;
 
-@Mod(modid="endernet", name="EnderNet", version="0.2.0")
-@NetworkMod(channels={"EnderNet"}, clientSideRequired=true, packetHandler=NetworkHandler.class)
+@Mod(modid="endernet", name="EnderNet", version="0.3.0")
 public class EnderNet {
 	// Dev environment parameter. Remember to remove for release!
 	public static boolean DEV = false;
@@ -81,35 +79,22 @@ public class EnderNet {
 	
 	public static EnderHTTPServer httpServer;
 	
-	public boolean isBlock(String name, int defaultID) {
-		int blockID = config.getBlock(name, defaultID).getInt(); 
-		return blockID > 0 && blockID < 4096;
-	}
-	
-	public boolean isItem(String name, int defaultID) {
-		int itemID = config.getItem(name, defaultID).getInt(); 
-		return itemID > 256 && itemID < 32000;
-	}
-	
 	public static BlockEnderTransmitter enderTransmitter;
 	public static BlockEnderReceiver enderReceiver;
 	public static BlockEnderModem enderModem;
-	public static BlockEnderChatBox enderChatBox;
 	public static EnderRegistry registry;
 	public static EnderServerManager servers;
 	
 	public static boolean spawnParticles, randomHTTPPort, enableEnergy, onlyAllowDefinedTransmit;
 	private static boolean treatBlacklistAsWhitelist;
-	public static ChatHandler chat;
 	
-	private static ArrayList<Integer> blacklistedItems;
+	private static ArrayList<Item> blacklistedItems;
 	private static ArrayList<Integer> whitelistedDimensions;
 	private File serverFile;
 	
 	@EventHandler
 	public void preInit(FMLPreInitializationEvent event) {		
-		log = Logger.getLogger("endernet");
-		log.setParent(FMLLog.getLogger());
+		log = LogManager.getLogger("endernet");
 		
 		config = new Configuration(event.getSuggestedConfigurationFile());
 		config.load();
@@ -117,31 +102,19 @@ public class EnderNet {
 		if(System.getProperty("user.dir").indexOf(".asielauncher") >= 0)
 			log.info("Thanks for using AsieLauncher!");
 		
-		if(isBlock("enderTransmitter", 2350)) {
-			enderTransmitter = new BlockEnderTransmitter(config.getBlock("enderTransmitter", 2350).getInt());
-			GameRegistry.registerBlock(enderTransmitter, ItemBlockEnder.class, "enderTransmitter");
-		}
-		if(isBlock("enderReceiver", 2351)) {
-			enderReceiver = new BlockEnderReceiver(config.getBlock("enderReceiver", 2351).getInt());
-			GameRegistry.registerBlock(enderReceiver, ItemBlockEnder.class, "enderReceiver");
-		}
-		if(Loader.isModLoaded("ComputerCraft") && isBlock("enderModem", 2352)) {
-			enderModem = new BlockEnderModem(config.getBlock("enderModem", 2352).getInt());
+		enderTransmitter = new BlockEnderTransmitter();
+		GameRegistry.registerBlock(enderTransmitter, ItemBlockEnder.class, "enderTransmitter");
+		enderReceiver = new BlockEnderReceiver();
+		GameRegistry.registerBlock(enderReceiver, ItemBlockEnder.class, "enderReceiver");
+		if(Loader.isModLoaded("ComputerCraft")) {
+			enderModem = new BlockEnderModem();
 			GameRegistry.registerBlock(enderModem, ItemBlockEnder.class, "enderModem");
-		}
-		if(Loader.isModLoaded("ComputerCraft") && isBlock("enderChatBox", 2353)) {
-			enderChatBox = new BlockEnderChatBox(config.getBlock("enderChatBox", 2353).getInt());
-			GameRegistry.registerBlock(enderChatBox, ItemBlockEnder.class, "enderChatBox");
 		}
 		
 		GameRegistry.registerTileEntity(TileEntityEnderTransmitter.class, "enderTransmitter");
 		GameRegistry.registerTileEntity(TileEntityEnderReceiver.class, "enderReceiver");
 		GameRegistry.registerTileEntity(TileEntityEnderModem.class, "enderModem");
-		GameRegistry.registerTileEntity(TileEntityEnderChatBox.class, "enderChatBox");
 		MinecraftForge.EVENT_BUS.register(new pl.asie.endernet.EventHandler());
-		
-		chat = new ChatHandler(config);
-		MinecraftForge.EVENT_BUS.register(chat);
 		
 		randomHTTPPort = config.get("comm", "randomHTTPPort", false).getBoolean(false);
 		spawnParticles = config.get("misc", "spawnTransmitterParticles", true).getBoolean(true);
@@ -171,7 +144,7 @@ public class EnderNet {
 		treatBlacklistAsWhitelist = config.get("comm", "blacklistedItemsAsWhiteList", false).getBoolean(false);
 	}
 	
-	public static boolean isItemBlacklisted(int id) {
+	public static boolean isItemBlacklisted(Item id) {
 		boolean contained = blacklistedItems.contains(id);
 		return treatBlacklistAsWhitelist ? !contained : contained;
 	}
@@ -182,22 +155,15 @@ public class EnderNet {
 	}
 	
 	private void parseBlacklistedItems(String s) {
-		blacklistedItems = new ArrayList<Integer>();
+		blacklistedItems = new ArrayList<Item>();
 		String[] items = s.split(",");
 		for(String itemString: items) {
-			try {
-				int itemID = new Integer(itemString.trim()).intValue();
-				if(itemID > 0 && itemID < 32000) {
-					blacklistedItems.add(itemID);
-				}
-			} catch(NumberFormatException e) {
-				if(itemString.contains("|")) {
-					EnderID id = new EnderID(itemString.split("|")[0], itemString.split("|")[1]);
-					if(id != null) {
-						ItemStack stack = id.createItemStack();
-						if(stack != null) {
-							blacklistedItems.add(stack.getItem().itemID);
-						}
+			if(itemString.contains("|")) {
+				EnderID id = new EnderID(itemString.split("|")[0], itemString.split("|")[1]);
+				if(id != null) {
+					ItemStack stack = id.createItemStack();
+					if(stack != null) {
+						blacklistedItems.add(stack.getItem());
 					}
 				}
 			}
@@ -222,14 +188,13 @@ public class EnderNet {
 		if(config.get("misc", "enableDevCommands", true).getBoolean(true))
 			event.registerServerCommand(new CommandEndernetInfo());
 		event.registerServerCommand(new CommandEndernetReload());
-		chat.registerCommands(event);
 	}
 	 
 	@EventHandler
 	public void init(FMLInitializationEvent event) {
 		FMLInterModComms.sendMessage("Waila", "register", "pl.asie.endernet.EnderNet.registerWaila");
 		
-		NetworkRegistry.instance().registerGuiHandler(this, new NetworkHandler());
+		NetworkRegistry.INSTANCE.registerGuiHandler(this, new NetworkHandler());
 		
 		startServerManager();
 		startHTTPServer();
@@ -241,18 +206,15 @@ public class EnderNet {
 		
 		if(!config.get("misc", "disableCraftingRecipes", false).getBoolean(false)) {
 			if(enderTransmitter != null) {
-				GameRegistry.addRecipe(new ItemStack(enderTransmitter, 1), "odo", "ded", "odo", 'd', new ItemStack(Item.diamond, 1), 'e', new ItemStack(Item.enderPearl, 1), 'o', new ItemStack(Item.redstone, 1));
-				GameRegistry.addRecipe(new ItemStack(enderTransmitter, 1), "dod", "oeo", "dod", 'd', new ItemStack(Item.diamond, 1), 'e', new ItemStack(Item.enderPearl, 1), 'o', new ItemStack(Item.redstone, 1));
+				GameRegistry.addRecipe(new ItemStack(enderTransmitter, 1), "odo", "ded", "odo", 'd', new ItemStack(Items.diamond, 1), 'e', new ItemStack(Items.ender_pearl, 1), 'o', new ItemStack(Items.redstone, 1));
+				GameRegistry.addRecipe(new ItemStack(enderTransmitter, 1), "dod", "oeo", "dod", 'd', new ItemStack(Items.diamond, 1), 'e', new ItemStack(Items.ender_pearl, 1), 'o', new ItemStack(Items.redstone, 1));
 			}
 			if(enderReceiver != null) {
-				GameRegistry.addRecipe(new ItemStack(enderReceiver, 1), "odo", "ded", "odo", 'd', new ItemStack(Item.diamond, 1), 'e', new ItemStack(Item.enderPearl, 1), 'o', new ItemStack(Item.dyePowder, 1, 4));
-				GameRegistry.addRecipe(new ItemStack(enderReceiver, 1), "dod", "oeo", "dod", 'd', new ItemStack(Item.diamond, 1), 'e', new ItemStack(Item.enderPearl, 1), 'o', new ItemStack(Item.dyePowder, 1, 4));
+				GameRegistry.addRecipe(new ItemStack(enderReceiver, 1), "odo", "ded", "odo", 'd', new ItemStack(Items.diamond, 1), 'e', new ItemStack(Items.ender_pearl, 1), 'o', new ItemStack(Items.dye, 1, 4));
+				GameRegistry.addRecipe(new ItemStack(enderReceiver, 1), "dod", "oeo", "dod", 'd', new ItemStack(Items.diamond, 1), 'e', new ItemStack(Items.ender_pearl, 1), 'o', new ItemStack(Items.dye, 1, 4));
 			}
 			if(enderModem != null) {
-				GameRegistry.addRecipe(new ItemStack(enderModem, 1), "gdg", "geg", "ggg", 'd', new ItemStack(Item.diamond, 1), 'e', new ItemStack(Item.enderPearl, 1), 'g', new ItemStack(Item.dyePowder, 1, 2));
-				if(enderChatBox != null) {
-					GameRegistry.addRecipe(new ItemStack(enderChatBox, 1), " n ", "nmn", " n ", 'n', new ItemStack(Block.music, 1), 'm', new ItemStack(enderModem, 1));
-				}
+				GameRegistry.addRecipe(new ItemStack(enderModem, 1), "gdg", "geg", "ggg", 'd', new ItemStack(Items.diamond, 1), 'e', new ItemStack(Items.ender_pearl, 1), 'g', new ItemStack(Items.dye, 1, 2));
 			}
 		}
 		
@@ -279,7 +241,7 @@ public class EnderNet {
 					httpServer.registerHandler((IURIHandler)handlerClass.newInstance());
 				} catch(Exception e) {
 					e.printStackTrace();
-					log.severe("Could not load handler " + msg.getStringValue() + "!");
+					log.error("Could not load handler " + msg.getStringValue() + "!");
 				}
 			}
 		}
@@ -331,7 +293,7 @@ public class EnderNet {
 		if(httpServer.wasStarted()) {
 			log.info("HTTP server ready on port " + port + "!");
 		} else {
-			log.warning("HTTP server not initialized; EnderNet will transmit *ONLY*!");
+			log.warn("HTTP server not initialized; EnderNet will transmit *ONLY*!");
 		}
 	}
 	

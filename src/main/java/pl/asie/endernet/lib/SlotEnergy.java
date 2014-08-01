@@ -1,5 +1,6 @@
 package pl.asie.endernet.lib;
 
+import net.minecraft.init.Items;
 import net.minecraft.inventory.IInventory;
 import net.minecraft.inventory.Slot;
 import net.minecraft.item.Item;
@@ -12,7 +13,7 @@ public class SlotEnergy extends Slot {
 	}
 	
 	public static boolean isValid(ItemStack stack) {
-		return (stack.getItem() == Item.enderPearl || stack.getItem() == Item.eyeOfEnder);
+		return (stack.getItem() == Items.ender_pearl || stack.getItem() == Items.ender_eye);
 	}
 
 	@Override

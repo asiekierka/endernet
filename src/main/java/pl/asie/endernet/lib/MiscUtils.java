@@ -24,7 +24,7 @@ public class MiscUtils {
 	}
 
     public static void dropItems(World world, int x, int y, int z) {
-    	TileEntity tileEntity = world.getBlockTileEntity(x, y, z);
+    	TileEntity tileEntity = world.getTileEntity(x, y, z);
     	if (tileEntity == null || !(tileEntity instanceof IInventory)) {
     		return;
     	}
@@ -48,7 +48,7 @@ public class MiscUtils {
 
 		EntityItem entityItem = new EntityItem(world,
 				x + rx, y + ry, z + rz,
-				new ItemStack(item.itemID, item.stackSize, item.getItemDamage()));
+				new ItemStack(item.getItem(), item.stackSize, item.getItemDamage()));
 
 		if (item.hasTagCompound()) {
 			entityItem.getEntityItem().setTagCompound((NBTTagCompound)item.getTagCompound().copy());

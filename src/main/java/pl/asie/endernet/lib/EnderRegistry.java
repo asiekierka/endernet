@@ -54,7 +54,7 @@ public class EnderRegistry {
 		try {
 			if(entities.get(eid) != null) {
 				EntityCoord ec = entities.get(eid);
-				EnderNet.log.warning("Entity already found for ID " + eid + "! Location: " + entities.get(eid).toString());
+				EnderNet.log.warn("Entity already found for ID " + eid + "! Location: " + entities.get(eid).toString());
 				return -1;
 			}
 			entities.set(eid, new EntityCoord(entity));
