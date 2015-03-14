@@ -1,0 +1,13 @@
+tile.endernet.enderTransmitter.name=Transmetteur des limbes
+tile.endernet.enderReceiver.name=Récepteur des limbes
+tile.endernet.enderModem.name=Modem des limbes
+tile.endernet.enderChatBox.name=Zone de chat des limbes
+
+error.endernet.dimension=EnderNet ne communique pas dans cette dimension !
+
+info.endernet.id=L'ID de ce bloc d'EnderNet est %s
+
+command.endernet.info.usage=Vous donne de l'information de développement sur l'objet de l'inventaire actuellement tenu.
+command.endernet.reload.usage=Recharge le fichier "endernet-servers.json".
+command.endernet.reload.success=Rechargé avec succès !
+command.endernet.reload.failure=Échec de rechargement !
